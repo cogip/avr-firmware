@@ -1,0 +1,53 @@
+/*
+ * pid.c
+ *
+ *  Created on: 24 avr. 2015
+ *      Author: ldo
+ */
+
+#include "pid.h"
+
+void
+pid_setup (PID *pid, const double kp, const double ki, const double kd)
+{
+  pid->kp = kp;
+  pid->ki = ki;
+  pid->kd = kd;
+}
+
+void
+pid_reset (PID *pid)
+{
+  pid->previous_error = 0;
+  pid->ti = 0;
+}
+
+double
+pid_controller (const double error, PID *pid)
+{
+  double p, i, d;
+
+  /* proportional */
+  p = error * pid->kp;
+
+  /* integral */
+  pid->ti += error;      // error sum
+
+  /* integral limitation */
+  if (pid->ti > INTEGRAL_LIMIT)
+    {
+      pid->ti = INTEGRAL_LIMIT;
+    }
+  else if (pid->ti < -INTEGRAL_LIMIT)
+    {
+      pid->ti = -INTEGRAL_LIMIT;
+    }
+  i = pid->ti * pid->ki;
+
+  /* derivative */
+  d = error - pid->previous_error;
+  d *= pid->kd;
+  pid->previous_error = error;      // backup the previous error
+
+  return p + i + d;
+}
