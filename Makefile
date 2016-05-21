@@ -3,6 +3,7 @@ MCU		:= atxmega128a1
 CROSS_COMPILE	:= avr-
 CC		:= $(CROSS_COMPILE)gcc
 OBJCOPY		:= $(CROSS_COMPILE)objcopy
+SIZE		:= $(CROSS_COMPILE)size
 
 # list of sources dirs which contains a Makefile included from the current one:
 src-dirs 	:= arch/$(ARCH) core
@@ -81,8 +82,13 @@ $(binname).hex: $(binname).elf
 quiet_cmd_linker = LD      $@
       cmd_linker = $(CC) -Wl,-Map,$@.map -mmcu=$(MCU) -o $@ $(objs) $(LIBS)
 
+# statistics
+quiet_cmd_size_elf = SIZE    $@
+      cmd_size_elf = $(SIZE) --format=avr --mcu=$(MCU) $@
+
 $(binname).elf: $(deps-y) $(objs)
 	$(call cmd,linker)
+	$(call cmd,size_elf)
 
 # include the C include dependencies
 #-include $(patsubst %,.%, $(objs:.o=.d))
