@@ -51,9 +51,9 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-#include <xmega_timer.h>
-#include <xmega_usart.h>
-#include <xmega_twi.h>
+#include <xmega/timer.h>
+#include <xmega/usart.h>
+#include <xmega/twi.h>
 
 #include "action.h"
 #include "sensor.h"

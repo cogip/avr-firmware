@@ -10,7 +10,7 @@
 
 #include <avr/io.h>
 //#include "xmega_twi.h"
-#include <xmega/twi/xmega_twi.h>
+#include <xmega/twi.h>
 
 #define SD21_ADDRESS 0xC2 >> 1
 
