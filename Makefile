@@ -42,7 +42,9 @@ cmd = @$(echo-cmd) $(cmd_$(1))
 CFLAGS 		+= $(patsubst %,-I%,$(src-dirs))
 
 CFLAGS		+= -Iinclude/ -Iarch/
-CFLAGS		+= -D__AVR_ATxmega128A1__ -mmcu=atxmega128a1
+CFLAGS		+= -mmcu=atxmega128a1 -DF_CPU=32000000
+CFLAGS		+= -Wall -Os -fpack-struct -fshort-enums -ffunction-sections \
+			-fdata-sections -funsigned-char -funsigned-bitfields
 
 # extra libraries if required
 LIBS :=
