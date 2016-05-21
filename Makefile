@@ -1,4 +1,5 @@
 ARCH		:= xmega
+MCU		:= atxmega128a1
 CROSS_COMPILE	:= avr-
 CC		:= $(CROSS_COMPILE)gcc
 OBJCOPY		:= $(CROSS_COMPILE)objcopy
@@ -42,7 +43,7 @@ cmd = @$(echo-cmd) $(cmd_$(1))
 CFLAGS 		+= $(patsubst %,-I%,$(src-dirs))
 
 CFLAGS		+= -Iinclude/ -Iarch/
-CFLAGS		+= -mmcu=atxmega128a1 -DF_CPU=32000000
+CFLAGS		+= -mmcu=$(MCU) -DF_CPU=32000000
 CFLAGS		+= -Wall -Os -fpack-struct -fshort-enums -ffunction-sections \
 			-fdata-sections -funsigned-char -funsigned-bitfields
 
@@ -65,6 +66,7 @@ deps-y		:= $(patsubst %.c,%.d,$(src-y))
 # -----------------------------------------------------------------------------
 # Main target
 #
+
 .PHONY: all
 all: $(binname).hex
 
@@ -77,7 +79,7 @@ $(binname).hex: $(binname).elf
 
 # link the program
 quiet_cmd_linker = LD      $@
-      cmd_linker = $(CC) -Wl,-Map,$@.map -mmcu=atxmega128a1 -o $@ $(objs) $(LIBS)
+      cmd_linker = $(CC) -Wl,-Map,$@.map -mmcu=$(MCU) -o $@ $(objs) $(LIBS)
 
 $(binname).elf: $(deps-y) $(objs)
 	$(call cmd,linker)
