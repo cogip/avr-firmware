@@ -251,7 +251,6 @@ int16_t tempo = 0;
 int
 main (void)
 {
-  uint8_t stop = 0;
   uint8_t all_irs[] =
     { 2, 3, 4, 5, 6, 7 };
   setup ();
