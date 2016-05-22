@@ -235,9 +235,9 @@ polar_t robot_speed;
 polar_t speed_setpoint =
   { 60, 60 };
 polar_t motor_command;
-pose robot_pose =
+pose_t robot_pose =
   { 1856.75, 0, 0 };
-pose pose_setpoint =
+pose_t pose_setpoint =
   { 0, 0, 0 };
 uint8_t pose_reached;
 

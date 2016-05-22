@@ -98,7 +98,7 @@ uint8_t route_retro = 0;
 uint8_t
 (*route_function) (void);
 
-pose
+pose_t
 route_update (void)
 {
   if (pose_reached == 1)

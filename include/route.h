@@ -12,7 +12,7 @@
 
 #include "odometry.h"
 
-pose
+pose_t
 route_update (void);
 
 void

@@ -19,7 +19,7 @@ odometry_setup (double d)
 }
 
 void
-pose_reset (pose *p)
+pose_reset (pose_t *p)
 {
   if (p != NULL)
     {
@@ -30,7 +30,7 @@ pose_reset (pose *p)
 }
 
 void
-pose_update (pose *p, double x, double y, double O)
+pose_update (pose_t *p, double x, double y, double O)
 {
   if (p != NULL)
     {
@@ -45,7 +45,7 @@ pose_update (pose *p, double x, double y, double O)
  * \brief limit angle from -pi to +pi
  * */
 void
-limit_angle (pose *p)
+limit_angle (pose_t *p)
 {
   /* limit angle from -pi to +pi */
   if (p->O > (M_PI * wheels_distance)) /* > +pi */
@@ -60,12 +60,12 @@ limit_angle (pose *p)
 
 /**
  * \fn void odometry_by_segment (const double distance, const double angle)
- * \brief update new robot pose (x, y, O) approximated by straight line segments
+ * \brief update new robot pose_t (x, y, O) approximated by straight line segments
  * \param distance : delta value for distance [pulse]
  * \param angle : delta value for angle [pulse]
  * */
 void
-odometry_by_segment (pose *p, const double distance, const double angle)
+odometry_by_segment (pose_t *p, const double distance, const double angle)
 {
   double O_rad = p->O / wheels_distance; /* [radian] */
   p->x += distance * cos (O_rad);
@@ -76,12 +76,12 @@ odometry_by_segment (pose *p, const double distance, const double angle)
 
 /**
  * \fn void odometry_by_arc (const double distance, const double angle)
- * \brief update new robot pose (x, y, O) approximated by an arc
+ * \brief update new robot pose_t (x, y, O) approximated by an arc
  * \param distance : delta value for distance [pulse]
  * \param angle : delta value for angle [pulse]
  * */
 void
-odometry_by_arc (pose *p, const double distance, const double angle)
+odometry_by_arc (pose_t *p, const double distance, const double angle)
 {
   double O_rad = p->O / wheels_distance; /* [radian] */
   if (angle == 0)
@@ -107,7 +107,7 @@ odometry_by_arc (pose *p, const double distance, const double angle)
 }
 
 void
-odometry_update (pose *p, const double distance, const double angle,
+odometry_update (pose_t *p, const double distance, const double angle,
 		 const uint8_t approximation)
 {
   if (approximation == ARC)

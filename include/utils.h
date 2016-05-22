@@ -28,7 +28,7 @@ typedef struct
 
 typedef struct
 {
-  pose p;
+  pose_t p;
   void * action_function;
   uint8_t status;
   uint8_t can_retro;

@@ -29,14 +29,14 @@ controller_setup (void)
 }
 
 /**
- \fn polar_t compute_error (const pose p1, const pose p2)
+ \fn polar_t compute_error (const pose_t p1, const pose_t p2)
  \brief compute error between 2 poses
  \param p1 : setpoint pose
  \param p2 : measure pose
  \return distance and angle errors between 2 poses
  */
 polar_t
-compute_error (const pose p1, const pose p2)
+compute_error (const pose_t p1, const pose_t p2)
 {
   polar_t error;
   double x = p1.x - p2.x;
@@ -102,7 +102,7 @@ speed_controller (polar_t speed_setpoint, polar_t current_speed)
 }
 
 polar_t
-controller_update (pose pose_setpoint, pose current_pose, polar_t speed_setpoint,
+controller_update (pose_t pose_setpoint, pose_t current_pose, polar_t speed_setpoint,
 		   polar_t current_speed)
 {
   /********************************* position pid controller ***************************/
