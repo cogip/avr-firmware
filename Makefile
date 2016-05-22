@@ -26,6 +26,7 @@ else
 endif
 
 # printing commands (catch from Kbuild.include)
+dot	:= .
 quote   := "
 squote  := '
 escsq = $(subst $(squote),'\$(squote)',$1)
@@ -141,7 +142,9 @@ objs := \
 	$(patsubst %.c,%.o, \
 	$(filter %.c,$(src-y)))
 
-deps-y		:= $(patsubst %.c,%.d,$(src-y))
+# from 'file.c' files in $(src-y), to '.file.d' in deps-y list
+deps-y		:= $(foreach dep, $(src-y), \
+			$(join $(dir $(dep)),$(dot)$(notdir $(dep:.c=.d))) )
 
 # hex file generation
 quiet_cmd_objcpy_hex_elf = HEX     $@
@@ -163,12 +166,11 @@ $(binname).elf: $(deps-y) $(objs)
 	$(call cmd,size_elf)
 
 # include the C include dependencies
-#-include $(patsubst %,.%, $(objs:.o=.d))
--include $(objs:.o=.d)
+-include $(deps-y)
 
 # calculate C include dependencies
 $(deps-y): .config
-%.d: %.c
+$(dot)%.d: %.c
 	$(Q)$(scripts-dir)/depends.sh `dirname $*.c` $(CFLAGS) $*.c > $@
 
 # build objects
