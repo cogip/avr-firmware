@@ -65,8 +65,6 @@
 #include "odometry.h"
 #include "route.h"
 
-volatile int16_t counter;
-
 /**
  * \fn void clock_setup (void)
  * \brief setup system clock 32 MHz

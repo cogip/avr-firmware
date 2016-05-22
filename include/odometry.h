@@ -10,8 +10,8 @@
 
 #include <stdint.h>
 
-#define SEGMENT 0
-#define ARC 1
+#define SEGMENT		0
+#define ARC		1
 
 /**
  * \struct pose

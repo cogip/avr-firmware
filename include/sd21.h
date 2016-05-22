@@ -11,10 +11,10 @@
 #include <stdint.h>
 #include <xmega/twi.h>
 
-#define SD21_ADDRESS 0xC2 >> 1
+#define SD21_ADDRESS	(0xC2 >> 1)
 
-#define REG_VERSION 64
-#define REG_VOLTAGE 65
+#define REG_VERSION	64
+#define REG_VOLTAGE	65
 
 /**
  * \fn void sd21_setup (TWI_t *twi)

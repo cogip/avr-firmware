@@ -11,14 +11,15 @@
 #include <avr/io.h>
 #include "odometry.h"
 
-#define WHEELS_DISTANCE 2960 // pulses soit 279 mm
-#define WHEELS_DIAMETER 60 // 60 mm - perimeter : 188 mm
-#define ENCODER_RESOLUTION 2000 // 500*4 pulse per rotate - 10.61 pulse/mm
-/* 2960*pi/2 = 4650 pulses pour 90° soit 51.66 pulses/° */
-#define PULSE_PER_DEGREE 51.66
-#define PULSE_PER_MM 10.61
+#define WHEELS_DISTANCE		2960 /* pulses soit 279 mm */
+#define WHEELS_DIAMETER		60   /* 60 mm - perimeter : 188 mm */
+#define ENCODER_RESOLUTION	2000 /* 500*4 pulse per rotate - 10.61 pulse/mm */
 
-#define MAX_ACC 4
+/* 2960*pi/2 = 4650 pulses pour 90° soit 51.66 pulses/° */
+#define PULSE_PER_DEGREE	51.66
+#define PULSE_PER_MM		10.61
+
+#define MAX_ACC			4
 
 typedef struct
 {

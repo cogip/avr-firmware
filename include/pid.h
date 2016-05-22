@@ -8,7 +8,7 @@
 #ifndef PID_H_
 #define PID_H_
 
-#define INTEGRAL_LIMIT 500000
+#define INTEGRAL_LIMIT	500000
 
 /**
  * \struct PID
