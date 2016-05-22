@@ -231,10 +231,10 @@ setup (void)
   controller_setup ();
 }
 
-polar robot_speed;
-polar speed_setpoint =
+polar_t robot_speed;
+polar_t speed_setpoint =
   { 60, 60 };
-polar motor_command;
+polar_t motor_command;
 pose robot_pose =
   { 1856.75, 0, 0 };
 pose pose_setpoint =

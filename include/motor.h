@@ -11,7 +11,7 @@
 #include "utils.h"
 
 void
-motor_drive (polar command);
+motor_drive (polar_t command);
 
 void
 left_motor_drive (int16_t pwm);

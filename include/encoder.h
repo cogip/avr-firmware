@@ -10,7 +10,7 @@
 
 #include "utils.h"
 
-polar
+polar_t
 read_encoder (void);
 
 /*int16_t

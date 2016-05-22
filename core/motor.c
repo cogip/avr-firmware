@@ -13,7 +13,7 @@
 #include "route.h"
 
 void
-motor_drive (polar command)
+motor_drive (polar_t command)
 {
   /************************ commandes moteur ************************/
   int16_t right_command = (int16_t) (command.distance + command.angle);

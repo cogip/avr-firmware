@@ -29,16 +29,16 @@ controller_setup (void)
 }
 
 /**
- \fn polar compute_error (const pose p1, const pose p2)
+ \fn polar_t compute_error (const pose p1, const pose p2)
  \brief compute error between 2 poses
  \param p1 : setpoint pose
  \param p2 : measure pose
  \return distance and angle errors between 2 poses
  */
-polar
+polar_t
 compute_error (const pose p1, const pose p2)
 {
-  polar error;
+  polar_t error;
   double x = p1.x - p2.x;
   double y = p1.y - p2.y;
   error.distance = sqrt (square (x) + square (y));
@@ -86,11 +86,11 @@ limit_speed_command (double command, double final_speed, double real_speed)
 /**
  *
  */
-polar
-speed_controller (polar speed_setpoint, polar current_speed)
+polar_t
+speed_controller (polar_t speed_setpoint, polar_t current_speed)
 {
-  polar speed_error;
-  polar command;
+  polar_t speed_error;
+  polar_t command;
 
   speed_error.distance = speed_setpoint.distance - current_speed.distance;
   speed_error.angle = speed_setpoint.angle - current_speed.angle;
@@ -101,14 +101,14 @@ speed_controller (polar speed_setpoint, polar current_speed)
   return command;
 }
 
-polar
-controller_update (pose pose_setpoint, pose current_pose, polar speed_setpoint,
-		   polar current_speed)
+polar_t
+controller_update (pose pose_setpoint, pose current_pose, polar_t speed_setpoint,
+		   polar_t current_speed)
 {
   /********************************* position pid controller ***************************/
 
   /* compute position error */
-  polar position_error = compute_error (pose_setpoint, current_pose);
+  polar_t position_error = compute_error (pose_setpoint, current_pose);
 
   /* position correction */
   if (position_error.distance > 500)
@@ -146,12 +146,12 @@ controller_update (pose pose_setpoint, pose current_pose, polar speed_setpoint,
     }
 
   /* compute speed command with position pid controller */
-  polar command;
+  polar_t command;
   command.distance = pid_controller (position_error.distance, &linear_pose_pid);
   command.angle = pid_controller (position_error.angle, &angular_pose_pid);
 
   /* limit speed command */
-  polar speed;
+  polar_t speed;
   speed.distance = limit_speed_command (command.distance,
 					speed_setpoint.distance,
 					current_speed.distance);

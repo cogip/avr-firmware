@@ -25,10 +25,10 @@ decode (int16_t counter)
 /**
  *
  */
-polar
+polar_t
 read_encoder (void)
 {
-  polar robot_speed;
+  polar_t robot_speed;
 
   int16_t left_speed = decode (TCE1.CNT);
   int16_t right_speed = decode (-TCF0.CNT);

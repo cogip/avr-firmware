@@ -24,7 +24,7 @@ typedef struct
 {
   int16_t distance;
   int16_t angle;
-} polar;
+} polar_t;
 
 typedef struct
 {

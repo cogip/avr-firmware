@@ -13,11 +13,11 @@
 void
 controller_setup (void);
 
-polar
-speed_controller (polar speed_setpoint, polar real_speed);
+polar_t
+speed_controller (polar_t speed_setpoint, polar_t real_speed);
 
-polar
-controller_update (pose pose_setpoint, pose current_pose, polar speed_setpoint,
-		   polar current_speed);
+polar_t
+controller_update (pose pose_setpoint, pose current_pose, polar_t speed_setpoint,
+		   polar_t current_speed);
 
 #endif /* CONTROLLER_H_ */
