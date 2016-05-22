@@ -1,18 +1,11 @@
 ARCH		:= xmega
-MCU		:= atxmega128a1
-CROSS_COMPILE	:= avr-
-CC		:= $(CROSS_COMPILE)gcc
-OBJCOPY		:= $(CROSS_COMPILE)objcopy
-SIZE		:= $(CROSS_COMPILE)size
-
-# list of sources dirs which contains a Makefile included from the current one:
-src-dirs 	:= arch/$(ARCH) core
-scripts-dir	:= scripts
 
 # target file basename
 binname		:= progname
 
-export CC
+# list of sources dirs which contains a Makefile included from the current one:
+scripts-dir	:= scripts
+src-dirs 	:= arch/$(ARCH) core
 
 # -----------------------------------------------------------------------------
 # Pretty display of command display or verbose: make V=1
@@ -32,21 +25,104 @@ else
   Q = @
 endif
 
-# printing commands (from Kbuild.include)
+# printing commands (catch from Kbuild.include)
+quote   := "
 squote  := '
 escsq = $(subst $(squote),'\$(squote)',$1)
 echo-cmd = $(if $($(quiet)cmd_$(1)),\
 	echo '  $(call escsq,$($(quiet)cmd_$(1)))$(echo-why)';)
 cmd = @$(echo-cmd) $(cmd_$(1))
+
 # -----------------------------------------------------------------------------
+# Main targets
+
+# targets are split in sets: build (default), config or clean.
+# following sections are thus exclusives regarding command line goals.
+build-targets		:= 1
+config-targets		:= 0
+clean-targets		:= 0
+ifneq ($(filter config %config,$(MAKECMDGOALS)),)
+        build-targets	:= 0
+        config-targets	:= 1
+endif
+ifneq ($(filter clean mrproper,$(MAKECMDGOALS)),)
+        build-targets	:= 0
+        clean-targets	:= 1
+endif
+
+# -----------------------------------------------------------------------------
+# Config targets
+ifeq ($(config-targets),1)
+
+define silentoldconfig
+        mkdir -p include/config include/generated; \
+        $(scripts-dir)/bin-$(shell uname -i)/kconfig-conf --silentoldconfig Kconfig
+endef
+
+.PHONY: defconfig
+defconfig:
+	$(Q)$(scripts-dir)/bin-$(shell uname -i)/kconfig-conf \
+		--alldefconfig Kconfig
+	$(Q)$(silentoldconfig)
+
+.PHONY: menuconfig
+menuconfig:
+	$(Q)$(scripts-dir)/bin-$(shell uname -i)/kconfig-mconf Kconfig
+	$(Q)$(silentoldconfig)
+endif
+
+# -----------------------------------------------------------------------------
+# Clean targets
+ifeq ($(clean-targets),1)
+
+.PHONY: clean
+clean:
+	$(Q)find . -name *.d -exec rm '{}' \;
+	$(Q)find . -name *.o -exec rm '{}' \;
+	$(Q)rm -f $(binname).elf $(binname).hex $(binname).elf.map
+
+.PHONY: mrproper
+mrproper: clean
+	$(Q)rm -Rf include/config include/generated
+	$(Q)rm -f .config
+endif
+
+# -----------------------------------------------------------------------------
+# Build targets
+ifeq ($(build-targets),1)
+
+.PHONY: all
+all: $(binname).hex
+
+.config:
+	@echo "Configuration file not found."
+	@echo "You need to configure before building. Available targets:"
+	@echo
+	@echo "    make defconfig"
+	@echo "    make menuconfig"
+	@echo
+	@false
+
+-include .config
+
+# aliases for CONFIG_ variables
+CROSS_COMPILE	:= $(subst $(quote),,$(CONFIG_CROSS_COMPILE))
+CC		:= $(CROSS_COMPILE)gcc
+OBJCOPY		:= $(CROSS_COMPILE)objcopy
+SIZE		:= $(CROSS_COMPILE)size
+export CC
+
+MCU		:= $(CONFIG_MCU)
+F_CPU		:= $(CONFIG_F_CPU)
 
 # look for include files in each of the modules
 CFLAGS 		+= $(patsubst %,-I%,$(src-dirs))
 
 CFLAGS		+= -Iinclude/ -Iarch/
-CFLAGS		+= -mmcu=$(MCU) -DF_CPU=32000000
+CFLAGS		+= -mmcu=$(MCU) -DF_CPU=$(CONFIG_F_CPU)
 CFLAGS		+= -Wall -Os -fpack-struct -fshort-enums -ffunction-sections \
-			-fdata-sections -funsigned-char -funsigned-bitfields
+			-fdata-sections -funsigned-char -funsigned-bitfields \
+			-include include/generated/autoconf.h
 
 # extra libraries if required
 LIBS :=
@@ -63,13 +139,6 @@ objs := \
 	$(filter %.c,$(src-y)))
 
 deps-y		:= $(patsubst %.c,%.d,$(src-y))
-
-# -----------------------------------------------------------------------------
-# Main target
-#
-
-.PHONY: all
-all: $(binname).hex
 
 # hex file generation
 quiet_cmd_objcpy_hex_elf = HEX     $@
@@ -95,18 +164,15 @@ $(binname).elf: $(deps-y) $(objs)
 -include $(objs:.o=.d)
 
 # calculate C include dependencies
+$(deps-y): .config
 %.d: %.c
-	@$(scripts-dir)/depends.sh `dirname $*.c` $(CFLAGS) $*.c > $@
+	$(Q)$(scripts-dir)/depends.sh `dirname $*.c` $(CFLAGS) $*.c > $@
 
+# build objects
 quiet_cmd_cc_o_c = CC      $@
       cmd_cc_o_c = $(CC) $(CFLAGS) -c -o $@ $<
 
 %.o: %.c
 	$(call cmd,cc_o_c)
 
-.PHONY: clean
-clean:
-	@find . -name *.d -exec rm '{}' \;
-	@find . -name *.o -exec rm '{}' \;
-	@rm -f $(binname).elf $(binname).hex $(binname).elf.map
-
+endif # ifeq ($(build-targets),1)

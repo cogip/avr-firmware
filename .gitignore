@@ -1,4 +1,8 @@
 *.d
-*.o
+*.elf
 *.hex
 *.map
+*.o
+.config*
+include/config
+include/generated

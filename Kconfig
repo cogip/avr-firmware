@@ -1,0 +1,24 @@
+#
+# Geonobot configuration
+#
+mainmenu "Geonobot configuration"
+
+config CROSS_COMPILE
+        string "Cross-compiler prefix"
+        default "avr-"
+        help
+          Same as running 'make CROSS_COMPILE=prefix-' but stored for
+          default make runs in this build directory.
+
+config MCU
+	string "MCU type"
+	default "atxmega128a1"
+	help
+	  This define the argument to "-mcu" option while calling the
+	  cross-compiler.
+
+config F_CPU
+	int "F_CPU (Hz)"
+	default 32000000
+	help
+	  This define the micro-controller CPU frequency (default: 32 MHz).
