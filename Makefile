@@ -54,6 +54,9 @@ endif
 # Config targets
 ifeq ($(config-targets),1)
 
+LD_LIBRARY_PATH		:= $(scripts-dir)/bin-$(shell uname -i)
+export LD_LIBRARY_PATH
+
 define silentoldconfig
         mkdir -p include/config include/generated; \
         $(scripts-dir)/bin-$(shell uname -i)/kconfig-conf --silentoldconfig Kconfig
