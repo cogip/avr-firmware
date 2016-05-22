@@ -5,8 +5,11 @@
  *      Author: ldo
  */
 
-#include "motor.h"
+#include <math.h>
+#include <xmega/timer.h>
+
 #include "action.h"
+#include "motor.h"
 #include "route.h"
 
 void

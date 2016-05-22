@@ -5,6 +5,9 @@
  * \author ldo
  */
 
+#include <math.h>
+#include <stdlib.h>
+
 #include "odometry.h"
 
 static double wheels_distance; /*!< robot wheels distance [pulse] */

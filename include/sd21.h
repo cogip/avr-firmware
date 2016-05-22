@@ -8,8 +8,7 @@
 #ifndef SD21_H_
 #define SD21_H_
 
-#include <avr/io.h>
-//#include "xmega_twi.h"
+#include <stdint.h>
 #include <xmega/twi.h>
 
 #define SD21_ADDRESS 0xC2 >> 1

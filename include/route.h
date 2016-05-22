@@ -8,7 +8,8 @@
 #ifndef ROUTE_H_
 #define ROUTE_H_
 
-#include "utils.h"
+#include <stdint.h>
+
 #include "odometry.h"
 
 pose

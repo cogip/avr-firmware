@@ -8,9 +8,6 @@
 #ifndef MOTOR_H_
 #define MOTOR_H_
 
-//#include <xmega_timer.h>
-#include <math.h>
-
 #include "utils.h"
 
 void

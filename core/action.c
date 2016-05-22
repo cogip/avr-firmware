@@ -4,8 +4,14 @@
  *  Created on: 4 mai 2015
  *      Author: ldo
  */
+#include <xmega/timer.h>
 
 #include "action.h"
+#include "analog_sensor.h"
+#include "sd21.h"
+#include "sensor.h"
+#include "utils.h"
+
 /**
  * servo map
  * 1 : Rear right bottom arm

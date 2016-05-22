@@ -8,10 +8,6 @@
 #ifndef ANALOG_SENSOR_H_
 #define ANALOG_SENSOR_H_
 
-#include <avr/io.h>
-#include <avr/interrupt.h>
-
-//#include <xmega/usart/xmega_usart.h>
 #include <xmega/adc.h>
 
 #define GP2Y0A41_DIST_MIN 4

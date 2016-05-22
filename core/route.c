@@ -5,8 +5,12 @@
  *      Author: ldo
  */
 
-#include "route.h"
+#include <stdio.h>
+
 #include "action.h"
+#include "utils.h" /* action typedef should be removed from utils.h */
+
+#include "route.h"
 
 #define NB_POSE 21
 // 10610 pour 1 m - 4650 pour 1/4 tour 90°

@@ -5,6 +5,11 @@
  *      Author: ldo
  */
 
+#include <math.h>
+
+#include "odometry.h"
+#include "pid.h"
+
 #include "controller.h"
 
 PID linear_speed_pid, angular_speed_pid;

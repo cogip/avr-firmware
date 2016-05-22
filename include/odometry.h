@@ -8,9 +8,7 @@
 #ifndef ODOMETRY_H_
 #define ODOMETRY_H_
 
-#include <math.h>
-#include <avr/io.h>
-#include <stdlib.h>
+#include <stdint.h>
 
 #define SEGMENT 0
 #define ARC 1

@@ -8,7 +8,6 @@
 #ifndef ENCODER_H_
 #define ENCODER_H_
 
-//#include <xmega/timer/xmega_timer.h>
 #include "utils.h"
 
 polar

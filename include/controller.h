@@ -8,8 +8,6 @@
 #ifndef CONTROLLER_H_
 #define CONTROLLER_H_
 
-#include "odometry.h"
-#include "pid.h"
 #include "utils.h"
 
 void

@@ -8,11 +8,7 @@
 #ifndef ACTION_H_
 #define ACTION_H_
 
-#include <xmega/timer.h>
-#include "sd21.h"
-#include "sensor.h"
-#include "utils.h"
-#include "analog_sensor.h"
+#include <stdint.h>
 
 void
 close_clap_arm (void);

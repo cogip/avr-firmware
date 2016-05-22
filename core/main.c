@@ -48,19 +48,20 @@
  * use TCE1, TCF0 and TCF1 timers to decode quadrature
  */
 
-#include <avr/io.h>
 #include <avr/interrupt.h>
+#include <avr/io.h>
 
 #include <xmega/timer.h>
-#include <xmega/usart.h>
 #include <xmega/twi.h>
+#include <xmega/usart.h>
 
 #include "action.h"
-#include "sensor.h"
 #include "analog_sensor.h"
-#include "encoder.h"
-#include "motor.h"
 #include "controller.h"
+#include "encoder.h"
+#include "sd21.h"
+#include "sensor.h"
+#include "motor.h"
 #include "odometry.h"
 #include "route.h"
 
