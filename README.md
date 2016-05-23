@@ -14,12 +14,12 @@ Thats obvious.
 
 # External references
 
-- [http://www.atmel.com/tools/atmelavrtoolchainforlinux.aspx](Atmel official AVR Toolchain web page)
-- [http://aegis.sourceforge.net/auug97.pdf](A paper on recursive Makefile issue)
-- [http://ymorin.is-a-geek.org/download/kconfig-frontends/](KConfig-frontend download page)
+- [Atmel official AVR Toolchain web page](http://www.atmel.com/tools/atmelavrtoolchainforlinux.aspx)
+- [A paper on recursive Makefile issue](http://aegis.sourceforge.net/auug97.pdf)
+- [KConfig-frontend download page](http://ymorin.is-a-geek.org/download/kconfig-frontends/)
 
 Kconfig usage examples:
 
-- [http://www.linuxembedded.fr/2013/01/utiliser-kconfig-dans-ses-projets/](Utiliser Kconfig dans ses projets)
-- [http://bitthunder.org/docs/quick-start/](BitThunder OS based on Kconfig-frontend for setup)
+- [Utiliser Kconfig dans ses projets](http://www.linuxembedded.fr/2013/01/utiliser-kconfig-dans-ses-projets/)
+- [BitThunder OS based on Kconfig-frontend for setup](http://bitthunder.org/docs/quick-start/)
 
