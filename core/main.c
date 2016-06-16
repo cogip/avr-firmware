@@ -234,7 +234,7 @@ polar_t speed_setpoint =
   { 60, 60 };
 polar_t motor_command;
 pose_t robot_pose =
-  { 1856.75, 0, 0 };
+  { 1856.75, 0, 0 }; /* position absolue */
 pose_t pose_setpoint =
   { 0, 0, 0 };
 uint8_t pose_reached;
@@ -261,22 +261,35 @@ main (void)
       gestion_tour ();
     }
 
+  /* main loop */
   while (tempo < 4500)
     {
       if (controller_flag == 1)
 	{
+	  /* we enter here every 20ms */
 	  tempo++;
+
+          /* catch speed */
 	  robot_speed = read_encoder ();
+
+          /* convert to position */
 	  odometry_update (&robot_pose, &robot_speed, SEGMENT);
+
+          /* get next pose_t to reach */
 	  pose_setpoint = route_update ();
+
 	  pose_setpoint.x *= PULSE_PER_MM;
 	  pose_setpoint.y *= PULSE_PER_MM;
 	  pose_setpoint.O *= PULSE_PER_DEGREE;
+
+          /* mirror mode: invert path regarding bot's camp */
 	  if (detect_color ())
 	    {
 	      pose_setpoint.y *= -1;
 	      pose_setpoint.O *= -1;
 	    }
+
+          /* collision detect */
 
 	  /*uint8_t side_irs[] =
 	   { 0, 1 };
@@ -307,10 +320,12 @@ main (void)
 	      speed_setpoint.angle = 60;
 	    }
 
+          /* PID / feedback control */
 	  //motor_command = speed_controller (speed_setpoint, robot_speed);
 	  motor_command = controller_update (pose_setpoint, robot_pose,
 					     speed_setpoint, robot_speed);
 
+          /* set speed to wheels */
 	  motor_drive (motor_command);
 
 	  controller_flag = 0;
@@ -321,6 +336,7 @@ main (void)
       gestion_tour ();
     }
 
+  /* final position */
   while (1)
     {
       open_pince ();
@@ -331,5 +347,7 @@ main (void)
       motor_command.angle = 0;
       motor_drive (motor_command);
     }
+
+  /* we never reach this point */
   return 0;
 }
