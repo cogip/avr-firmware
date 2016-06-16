@@ -23,6 +23,12 @@ typedef struct
   double O; /*!< 0-orientation [pulse] */
 } pose_t;
 
+typedef struct
+{
+  int16_t distance;
+  int16_t angle;
+} polar_t;
+
 /**
  * \struct polar_pose
  */
@@ -59,12 +65,10 @@ pose_update (pose_t *p, double x, double y, double O);
 /**
  * \fn void odometry_update (const double distance, const double angle, const uint8_t approximation)
  * \brief update new robot pose_t (x, y, O) by ARC or SEGMENT approximation
- * \param distance : delta value for distance [pulse]
- * \param angle : delta value for angle [pulse]
+ * \param polar_t : delta value for distance [pulse]
  * \param approximation : SEGMENT (default) or ARC
  * */
 void
-odometry_update (pose_t *p, const double distance, const double angle,
-		 const uint8_t approximation);
+odometry_update (pose_t *p, polar_t *robot_speed, const uint8_t approximation);
 
 #endif /* ODOMETRY_H_ */

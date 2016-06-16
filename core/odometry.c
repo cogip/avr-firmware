@@ -107,15 +107,14 @@ odometry_by_arc (pose_t *p, const double distance, const double angle)
 }
 
 void
-odometry_update (pose_t *p, const double distance, const double angle,
-		 const uint8_t approximation)
+odometry_update (pose_t *p, polar_t *robot_speed, const uint8_t approximation)
 {
   if (approximation == ARC)
     {
-      odometry_by_arc (p, distance, angle);
+      odometry_by_arc (p, robot_speed->distance, robot_speed->angle);
     }
   else
     {
-      odometry_by_segment (p, distance, angle);
+      odometry_by_segment (p, robot_speed->distance, robot_speed->angle);
     }
 }

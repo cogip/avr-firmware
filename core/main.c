@@ -267,8 +267,7 @@ main (void)
 	{
 	  tempo++;
 	  robot_speed = read_encoder ();
-	  odometry_update (&robot_pose, robot_speed.distance, robot_speed.angle,
-	  SEGMENT);
+	  odometry_update (&robot_pose, &robot_speed, SEGMENT);
 	  pose_setpoint = route_update ();
 	  pose_setpoint.x *= PULSE_PER_MM;
 	  pose_setpoint.y *= PULSE_PER_MM;

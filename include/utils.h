@@ -23,12 +23,6 @@
 
 typedef struct
 {
-  int16_t distance;
-  int16_t angle;
-} polar_t;
-
-typedef struct
-{
   pose_t p;
   void * action_function;
   uint8_t status;
