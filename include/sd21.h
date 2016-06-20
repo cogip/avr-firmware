@@ -21,24 +21,21 @@
  * \brief setup twi port
  * \param twi twi port
  */
-void
-sd21_setup (TWI_t *twi);
+void sd21_setup(TWI_t *twi);
 
 /**
  * \fn uint8_t sd21_version (void)
  * \brief
  * \return software revision number
  */
-uint8_t
-sd21_version (void);
+uint8_t sd21_version(void);
 
 /**
  * \fn double sd21_battery_voltage (void)
  * \brief
  * \return servo battery voltage [V]
  */
-double
-sd21_battery_voltage (void);
+double sd21_battery_voltage(void);
 
 /**
  * \fn void sd21_send (uint8_t servo, uint8_t speed, uint16_t position)
@@ -47,7 +44,6 @@ sd21_battery_voltage (void);
  * \param speed : servo speed (0 is the maximum speed)
  * \param position : pulse width in us
  */
-void
-sd21_control_servo (uint8_t servo, uint8_t speed, uint16_t position);
+void sd21_control_servo(uint8_t servo, uint8_t speed, uint16_t position);
 
 #endif /* SD21_H_ */
