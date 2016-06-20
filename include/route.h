@@ -12,15 +12,9 @@
 
 #include "odometry.h"
 
-pose_t
-route_update (void);
-
-void
-down_route_index (void);
-
+pose_t route_update(void);
+void down_route_index(void);
 uint8_t get_can_retro(void);
-
-uint8_t
-get_route_index (void);
+uint8_t get_route_index(void);
 
 #endif /* ROUTE_H_ */
