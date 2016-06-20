@@ -91,13 +91,13 @@ action_t route[NB_POSE] =
  {
  { 970, 775, 0 }, close_clap_arm, 0, 0 } };*/
 
-uint8_t route_index = 0;
-uint8_t route_retro = 0;
-uint8_t
-(*route_function) (void);
+static uint8_t route_index;
+static uint8_t route_retro;
 
 pose_t route_update(void)
 {
+	uint8_t (*route_function)(void);
+
 	if (pose_reached == 1) {
 		route_retro = 0;
 		route_function = route[route_index].action_function;
@@ -122,10 +122,12 @@ void down_route_index()
 	}
 }
 
+#if 0
 uint8_t get_can_retro()
 {
 	return route[route_index].can_retro;
 }
+#endif
 
 uint8_t get_route_index()
 {
