@@ -9,6 +9,7 @@
 #define UTILS_H_
 
 #include <avr/io.h>
+
 #include "odometry.h"
 
 #define WHEELS_DISTANCE		2960 /* pulses soit 279 mm */
@@ -21,16 +22,8 @@
 
 #define MAX_ACC			4
 
-typedef struct
-{
-  pose_t p;
-  void * action_function;
-  uint8_t status;
-  uint8_t can_retro;
-} action;
-
+/* FIXME: to rework */
 extern uint8_t pose_reached;
-
 extern uint8_t flag_tower_down;
 
 #endif /* UTILS_H_ */

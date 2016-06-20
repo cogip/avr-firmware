@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 #include "action.h"
-#include "utils.h" /* action typedef should be removed from utils.h */
+#include "utils.h" /* FIXME: for global var ugly hack. to remove! */
 
 #include "route.h"
 
@@ -27,7 +27,7 @@ void reset_flag_tower_down(void)
 	flag_tower_down = 0;
 }
 
-action route[NB_POSE] =
+action_t route[NB_POSE] =
   {
     {
       { 2500, 0, 0 }, NULL, 0, 0 },
@@ -72,7 +72,7 @@ action route[NB_POSE] =
     {
       { 275, 0, 0 }, set_release_right_cup, 0, 0 } };
 
-/*action route[NB_POSE] =
+/*action_t route[NB_POSE] =
  {
  {
  { 500, 0, 0 }, NULL, 0, 0 },

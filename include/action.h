@@ -10,6 +10,15 @@
 
 #include <stdint.h>
 
+#include "odometry.h"
+
+typedef struct {
+	pose_t p;
+	void * action_function;
+	uint8_t status;
+	uint8_t can_retro;
+} action_t;
+
 void action_setup(void);
 void gestion_tour(void);
 
