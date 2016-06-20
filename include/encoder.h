@@ -10,10 +10,6 @@
 
 #include "utils.h"
 
-polar_t
-read_encoder (void);
-
-/*int16_t
- read_encoder_elevator (void);*/
+polar_t read_encoder(void);
 
 #endif /* ENCODER_H_ */
