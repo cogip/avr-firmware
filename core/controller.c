@@ -95,8 +95,8 @@ speed_controller (polar_t speed_setpoint, polar_t current_speed)
   speed_error.distance = speed_setpoint.distance - current_speed.distance;
   speed_error.angle = speed_setpoint.angle - current_speed.angle;
 
-  command.distance = pid_controller (speed_error.distance, &linear_speed_pid);
-  command.angle = pid_controller (speed_error.angle, &angular_speed_pid);
+  command.distance = pid_controller (&linear_speed_pid, speed_error.distance);
+  command.angle = pid_controller (&angular_speed_pid, speed_error.angle);
 
   return command;
 }
@@ -147,8 +147,8 @@ controller_update (pose_t pose_setpoint, pose_t current_pose, polar_t speed_setp
 
   /* compute speed command with position pid controller */
   polar_t command;
-  command.distance = pid_controller (position_error.distance, &linear_pose_pid);
-  command.angle = pid_controller (position_error.angle, &angular_pose_pid);
+  command.distance = pid_controller (&linear_pose_pid, position_error.distance);
+  command.angle = pid_controller (&angular_pose_pid, position_error.angle);
 
   /* limit speed command */
   polar_t speed;

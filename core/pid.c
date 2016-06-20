@@ -20,7 +20,7 @@ void pid_reset(PID *pid)
 	pid->ti = 0;
 }
 
-double pid_controller(const double error, PID *pid)
+double pid_controller(PID *pid, const double error)
 {
 	double p, i, d;
 

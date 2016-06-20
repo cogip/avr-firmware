@@ -41,10 +41,10 @@ void pid_reset(PID *pid);
 /**
  * \fn pid_controller
  * \brief compute pid controller
- * \param error
  * \param pid
+ * \param error
  * \return the variable that will be adjusted by the pid
  */
-double pid_controller(const double error, PID *pid);
+double pid_controller(PID *pid, const double error);
 
 #endif /* PID_H_ */
