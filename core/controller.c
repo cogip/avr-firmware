@@ -9,6 +9,7 @@
 
 #include "odometry.h"
 #include "pid.h"
+#include "utils.h"
 
 #include "controller.h"
 

@@ -8,7 +8,7 @@
 #ifndef CONTROLLER_H_
 #define CONTROLLER_H_
 
-#include "utils.h"
+#include "odometry.h"
 
 void controller_setup(void);
 
