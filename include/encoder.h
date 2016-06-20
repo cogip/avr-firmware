@@ -8,7 +8,7 @@
 #ifndef ENCODER_H_
 #define ENCODER_H_
 
-#include "utils.h"
+#include "odometry.h"
 
 polar_t read_encoder(void);
 

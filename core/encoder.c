@@ -5,6 +5,8 @@
  *      Author: ldo
  */
 
+#include <avr/io.h>
+
 #include "encoder.h"
 
 int16_t decode(int16_t counter)

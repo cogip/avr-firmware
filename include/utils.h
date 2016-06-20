@@ -8,10 +8,6 @@
 #ifndef UTILS_H_
 #define UTILS_H_
 
-#include <avr/io.h>
-
-#include "odometry.h"
-
 #define WHEELS_DISTANCE		2960 /* pulses soit 279 mm */
 #define WHEELS_DIAMETER		60   /* 60 mm - perimeter : 188 mm */
 #define ENCODER_RESOLUTION	2000 /* 500*4 pulse per rotate - 10.61 pulse/mm */
