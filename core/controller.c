@@ -12,8 +12,8 @@
 
 #include "controller.h"
 
-PID linear_speed_pid, angular_speed_pid;
-PID linear_pose_pid, angular_pose_pid;
+PID_t linear_speed_pid, angular_speed_pid;
+PID_t linear_pose_pid, angular_pose_pid;
 
 /**
  * TODO reglage des coeffs PID position

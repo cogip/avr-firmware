@@ -7,20 +7,20 @@
 
 #include "pid.h"
 
-void pid_setup(PID *pid, const double kp, const double ki, const double kd)
+void pid_setup(PID_t *pid, const double kp, const double ki, const double kd)
 {
 	pid->kp = kp;
 	pid->ki = ki;
 	pid->kd = kd;
 }
 
-void pid_reset(PID *pid)
+void pid_reset(PID_t *pid)
 {
 	pid->previous_error = 0;
 	pid->ti = 0;
 }
 
-double pid_controller(PID *pid, const double error)
+double pid_controller(PID_t *pid, const double error)
 {
 	double p, i, d;
 

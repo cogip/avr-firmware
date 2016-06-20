@@ -19,7 +19,7 @@ typedef struct {
 	double kd; /*!< derivative gain */
 	double ti; /*!< error sum */
 	double previous_error; /*!< previous sum */
-} PID;
+} PID_t;
 
 /**
  * \fn pid_setup
@@ -29,14 +29,14 @@ typedef struct {
  * \param ki integral gain
  * \param kd derivative gain
  */
-void pid_setup(PID *pid, const double kp, const double ki, const double kd);
+void pid_setup(PID_t *pid, const double kp, const double ki, const double kd);
 
 /**
  * \fn pid_reset
  * \brief PID reset pid parameters
  * \param pid struct PID
  */
-void pid_reset(PID *pid);
+void pid_reset(PID_t *pid);
 
 /**
  * \fn pid_controller
@@ -45,6 +45,6 @@ void pid_reset(PID *pid);
  * \param error
  * \return the variable that will be adjusted by the pid
  */
-double pid_controller(PID *pid, const double error);
+double pid_controller(PID_t *pid, const double error);
 
 #endif /* PID_H_ */
