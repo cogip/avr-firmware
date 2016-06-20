@@ -7,5 +7,4 @@ src-y += core/motor.c
 src-y += core/odometry.c
 src-y += core/pid.c
 src-y += core/route.c
-src-y += core/sd21.c
 src-y += core/sensor.c
