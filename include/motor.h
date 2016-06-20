@@ -10,13 +10,6 @@
 
 #include "utils.h"
 
-void
-motor_drive (polar_t command);
-
-void
-left_motor_drive (int16_t pwm);
-
-void
-right_motor_drive (int16_t pwm);
+void motor_drive(polar_t command);
 
 #endif /* MOTOR_H_ */
