@@ -13,7 +13,7 @@
 
 #include "utils.h"
 
-void xmega_adc_setup(ADC_t *adc, func_cb_t callback);
-void xmega_adc_read(ADC_t *adc, uint8_t pin);
+void adc_setup(ADC_t *adc, func_cb_t callback);
+void adc_read(ADC_t *adc, uint8_t pin);
 
 #endif /* ADC_H_ */

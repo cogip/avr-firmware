@@ -83,7 +83,7 @@ void read_analog_sensor(void)
 		if (sensor_index > 7)
 			sensor_index = 0;
 
-		xmega_adc_read(&ADCA, sensor_index);
+		adc_read(&ADCA, sensor_index);
 
 		adc_flag = 0;
 	}

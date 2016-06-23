@@ -196,6 +196,10 @@ static void setup(void)
 {
 	clock_setup();
 	pin_setup();
+
+	/* setup analog conversion */
+	adc_setup(&ADCA, irq_adc_handler);
+
 	interrupt_setup();
 
 	/* timer setup */
@@ -220,9 +224,6 @@ static void setup(void)
 	/* setup qdec */
 	qdec_setup();
 
-	/* setup analog conversion */
-	xmega_adc_setup(&ADCA, irq_adc_handler);
-
 	/* controller setup */
 	odometry_setup(WHEELS_DISTANCE);
 	controller_setup();
@@ -239,8 +240,9 @@ int main(void)
 	uint8_t stop = 0;
 
 	setup();
+
 	/* start first conversion */
-	xmega_adc_read(&ADCA, 0);
+	adc_read(&ADCA, 0);
 	xmega_usart_transmit(&USARTC0, 0xAA);
 
 	while (detect_start())
