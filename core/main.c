@@ -221,7 +221,7 @@ static void setup(void)
 	qdec_setup();
 
 	/* setup analog conversion */
-	xmega_adc_setup(&ADCA);
+	xmega_adc_setup(&ADCA, irq_adc_handler);
 
 	/* controller setup */
 	odometry_setup(WHEELS_DISTANCE);

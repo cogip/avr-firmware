@@ -16,13 +16,10 @@ static volatile uint8_t sensor_index;
 static volatile uint8_t adc_flag;
 static volatile uint16_t adc_result;
 
-/* Interrupt Service Routine for handling the ADC conversion complete IT */
-ISR(ADCA_CH0_vect)
+void irq_adc_handler(void)
 {
-	adc_result = ADCA.CH0.RES;
-	adc_flag = 1;
-
-	/* Interrupt flag is cleared upon return from ISR */
+       adc_result = ADCA.CH0.RES;
+       adc_flag = 1;
 }
 
 /*

@@ -7,6 +7,17 @@
 
 #include "adc.h"
 
+static func_cb_t irq_handler;
+
+/* Interrupt Service Routine for handling the ADC conversion complete IT */
+ISR(ADCA_CH0_vect)
+{
+	if (irq_handler)
+		irq_handler();
+
+	/* Interrupt flag is cleared upon return from ISR */
+}
+
 /**
  * \fn
  * \brief
@@ -15,7 +26,7 @@
  * TODO param CH0 and PRPA
  */
 void
-xmega_adc_setup (ADC_t *adc)
+xmega_adc_setup (ADC_t *adc, func_cb_t callback)
 {
   /* Clear ADC bit in Power Reduction Port A Register */
   PR.PRPA &= ~0x02; // TODO
