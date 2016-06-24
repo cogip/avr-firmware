@@ -11,6 +11,8 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
+#include "utils.h"
+
 void xmega_timer_0_normal_mode_setup(volatile TC0_t *tc, uint16_t period,
 				     TC_CLKSEL_t clock_source);
 
@@ -27,5 +29,7 @@ void xmega_timer_0_pwm_enable(volatile TC0_t *tc, const uint8_t pin);
 
 void xmega_timer_0_pwm_duty_cycle(volatile TC0_t *tc, const uint8_t pin,
 				  uint8_t duty_cycle);
+
+void xmega_timer_0_register_ovf_cb(func_cb_t handler);
 
 #endif /* TIMER_H_ */

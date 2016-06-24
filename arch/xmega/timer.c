@@ -18,12 +18,14 @@
 #include <avr/io.h>
 #include "timer.h"
 
-#if 0
+static func_cb_t irq_tcc0_ovf_handler;
+
+/* Timer 0 Overflow interrupt */
 ISR(TCC0_OVF_vect)
 {
-	TCC0.CNT = 0;
+	if (irq_tcc0_ovf_handler)
+		irq_tcc0_ovf_handler();
 }
-#endif
 
 ISR(TCD0_OVF_vect)
 {
@@ -147,4 +149,9 @@ void xmega_timer_0_pwm_duty_cycle(volatile TC0_t *tc, const uint8_t pin,
 	default:
 		break;
 	}
+}
+
+void xmega_timer_0_register_ovf_cb(func_cb_t handler)
+{
+	irq_tcc0_ovf_handler = handler;
 }

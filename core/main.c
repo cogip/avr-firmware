@@ -104,9 +104,6 @@ static void interrupt_setup(void)
 {
 	/* Programmable Multilevel Interrupt Controller */
 	PMIC.CTRL |= PMIC_LOLVLEN_bm; /* Low-level Interrupt Enable */
-
-	/* global interrupt enable */
-	sei();
 }
 
 static void pin_setup(void)
@@ -184,7 +181,7 @@ void qdec_setup(void)
 }
 
 /* Timer 0 Overflow interrupt */
-ISR(TCC0_OVF_vect)
+void irq_timer0_handler(void)
 {
 	controller_flag = 1;
 }
@@ -202,8 +199,12 @@ static void setup(void)
 
 	interrupt_setup();
 
+	/* global interrupt enable */
+	sei();
+
 	/* timer setup */
 	controller_flag = 0;
+	xmega_timer_0_register_ovf_cb(irq_timer0_handler);
 	xmega_timer_0_normal_mode_setup(&TCC0, 625, TC_CLKSEL_DIV1024_gc);
 
 	/* setup usart communication */
