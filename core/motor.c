@@ -12,36 +12,26 @@
 #include "motor.h"
 #include "route.h"
 
-
-#define MIN_PWM 30
+#define MAX_PWM		200
 
 /** limite la commande de vitesse
  * @param value from -16535 to 16535
- * @return pwm value from 0 to max */
+ * @return pwm value from 0 to max
+ */
 static uint8_t pwm_limitation(int16_t value, uint8_t max)
 {
-	if (value > 0) {
-		/*if (value < MIN_PWM)
-			value = MIN_PWM;*/
-		if (value > max)
-			value = max;
-	} else {
-		/*if (value > -MIN_PWM)
-			value = -MIN_PWM;*/
-		if (value < -max)
-			value = -max;
-	}
+	int16_t	out = value > 0 ? value : -value;
 
-	return fabs(value);
+	return out > max ? max : (uint8_t) out;
 }
 
 /**
  * \param pwm value for motor (signed value)
- * */
+ */
 static void left_motor_drive(int16_t pwm)
 {
 	/* limitation de la commande de vitesse */
-	uint8_t pwm_limit = pwm_limitation(pwm, 200);
+	uint8_t pwm_limit = pwm_limitation(pwm, MAX_PWM);
 
 	/* advance */
 	if (pwm > 0)
@@ -55,11 +45,11 @@ static void left_motor_drive(int16_t pwm)
 
 /**
  * \param pwm value for motor (signed value)
- * */
+ */
 static void right_motor_drive(int16_t pwm)
 {
 	/* limitation de la commande de vitesse */
-	uint8_t pwm_limit = pwm_limitation(pwm, 200);
+	uint8_t pwm_limit = pwm_limitation(pwm, MAX_PWM);
 
 	/* advance */
 	if (pwm > 0)

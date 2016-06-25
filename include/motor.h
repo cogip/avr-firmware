@@ -8,7 +8,7 @@
 #ifndef MOTOR_H_
 #define MOTOR_H_
 
-#include "utils.h"
+#include "odometry.h"
 
 void motor_drive(polar_t command);
 
