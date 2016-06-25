@@ -169,7 +169,7 @@ void qdec_setup(void)
 	EVSYS.CH0MUX = EVSYS_CHMUX_PORTE_PIN4_gc;
 	EVSYS.CH0CTRL = EVSYS_QDEN_bm
 			| EVSYS_DIGFILT_2SAMPLES_gc /*| EVSYS_QDIEN_bm*/;
-	xmega_timer_1_qdec_mode_setup(&TCE1, TC_EVSEL_CH0_gc, 500);
+	timer_1_qdec_mode_setup(&TCE1, TC_EVSEL_CH0_gc, 500);
 
 	/* Configure event channel x assign to pin x */
 	/* A & B inputs to quad-decoder */
@@ -177,7 +177,7 @@ void qdec_setup(void)
 	EVSYS.CH2CTRL = EVSYS_QDEN_bm
 			| EVSYS_DIGFILT_2SAMPLES_gc /*| EVSYS_QDIEN_bm*/;
 
-	xmega_timer_0_qdec_mode_setup(&TCF0, TC_EVSEL_CH2_gc, 500);
+	timer_0_qdec_mode_setup(&TCF0, TC_EVSEL_CH2_gc, 500);
 }
 
 /* Timer 0 Overflow interrupt */
@@ -204,8 +204,8 @@ static void setup(void)
 
 	/* timer setup */
 	controller_flag = 0;
-	xmega_timer_0_register_ovf_cb(irq_timer0_handler);
-	xmega_timer_0_normal_mode_setup(&TCC0, 625, TC_CLKSEL_DIV1024_gc);
+	timer_0_register_ovf_cb(irq_timer0_handler);
+	timer_0_normal_mode_setup(&TCC0, 625, TC_CLKSEL_DIV1024_gc);
 
 	/* setup usart communication */
 	xmega_usart_setup(&USARTC0);
@@ -217,10 +217,10 @@ static void setup(void)
 
 	/* setup frequency waveform generation (PWM) */
 	/* note: 200 pour 20KHz -100 pour pour 40 KHz */
-	xmega_timer_0_pwm_mode_setup(&TCE0, 200, TC_CLKSEL_DIV8_gc);
-	xmega_timer_0_pwm_enable(&TCE0, 0); /* PE0 */
-	xmega_timer_0_pwm_enable(&TCE0, 1); /* PE1 */
-	xmega_timer_0_pwm_enable(&TCE0, 2); /* PE2 */
+	timer_0_pwm_mode_setup(&TCE0, 200, TC_CLKSEL_DIV8_gc);
+	timer_0_pwm_enable(&TCE0, 0); /* PE0 */
+	timer_0_pwm_enable(&TCE0, 1); /* PE1 */
+	timer_0_pwm_enable(&TCE0, 2); /* PE2 */
 
 	/* setup qdec */
 	qdec_setup();

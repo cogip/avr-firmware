@@ -1,5 +1,5 @@
 /**
- * \file xmega_timer.c
+ * \file timer.c
  *
  * \date 26 nov. 2014
  * \author ldo
@@ -45,8 +45,8 @@ ISR(TCD0_OVF_vect)
  * Notation TCC0, TCC1, TCD0, TCD1, TCE0, TCE1, TCF0 and TCF1
  *
  */
-void xmega_timer_0_normal_mode_setup(volatile TC0_t *tc, uint16_t period,
-				     TC_CLKSEL_t clock_source)
+void timer_0_normal_mode_setup(volatile TC0_t *tc, uint16_t period,
+			       TC_CLKSEL_t clock_source)
 {
 	/* set the PER[H:L] register to select the timer period */
 	tc->PER = period; /* PER is TOP; */
@@ -67,9 +67,9 @@ void xmega_timer_0_normal_mode_setup(volatile TC0_t *tc, uint16_t period,
 /**
  *  Configure TC as a quadrature counter
  */
-void xmega_timer_0_qdec_mode_setup(volatile TC0_t *tc,
-				   TC_EVSEL_t event_channel,
-				   const uint16_t line_count)
+void timer_0_qdec_mode_setup(volatile TC0_t *tc,
+			     TC_EVSEL_t event_channel,
+			     const uint16_t line_count)
 {
 	tc->CTRLD = TC_EVACT_QDEC_gc | event_channel;
 	tc->PER = (line_count * 4) - 1; /* full range, this is the low word
@@ -83,9 +83,9 @@ void xmega_timer_0_qdec_mode_setup(volatile TC0_t *tc,
 /**
  *  Configure TC as a quadrature counter
  */
-void xmega_timer_1_qdec_mode_setup(volatile TC1_t *tc,
-				   TC_EVSEL_t event_channel,
-				   const uint16_t line_count)
+void timer_1_qdec_mode_setup(volatile TC1_t *tc,
+			     TC_EVSEL_t event_channel,
+			     const uint16_t line_count)
 {
 	tc->CTRLD = TC_EVACT_QDEC_gc | event_channel;
 	tc->PER = (line_count * 4) - 1; /* full range, this is the low word
@@ -102,8 +102,8 @@ void xmega_timer_1_qdec_mode_setup(volatile TC1_t *tc,
  * The waveform generation (WG) output is toggled on each compare match between
  * the CNT and CCA registers
  */
-void xmega_timer_0_pwm_mode_setup(volatile TC0_t *tc, const uint8_t period,
-				  TC_CLKSEL_t prescaler)
+void timer_0_pwm_mode_setup(volatile TC0_t *tc, const uint8_t period,
+			    TC_CLKSEL_t prescaler)
 {
 	/* set the PER[H:L] register to select the timer period */
 	tc->PER = period;
@@ -120,7 +120,7 @@ void xmega_timer_0_pwm_mode_setup(volatile TC0_t *tc, const uint8_t period,
 /**
  *
  */
-void xmega_timer_0_pwm_enable(volatile TC0_t *tc, const uint8_t pin)
+void timer_0_pwm_enable(volatile TC0_t *tc, const uint8_t pin)
 {
 	/* set the CCAEN bit in CTRLB to enable Compare Channel A */
 	tc->CTRLB |= (1 << (pin + TC0_CCAEN_bp));
@@ -129,8 +129,8 @@ void xmega_timer_0_pwm_enable(volatile TC0_t *tc, const uint8_t pin)
 /**
  *
  */
-void xmega_timer_0_pwm_duty_cycle(volatile TC0_t *tc, const uint8_t pin,
-				  uint8_t duty_cycle)
+void timer_0_pwm_duty_cycle(volatile TC0_t *tc, const uint8_t pin,
+			    uint8_t duty_cycle)
 {
 	/* Write the new compare value to CCA[H:L] */
 	switch (pin) {
@@ -151,7 +151,7 @@ void xmega_timer_0_pwm_duty_cycle(volatile TC0_t *tc, const uint8_t pin,
 	}
 }
 
-void xmega_timer_0_register_ovf_cb(func_cb_t handler)
+void timer_0_register_ovf_cb(func_cb_t handler)
 {
 	irq_tcc0_ovf_handler = handler;
 }

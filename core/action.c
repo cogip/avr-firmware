@@ -160,9 +160,9 @@ void spot_up(void)
 
 	/* elevator */
 	if (detect_elevator_up())
-		xmega_timer_0_pwm_duty_cycle(&TCE0, 2, 0);
+		timer_0_pwm_duty_cycle(&TCE0, 2, 0);
 	else
-		xmega_timer_0_pwm_duty_cycle(&TCE0, 2, 200);
+		timer_0_pwm_duty_cycle(&TCE0, 2, 200);
 }
 
 /**
@@ -174,9 +174,9 @@ void spot_down(void)
 
 	/* elevator */
 	if (detect_elevator_down())
-		xmega_timer_0_pwm_duty_cycle(&TCE0, 2, 0);
+		timer_0_pwm_duty_cycle(&TCE0, 2, 0);
 	else
-		xmega_timer_0_pwm_duty_cycle(&TCE0, 2, 200);
+		timer_0_pwm_duty_cycle(&TCE0, 2, 200);
 }
 
 static uint8_t spot_get_up = 1;

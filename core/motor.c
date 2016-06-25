@@ -50,7 +50,7 @@ static void left_motor_drive(int16_t pwm)
 		PORTD.OUTCLR = PIN4_bm;
 
 	/* generate PWM */
-	xmega_timer_0_pwm_duty_cycle(&TCE0, 0, pwm_limit);
+	timer_0_pwm_duty_cycle(&TCE0, 0, pwm_limit);
 }
 
 /**
@@ -68,7 +68,7 @@ static void right_motor_drive(int16_t pwm)
 		PORTD.OUTSET = PIN5_bm;
 
 	/* generate PWM */
-	xmega_timer_0_pwm_duty_cycle(&TCE0, 1, pwm_limit);
+	timer_0_pwm_duty_cycle(&TCE0, 1, pwm_limit);
 }
 
 void motor_drive(polar_t command)
