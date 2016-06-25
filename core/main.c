@@ -225,8 +225,7 @@ static void setup(void)
 	action_setup(); /* TODO: commenter pour debug */
 
 	/* setup frequency waveform generation (PWM) */
-	/* note: 200 pour 20KHz -100 pour pour 40 KHz */
-	timer_0_pwm_mode_setup(&TCE0, 200, TC_CLKSEL_DIV8_gc);
+	timer_0_pwm_mode_setup(&TCE0, TCE0_MOTOR_PER_VALUE, TCE0_MOTOR_PRESCALER);
 	timer_0_pwm_enable(&TCE0, 0); /* PE0 */
 	timer_0_pwm_enable(&TCE0, 1); /* PE1 */
 	timer_0_pwm_enable(&TCE0, 2); /* PE2 */

@@ -12,7 +12,7 @@
 #include "motor.h"
 #include "route.h"
 
-#define MAX_PWM		200
+#define MAX_PWM		(TCE0_MOTOR_PER_VALUE)
 
 /** limite la commande de vitesse
  * @param value from -16535 to 16535

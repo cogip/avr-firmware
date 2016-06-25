@@ -13,6 +13,12 @@
 
 #include "utils.h"
 
+
+/* TCE0 ClkIn == ClkPer / 8 == 4000 KHz */
+/* Counter set to 200 for 20KHz output */
+#define TCE0_MOTOR_PRESCALER		TC_CLKSEL_DIV8_gc
+#define TCE0_MOTOR_PER_VALUE		200
+
 void timer_0_normal_mode_setup(volatile TC0_t *tc, uint16_t period,
 			       TC_CLKSEL_t clock_source);
 
