@@ -97,10 +97,10 @@ void timer_1_qdec_mode_setup(volatile TC1_t *tc,
 }
 
 /**
- * For frequency generation the period time (T) is controlled by the CCA
- * register.
+ * For frequency generation the period time (T) is controlled by the CCA, CCB,
+ * CCC or CCD registers.
  * The waveform generation (WG) output is toggled on each compare match between
- * the CNT and CCA registers
+ * the CNT and CCx registers
  */
 void timer_0_pwm_mode_setup(volatile TC0_t *tc, const uint8_t period,
 			    TC_CLKSEL_t prescaler)
@@ -120,20 +120,35 @@ void timer_0_pwm_mode_setup(volatile TC0_t *tc, const uint8_t period,
 /**
  *
  */
-void timer_0_pwm_enable(volatile TC0_t *tc, const uint8_t pin)
+void timer_0_pwm_enable(volatile TC0_t *tc, const uint8_t channel)
 {
-	/* set the CCAEN bit in CTRLB to enable Compare Channel A */
-	tc->CTRLB |= (1 << (pin + TC0_CCAEN_bp));
+	/* set the CCxEN bit in CTRLB to enable Compare Channel x */
+	switch (channel) {
+	case 0:
+		tc->CTRLB |= (1 << TC0_CCAEN_bp);
+		break;
+	case 1:
+		tc->CTRLB |= (1 << TC0_CCBEN_bp);
+		break;
+	case 2:
+		tc->CTRLB |= (1 << TC0_CCCEN_bp);
+		break;
+	case 3:
+		tc->CTRLB |= (1 << TC0_CCDEN_bp);
+		break;
+	default:
+		break;
+	}
 }
 
 /**
  *
  */
-void timer_0_pwm_duty_cycle(volatile TC0_t *tc, const uint8_t pin,
+void timer_0_pwm_duty_cycle(volatile TC0_t *tc, const uint8_t channel,
 			    uint8_t duty_cycle)
 {
-	/* Write the new compare value to CCA[H:L] */
-	switch (pin) {
+	/* Write the new compare value to CCx[H:L] */
+	switch (channel) {
 	case 0:
 		tc->CCA = duty_cycle;
 		break;

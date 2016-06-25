@@ -31,9 +31,9 @@ void timer_1_qdec_mode_setup(volatile TC1_t *tc, TC_EVSEL_t event_channel,
 void timer_0_pwm_mode_setup(volatile TC0_t *tc, const uint8_t period,
 			    TC_CLKSEL_t prescaler);
 
-void timer_0_pwm_enable(volatile TC0_t *tc, const uint8_t pin);
+void timer_0_pwm_enable(volatile TC0_t *tc, const uint8_t channel);
 
-void timer_0_pwm_duty_cycle(volatile TC0_t *tc, const uint8_t pin,
+void timer_0_pwm_duty_cycle(volatile TC0_t *tc, const uint8_t channel,
 			    uint8_t duty_cycle);
 
 void timer_0_register_ovf_cb(func_cb_t handler);
