@@ -8,11 +8,33 @@
 #include <math.h>
 #include <xmega/timer.h>
 
-#include "action.h"
 #include "motor.h"
-#include "route.h"
 
 #define MAX_PWM		(TCE0_MOTOR_PER_VALUE)
+
+typedef struct {
+	PORT_t *direction_pin_port;
+	uint8_t direction_pin_id;
+	uint8_t pwm_channel;
+} hbridge_t;
+
+#define HBRIDGE_MOTOR_LEFT		0
+#define HBRIDGE_MOTOR_RIGHT		1
+
+hbridge_t motors[] = {
+	{
+		/* left motor */
+		.direction_pin_port = &PORTD,
+		.direction_pin_id = PIN4_bm,
+		.pwm_channel = 0,
+	},
+	{
+		/* right motor */
+		.direction_pin_port = &PORTD,
+		.direction_pin_id = PIN5_bm,
+		.pwm_channel = 1,
+	},
+};
 
 /** limite la commande de vitesse
  * @param value from -16535 to 16535
@@ -25,40 +47,20 @@ static uint8_t pwm_limitation(int16_t value, uint8_t max)
 	return out > max ? max : (uint8_t) out;
 }
 
-/**
- * \param pwm value for motor (signed value)
- */
-static void left_motor_drive(int16_t pwm)
+static void hbridge_update(hbridge_t *b, int16_t pwm)
 {
 	/* limitation de la commande de vitesse */
-	uint8_t pwm_limit = pwm_limitation(pwm, MAX_PWM);
+	uint8_t pwm_period = pwm_limitation(pwm, MAX_PWM);
 
-	/* advance */
 	if (pwm > 0)
-		PORTD.OUTSET = PIN4_bm;
+		/* forward direction */
+		b->direction_pin_port->OUTSET = b->direction_pin_id;
 	else
-		PORTD.OUTCLR = PIN4_bm;
+		/* backward direction */
+		b->direction_pin_port->OUTCLR = b->direction_pin_id;
 
 	/* generate PWM */
-	timer_0_pwm_duty_cycle(&TCE0, 0, pwm_limit);
-}
-
-/**
- * \param pwm value for motor (signed value)
- */
-static void right_motor_drive(int16_t pwm)
-{
-	/* limitation de la commande de vitesse */
-	uint8_t pwm_limit = pwm_limitation(pwm, MAX_PWM);
-
-	/* advance */
-	if (pwm > 0)
-		PORTD.OUTCLR = PIN5_bm;
-	else
-		PORTD.OUTSET = PIN5_bm;
-
-	/* generate PWM */
-	timer_0_pwm_duty_cycle(&TCE0, 1, pwm_limit);
+	timer_0_pwm_duty_cycle(&TCE0, b->pwm_channel, pwm_period);
 }
 
 void motor_drive(polar_t command)
@@ -67,7 +69,7 @@ void motor_drive(polar_t command)
 	int16_t right_command = (int16_t) (command.distance + command.angle);
 	int16_t left_command = (int16_t) (command.distance - command.angle);
 
-	right_motor_drive(right_command);
-	left_motor_drive(left_command);
+	hbridge_update(&motors[HBRIDGE_MOTOR_RIGHT], right_command);
+	hbridge_update(&motors[HBRIDGE_MOTOR_LEFT],  left_command);
 }
 
