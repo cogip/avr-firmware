@@ -96,8 +96,14 @@ static void clock_setup(void)
 	/* Configuration change protection : Protected IO register */
 	CCP = CCP_IOREG_gc;
 
-	/* Clock : 32MHz Internal Oscillator */
+	/* System Clock Selection : 32MHz Internal Oscillator */
 	CLK.CTRL = CLK_SCLKSEL_RC32M_gc;
+
+	/* Note:
+	 * Prescaler A, B & C are 0x0 by default, thus no division. So:
+	 *   ClkSys == 32MHz
+	 *   ClkPer4 == ClkPer2 == ClkPer == 32MHz
+	 */
 }
 
 static void interrupt_setup(void)
@@ -205,6 +211,9 @@ static void setup(void)
 	/* timer setup */
 	controller_flag = 0;
 	timer_0_register_ovf_cb(irq_timer0_handler);
+
+	/* TCC0 ClkIn == ClkPer / 1024 == 31.25 KHz */
+	/* Counter set to 625 for 50Hz output (20ms) */
 	timer_0_normal_mode_setup(&TCC0, 625, TC_CLKSEL_DIV1024_gc);
 
 	/* setup usart communication */
