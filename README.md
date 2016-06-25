@@ -22,4 +22,5 @@ Kconfig usage examples:
 
 - [Utiliser Kconfig dans ses projets](http://www.linuxembedded.fr/2013/01/utiliser-kconfig-dans-ses-projets/)
 - [BitThunder OS based on Kconfig-frontend for setup](http://bitthunder.org/docs/quick-start/)
+- [A kbuild skeleton we looked at initially](https://github.com/masahir0y/kbuild_skeleton)
 
