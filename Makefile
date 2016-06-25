@@ -96,7 +96,7 @@ endif
 ifeq ($(build-targets),1)
 
 .PHONY: all
-all: $(binname).hex
+all: $(binname).hex $(binname).eep
 
 .config:
 	@echo "Configuration file not found."
@@ -150,8 +150,14 @@ deps-y		:= $(foreach dep, $(src-y), \
 quiet_cmd_objcpy_hex_elf = HEX     $@
       cmd_objcpy_hex_elf = $(OBJCOPY) -R .eeprom -R .fuse -R .lock -R .signature -O ihex $< $@
 
+quiet_cmd_objcpy_eep_elf = EEP     $@
+      cmd_objcpy_eep_elf = $(OBJCOPY) -j .eeprom --no-change-warnings --change-section-lma .eeprom=0 -O ihex $< $@
+
 $(binname).hex: $(binname).elf
 	$(call cmd,objcpy_hex_elf)
+
+$(binname).eep: $(binname).elf
+	$(call cmd,objcpy_eep_elf)
 
 # link the program
 quiet_cmd_linker = LD      $@
