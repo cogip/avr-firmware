@@ -152,7 +152,7 @@ static void pin_setup(void)
 }
 
 /* Timer 0 Overflow interrupt */
-void irq_timer0_handler(void)
+static void irq_timer_tcc0_handler(void)
 {
 	controller_flag = 1;
 }
@@ -175,7 +175,7 @@ static void setup(void)
 
 	/* timer setup */
 	controller_flag = 0;
-	timer_0_register_ovf_cb(irq_timer0_handler);
+	timer_0_register_ovf_cb(irq_timer_tcc0_handler);
 
 	/* TCC0 ClkIn == ClkPer / 1024 == 31.25 KHz */
 	/* Counter set to 625 for 50Hz output (20ms) */
@@ -222,7 +222,7 @@ int main(void)
 	while (detect_start())
 		gestion_tour();
 
-	/* main loop */
+	/* main loop == 90s */
 	while (tempo < 4500) {
 		if (controller_flag == 1) {
 			/* we enter here every 20ms */
