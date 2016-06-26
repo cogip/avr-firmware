@@ -6,10 +6,54 @@
  */
 
 #include <avr/io.h>
+#include <xmega/timer.h>
 
 #include "encoder.h"
 
-int16_t decode(int16_t counter)
+/* FIXME: some part of this file should be moved to arch/xmega */
+
+/*
+ * setup quadrature decoder A & B (index is not used here)
+ * use CH0, CH2 and CH4
+ */
+void encoder_setup(void)
+{
+	/* Configure PE4 and PE5 as input pin */
+	PORTE.DIRCLR = PIN4_bm;
+	PORTE.DIRCLR = PIN5_bm;
+	/* A : QDPH0 - D0 */
+	PORTE.PIN4CTRL = PORT_ISC_LEVEL_gc | PORT_OPC_PULLUP_gc;
+	/* B : QDPH90 - D1 */
+	PORTE.PIN5CTRL = PORT_ISC_LEVEL_gc | PORT_OPC_PULLUP_gc;
+
+	/* PORTF encoder counter (PF0, PF1) as input pin,
+	 * Set QDPH0 and QDPH1 sensing level index not used here
+	 */
+	PORTF.DIRCLR = PIN0_bm;
+	PORTF.DIRCLR = PIN1_bm;
+	/* A : QDPH0 - D0 */
+	PORTF.PIN0CTRL = PORT_ISC_LEVEL_gc | PORT_OPC_PULLUP_gc;
+	/* B : QDPH90 - D1 */
+	PORTF.PIN1CTRL = PORT_ISC_LEVEL_gc | PORT_OPC_PULLUP_gc;
+
+
+	/* Configure event channel x assign to pin x */
+	/* A & B inputs to quad-decoder */
+	EVSYS.CH0MUX = EVSYS_CHMUX_PORTE_PIN4_gc;
+	EVSYS.CH0CTRL = EVSYS_QDEN_bm
+			| EVSYS_DIGFILT_2SAMPLES_gc /*| EVSYS_QDIEN_bm*/;
+	timer_1_qdec_mode_setup(&TCE1, TC_EVSEL_CH0_gc, 500);
+
+	/* Configure event channel x assign to pin x */
+	/* A & B inputs to quad-decoder */
+	EVSYS.CH2MUX = EVSYS_CHMUX_PORTF_PIN0_gc;
+	EVSYS.CH2CTRL = EVSYS_QDEN_bm
+			| EVSYS_DIGFILT_2SAMPLES_gc /*| EVSYS_QDIEN_bm*/;
+
+	timer_0_qdec_mode_setup(&TCF0, TC_EVSEL_CH2_gc, 500);
+}
+
+static int16_t decode(int16_t counter)
 {
 	if (counter > 1000)
 		counter -= 2000;
@@ -23,7 +67,7 @@ int16_t decode(int16_t counter)
 /**
  *
  */
-polar_t read_encoder(void)
+polar_t encoder_read(void)
 {
 	polar_t robot_speed;
 

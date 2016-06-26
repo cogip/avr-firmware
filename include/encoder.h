@@ -10,6 +10,7 @@
 
 #include "odometry.h"
 
-polar_t read_encoder(void);
+void encoder_setup(void);
+polar_t encoder_read(void);
 
 #endif /* ENCODER_H_ */

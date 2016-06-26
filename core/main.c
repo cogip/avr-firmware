@@ -132,23 +132,10 @@ static void pin_setup(void)
 	PORTE.DIRSET = PIN0_bm;
 	PORTE.DIRSET = PIN1_bm;
 	PORTE.DIRSET = PIN2_bm;
-	/* Configure PE4 and PE5 as input pin */
-	PORTE.DIRCLR = PIN4_bm;
-	PORTE.DIRCLR = PIN5_bm;
-	/* A : QDPH0 - D0 */
-	PORTE.PIN4CTRL = PORT_ISC_LEVEL_gc | PORT_OPC_PULLUP_gc;
-	/* B : QDPH90 - D1 */
-	PORTE.PIN5CTRL = PORT_ISC_LEVEL_gc | PORT_OPC_PULLUP_gc;
 
-	/* PORTF encoder counter (PF0, PF1, PF4 and PF5) as input pin,
+	/* PORTF encoder counter (PF4 and PF5) as input pin,
 	 * Set QDPH0 and QDPH1 sensing level index not used here
 	 */
-	PORTF.DIRCLR = PIN0_bm;
-	PORTF.DIRCLR = PIN1_bm;
-	/* A : QDPH0 - D0 */
-	PORTF.PIN0CTRL = PORT_ISC_LEVEL_gc | PORT_OPC_PULLUP_gc;
-	/* B : QDPH90 - D1 */
-	PORTF.PIN1CTRL = PORT_ISC_LEVEL_gc | PORT_OPC_PULLUP_gc;
 	PORTF.DIRCLR = PIN4_bm;
 	PORTF.DIRCLR = PIN5_bm;
 	/* A : QDPH0 - D0 */
@@ -162,28 +149,6 @@ static void pin_setup(void)
 	PORTH.DIR = 0x00;
 	PORTJ.DIRCLR = PIN0_bm;
 	PORTJ.DIRCLR = PIN1_bm;
-}
-
-/*
- * setup quadrature decoder A & B (index is not used here)
- * use CH0, CH2 and CH4
- */
-void qdec_setup(void)
-{
-	/* Configure event channel x assign to pin x */
-	/* A & B inputs to quad-decoder */
-	EVSYS.CH0MUX = EVSYS_CHMUX_PORTE_PIN4_gc;
-	EVSYS.CH0CTRL = EVSYS_QDEN_bm
-			| EVSYS_DIGFILT_2SAMPLES_gc /*| EVSYS_QDIEN_bm*/;
-	timer_1_qdec_mode_setup(&TCE1, TC_EVSEL_CH0_gc, 500);
-
-	/* Configure event channel x assign to pin x */
-	/* A & B inputs to quad-decoder */
-	EVSYS.CH2MUX = EVSYS_CHMUX_PORTF_PIN0_gc;
-	EVSYS.CH2CTRL = EVSYS_QDEN_bm
-			| EVSYS_DIGFILT_2SAMPLES_gc /*| EVSYS_QDIEN_bm*/;
-
-	timer_0_qdec_mode_setup(&TCF0, TC_EVSEL_CH2_gc, 500);
 }
 
 /* Timer 0 Overflow interrupt */
@@ -231,7 +196,7 @@ static void setup(void)
 	timer_0_pwm_enable(&TCE0, 2); /* PE2 */
 
 	/* setup qdec */
-	qdec_setup();
+	encoder_setup();
 
 	/* controller setup */
 	odometry_setup(WHEELS_DISTANCE);
@@ -264,7 +229,7 @@ int main(void)
 			tempo++;
 
 			/* catch speed */
-			robot_speed = read_encoder();
+			robot_speed = encoder_read();
 
 			/* convert to position */
 			odometry_update(&robot_pose, &robot_speed, SEGMENT);
