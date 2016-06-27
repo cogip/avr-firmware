@@ -78,6 +78,7 @@ int16_t	speed_elevator;
 int16_t	distance_elevator;
 int16_t	tempo;
 
+#if F_CPU == 32000000UL
 static void clock_setup(void)
 {
 	/* Configuration change protection : Protected IO register
@@ -105,6 +106,7 @@ static void clock_setup(void)
 	 *   ClkPer4 == ClkPer2 == ClkPer == 32MHz
 	 */
 }
+#endif
 
 static void interrupt_setup(void)
 {
@@ -162,7 +164,9 @@ static void irq_timer_tcc0_handler(void)
  */
 static void setup(void)
 {
+#if F_CPU == 32000000UL
 	clock_setup();
+#endif
 	pin_setup();
 
 	/* setup analog conversion */
