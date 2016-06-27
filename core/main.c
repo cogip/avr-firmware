@@ -131,8 +131,6 @@ static void pin_setup(void)
 	PORTD.DIR = 0xFF;
 
 	/* Configure PE0, PE1 and PE2 as output pin */
-	PORTE.DIRSET = PIN0_bm;
-	PORTE.DIRSET = PIN1_bm;
 	PORTE.DIRSET = PIN2_bm;
 
 	/* PORTF encoder counter (PF4 and PF5) as input pin,
@@ -194,9 +192,8 @@ static void setup(void)
 	action_setup(); /* TODO: commenter pour debug */
 
 	/* setup frequency waveform generation (PWM) */
-	timer_0_pwm_mode_setup(&TCE0, TCE0_MOTOR_PER_VALUE, TCE0_MOTOR_PRESCALER);
-	timer_0_pwm_enable(&TCE0, 0); /* PE0 */
-	timer_0_pwm_enable(&TCE0, 1); /* PE1 */
+	/* TODO: following should be in platform */
+	motor_setup();
 	timer_0_pwm_enable(&TCE0, 2); /* PE2 */
 
 	/* setup qdec */

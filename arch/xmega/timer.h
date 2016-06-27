@@ -13,11 +13,12 @@
 
 #include "utils.h"
 
+#define IS_TIMER0(p)	((p) == &TCC0 || (p) == &TCD0 || \
+			 (p) == &TCE0 || (p) == &TCF0)
 
-/* TCE0 ClkIn == ClkPer / 8 == 4000 KHz */
-/* Counter set to 200 for 20KHz output */
-#define TCE0_MOTOR_PRESCALER		TC_CLKSEL_DIV8_gc
-#define TCE0_MOTOR_PER_VALUE		200
+#define IS_TIMER1(p)	((p) == &TCC1 || (p) == &TCD1 || \
+			 (p) == &TCE1 || (p) == &TCF1)
+
 
 void timer_0_normal_mode_setup(volatile TC0_t *tc, uint16_t period,
 			       TC_CLKSEL_t clock_source);

@@ -11,5 +11,6 @@
 #include "odometry.h"
 
 void motor_drive(polar_t command);
+void motor_setup();
 
 #endif /* MOTOR_H_ */
