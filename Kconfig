@@ -22,3 +22,18 @@ config F_CPU
 	default 32000000
 	help
 	  This define the micro-controller CPU frequency (default: 32 MHz).
+
+choice
+	prompt "Platform selection"
+	default BIG_BOT
+
+config BIG_BOT2015
+	bool "Geonobot 2015"
+	help
+	  This will build the Big bot firmware.
+
+endchoice
+
+config PLATFORM_NAME
+	string
+	default "geonobot" if BIG_BOT2015
