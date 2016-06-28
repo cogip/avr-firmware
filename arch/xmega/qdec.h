@@ -16,6 +16,6 @@ typedef struct {
 } qdec_t;
 
 int8_t qdec_setup(qdec_t *qdec);
-int16_t qdec_read(qdec_t *qdec);
+uint16_t qdec_read(qdec_t *qdec);
 
 #endif /* QDEC_H_ */

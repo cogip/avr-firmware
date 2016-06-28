@@ -103,9 +103,9 @@ int8_t qdec_setup(qdec_t *qdec)
 	return 0;
 }
 
-int16_t qdec_read(qdec_t *qdec)
+uint16_t qdec_read(qdec_t *qdec)
 {
-	int16_t value = 0;
+	uint16_t value = 0;
 
 	value = timer_get_cnt(qdec->tc);
 	timer_set_cnt(qdec->tc, 0);

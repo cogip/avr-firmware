@@ -21,14 +21,21 @@ void encoder_setup(void)
 	qdec_setup(&encoders[1]);
 }
 
-/* FIXME: should we move this to qdec? */
+/* Counter value is between [0..ENCODER_RES]
+ * This function translate [0..ENCODER_RES/2] range to forward direction
+ * all value in [ENCODER_RES/2..ENCODER_RES] are considered as backward
+ * direction, thus shifted as below:
+ */
 static int16_t decode(int16_t counter)
 {
 	if (counter > (WHEELS_ENCODER_RESOLUTION / 2))
 		counter -= WHEELS_ENCODER_RESOLUTION;
 
+#if 0
+	/* What the hell is going on here? */
 	if (counter < -(WHEELS_ENCODER_RESOLUTION / 2))
 		counter += WHEELS_ENCODER_RESOLUTION;
+#endif
 
 	return counter;
 }
@@ -40,6 +47,7 @@ polar_t encoder_read(void)
 {
 	polar_t robot_speed;
 
+	/* FIXME: -1 to be replaced by "polarity" in qdec structure */
 	int16_t left_speed = decode(qdec_read(&encoders[0]));
 	int16_t right_speed = decode(-1 * qdec_read(&encoders[1]));
 
