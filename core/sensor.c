@@ -8,13 +8,6 @@
 #include <avr/io.h>
 
 /**
- * 1 : devant droit PA6
- * 2 : devant gauche PA7 //pb
- * 3 : coté droit PA5
- * 4 : coté gauche PA4
- * 5 : derriere gauche (PA3)
- * 6 : derriere droite (PA2)
- *
  * 10 : bas droit (PJ1)
  * 11 : haut droit (PJ0)
  * 12 : bas gauche (PH7)
