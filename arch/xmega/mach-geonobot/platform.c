@@ -9,7 +9,7 @@ qdec_t encoders[] = {
 		.pin_qdph90 = PIN5_bp,
 		.event_channel = TC_EVSEL_CH0_gc,
 		.tc = &TCE1,
-		.line_count = QDEC_LINE_COUNT,
+		.line_count = WHEELS_ENCODER_RESOLUTION / 4,
 	},
 	{
 		/* right motor */
@@ -18,7 +18,7 @@ qdec_t encoders[] = {
 		.pin_qdph90 = PIN1_bp,
 		.event_channel = TC_EVSEL_CH2_gc,
 		.tc = &TCF0,
-		.line_count = QDEC_LINE_COUNT,
+		.line_count = WHEELS_ENCODER_RESOLUTION / 4,
 	},
 };
 

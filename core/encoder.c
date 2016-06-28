@@ -24,11 +24,11 @@ void encoder_setup(void)
 /* FIXME: should we move this to qdec? */
 static int16_t decode(int16_t counter)
 {
-	if (counter > (QDEC_LINE_COUNT * 2))
-		counter -= QDEC_LINE_COUNT * 4;
+	if (counter > (WHEELS_ENCODER_RESOLUTION / 2))
+		counter -= WHEELS_ENCODER_RESOLUTION;
 
-	if (counter < -(QDEC_LINE_COUNT * 2))
-		counter += QDEC_LINE_COUNT * 4;
+	if (counter < -(WHEELS_ENCODER_RESOLUTION / 2))
+		counter += WHEELS_ENCODER_RESOLUTION;
 
 	return counter;
 }

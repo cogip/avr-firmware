@@ -63,6 +63,7 @@
 #include "sensor.h"
 #include "motor.h"
 #include "odometry.h"
+#include "platform.h"
 #include "route.h"
 
 volatile uint8_t controller_flag;
