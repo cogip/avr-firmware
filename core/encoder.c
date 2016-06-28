@@ -9,29 +9,7 @@
 #include <xmega/qdec.h>
 
 #include "encoder.h"
-
-#define LINE_COUNT		500
-
-qdec_t encoders[] = {
-	{
-		/* left motor */
-		.pin_port = &PORTE,
-		.pin_qdph0 = PIN4_bp,
-		.pin_qdph90 = PIN5_bp,
-		.event_channel = TC_EVSEL_CH0_gc,
-		.tc = &TCE1,
-		.line_count = LINE_COUNT,
-	},
-	{
-		/* right motor */
-		.pin_port = &PORTF,
-		.pin_qdph0 = PIN0_bp,
-		.pin_qdph90 = PIN1_bp,
-		.event_channel = TC_EVSEL_CH2_gc,
-		.tc = &TCF0,
-		.line_count = LINE_COUNT,
-	},
-};
+#include "platform.h"
 
 /*
  * setup quadrature decoder A & B (index is not used here)
@@ -43,13 +21,14 @@ void encoder_setup(void)
 	qdec_setup(&encoders[1]);
 }
 
+/* FIXME: should we move this to qdec? */
 static int16_t decode(int16_t counter)
 {
-	if (counter > (LINE_COUNT * 2))
-		counter -= LINE_COUNT * 4;
+	if (counter > (QDEC_LINE_COUNT * 2))
+		counter -= QDEC_LINE_COUNT * 4;
 
-	if (counter < -(LINE_COUNT * 2))
-		counter += LINE_COUNT * 4;
+	if (counter < -(QDEC_LINE_COUNT * 2))
+		counter += QDEC_LINE_COUNT * 4;
 
 	return counter;
 }

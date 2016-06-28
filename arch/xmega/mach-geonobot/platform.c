@@ -1,6 +1,27 @@
 #include <avr/io.h>
 #include "platform.h"
 
+qdec_t encoders[] = {
+	{
+		/* left motor */
+		.pin_port = &PORTE,
+		.pin_qdph0 = PIN4_bp,
+		.pin_qdph90 = PIN5_bp,
+		.event_channel = TC_EVSEL_CH0_gc,
+		.tc = &TCE1,
+		.line_count = QDEC_LINE_COUNT,
+	},
+	{
+		/* right motor */
+		.pin_port = &PORTF,
+		.pin_qdph0 = PIN0_bp,
+		.pin_qdph90 = PIN1_bp,
+		.event_channel = TC_EVSEL_CH2_gc,
+		.tc = &TCF0,
+		.line_count = QDEC_LINE_COUNT,
+	},
+};
+
 /* TCE0 ClkIn == ClkPer / 8 == 4000 KHz */
 /* Counter set to 200 for 20KHz output */
 #define TCE0_MOTOR_PRESCALER		TC_CLKSEL_DIV8_gc
