@@ -11,10 +11,7 @@ typedef struct {
 } engine_t;
 
 typedef struct {
-	union {
-		volatile TC0_t *tc0;
-		volatile TC1_t *tc1;
-	};
+	timer_t *tc;
 	uint8_t period;
 	TC_CLKSEL_t prescaler;
 

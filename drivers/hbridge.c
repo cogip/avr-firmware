@@ -26,10 +26,7 @@ void hbridge_engine_update(hbridge_t *b, engine_t *e, int16_t pwm)
 		e->direction_pin_port->OUTCLR = e->direction_pin_id;
 
 	/* generate PWM */
-	if (IS_TIMER0(b->tc0))
-		timer_0_pwm_duty_cycle(b->tc0, e->pwm_channel, pwm_period);
-	else
-		; /* timer_1: pwm mode not implemented */
+	timer_pwm_duty_cycle(b->tc, e->pwm_channel, pwm_period);
 }
 
 void hbridge_setup(hbridge_t *b)
@@ -41,11 +38,8 @@ void hbridge_setup(hbridge_t *b)
 		b->pwm_port->DIRSET = (1 << b->engines[i].pwm_channel);
 
 	/* setup frequency waveform generation (PWM) */
-	if (IS_TIMER0(b->tc0)) {
-		timer_0_pwm_mode_setup(b->tc0, b->period, b->prescaler);
+	timer_pwm_mode_setup(b->tc, b->period, b->prescaler);
 
-		for (i = 0; i < b->engine_nb; i++)
-			timer_0_pwm_enable(b->tc0, b->engines[i].pwm_channel);
-	} else if (IS_TIMER1(b->tc1))
-		; /* timer_1: pwm mode not implemented */
+	for (i = 0; i < b->engine_nb; i++)
+		timer_pwm_enable(b->tc, b->engines[i].pwm_channel);
 }

@@ -44,7 +44,7 @@ void encoder_setup(void)
 	EVSYS.CH0MUX = EVSYS_CHMUX_PORTE_PIN4_gc;
 	EVSYS.CH0CTRL = EVSYS_QDEN_bm
 			| EVSYS_DIGFILT_2SAMPLES_gc /*| EVSYS_QDIEN_bm*/;
-	timer_1_qdec_mode_setup(&TCE1, TC_EVSEL_CH0_gc, LINE_COUNT);
+	timer_qdec_mode_setup(&TCE1, TC_EVSEL_CH0_gc, LINE_COUNT);
 
 	/* Configure event channel x assign to pin x */
 	/* A & B inputs to quad-decoder */
@@ -52,7 +52,7 @@ void encoder_setup(void)
 	EVSYS.CH2CTRL = EVSYS_QDEN_bm
 			| EVSYS_DIGFILT_2SAMPLES_gc /*| EVSYS_QDIEN_bm*/;
 
-	timer_0_qdec_mode_setup(&TCF0, TC_EVSEL_CH2_gc, LINE_COUNT);
+	timer_qdec_mode_setup(&TCF0, TC_EVSEL_CH2_gc, LINE_COUNT);
 }
 
 static int16_t decode(int16_t counter)

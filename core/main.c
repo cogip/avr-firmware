@@ -181,7 +181,7 @@ static void setup(void)
 
 	/* TCC0 ClkIn == ClkPer / 1024 == 31.25 KHz */
 	/* Counter set to 625 for 50Hz output (20ms) */
-	timer_0_normal_mode_setup(&TCC0, 625, TC_CLKSEL_DIV1024_gc);
+	timer_normal_mode_setup(&TCC0, 625, TC_CLKSEL_DIV1024_gc);
 
 	/* setup usart communication */
 	xmega_usart_setup(&USARTC0);
@@ -194,7 +194,7 @@ static void setup(void)
 	/* setup frequency waveform generation (PWM) */
 	/* TODO: following should be in platform */
 	motor_setup();
-	timer_0_pwm_enable(&TCE0, 2); /* PE2 */
+	timer_pwm_enable(&TCE0, 2); /* PE2 */
 
 	/* setup qdec */
 	encoder_setup();

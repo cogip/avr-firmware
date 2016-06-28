@@ -7,7 +7,7 @@
 #define TCE0_MOTOR_PER_VALUE		200
 
 hbridge_t hbridges = {
-	.tc0 = &TCE0,
+	.tc = &TCE0,
 	.period = TCE0_MOTOR_PER_VALUE,
 	.prescaler = TCE0_MOTOR_PRESCALER,
 
