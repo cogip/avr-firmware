@@ -2,7 +2,7 @@
 
 #include "hbridge.h"
 
-/** limite la commande de vitesse
+/** limits speed command
  * @param value from -16535 to 16535
  * @return pwm value from 0 to max
  */
@@ -15,7 +15,7 @@ static uint8_t pwm_limitation(int16_t value, uint8_t max)
 
 void hbridge_engine_update(hbridge_t *b, engine_t *e, int16_t pwm)
 {
-	/* limitation de la commande de vitesse */
+	/* limits speed command */
 	uint8_t pwm_period = pwm_limitation(pwm, b->period);
 
 	if (pwm > 0)
