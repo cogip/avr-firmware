@@ -51,6 +51,7 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 
+#include <xmega/clksys.h>
 #include <xmega/timer.h>
 #include <xmega/twi.h>
 #include <xmega/usart.h>
@@ -78,36 +79,6 @@ uint8_t	pose_reached;
 int16_t	speed_elevator;
 int16_t	distance_elevator;
 int16_t	tempo;
-
-#if F_CPU == 32000000UL
-static void clock_setup(void)
-{
-	/* Configuration change protection : Protected IO register
-	 * disable automatically all interrupts for the next
-	 * four CPU instruction cycles
-	 */
-	CCP = CCP_IOREG_gc;
-
-	/* Oscillator : 32MHz Internal Oscillator Enable */
-	OSC.CTRL = OSC_RC32MEN_bm;
-
-	/* Wait for the internal 32 MHz RC oscillator to stabilize */
-	while (!(OSC.STATUS & OSC_RC32MRDY_bm))
-		;
-
-	/* Configuration change protection : Protected IO register */
-	CCP = CCP_IOREG_gc;
-
-	/* System Clock Selection : 32MHz Internal Oscillator */
-	CLK.CTRL = CLK_SCLKSEL_RC32M_gc;
-
-	/* Note:
-	 * Prescaler A, B & C are 0x0 by default, thus no division. So:
-	 *   ClkSys == 32MHz
-	 *   ClkPer4 == ClkPer2 == ClkPer == 32MHz
-	 */
-}
-#endif
 
 static void interrupt_setup(void)
 {
@@ -164,7 +135,7 @@ static void irq_timer_tcc0_handler(void)
 static void setup(void)
 {
 #if F_CPU == 32000000UL
-	clock_setup();
+	clksys_intrc_32MHz_setup();
 #endif
 	pin_setup();
 
