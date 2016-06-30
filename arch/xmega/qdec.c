@@ -99,6 +99,7 @@ int8_t qdec_setup(qdec_t *qdec)
 	}
 
 	timer_qdec_mode_setup(qdec->tc, qdec->event_channel, qdec->line_count);
+	timer_set_cnt(qdec->tc, qdec->line_count >> 1);
 
 	return 0;
 }
@@ -107,8 +108,9 @@ uint16_t qdec_read(qdec_t *qdec)
 {
 	uint16_t value = 0;
 
+	/* TODO: both following lines should be in a critical section */
 	value = timer_get_cnt(qdec->tc);
-	timer_set_cnt(qdec->tc, 0);
+	timer_set_cnt(qdec->tc, qdec->line_count >> 1);
 
 	return value;
 }

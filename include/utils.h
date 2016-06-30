@@ -14,5 +14,8 @@ extern uint8_t flag_tower_down;
 
 typedef void (*func_cb_t)(void);
 
+#define FALSE	(0)
+#define TRUE	(!FALSE)
+
 
 #endif /* UTILS_H_ */

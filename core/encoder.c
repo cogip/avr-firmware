@@ -21,23 +21,22 @@ void encoder_setup(void)
 	qdec_setup(&encoders[1]);
 }
 
-/* Counter value is between [0..ENCODER_RES]
- * This function translate [0..ENCODER_RES/2] range to forward direction
- * all value in [ENCODER_RES/2..ENCODER_RES] are considered as backward
- * direction, thus shifted as below:
+/* Counter value is between [0..ENCODER_RES] at hardware stage,
+ * Qdec driver shifts its zero reference to ENCODER_RES/2 (as it counter is
+ * working on unsigned type) each time the counter is read.
+ *
+ * This function translate [0..ENCODER_RES/2] range to backward direction
+ * all value in [ENCODER_RES/2..ENCODER_RES] are considered as forward
+ * direction.
  */
-static int16_t decode(int16_t counter)
+static int16_t decode(const uint16_t counter, const uint8_t negate)
 {
-	if (counter > (WHEELS_ENCODER_RESOLUTION / 2))
-		counter -= WHEELS_ENCODER_RESOLUTION;
+	int16_t signed_value = (int16_t) counter;
 
-#if 0
-	/* What the hell is going on here? */
-	if (counter < -(WHEELS_ENCODER_RESOLUTION / 2))
-		counter += WHEELS_ENCODER_RESOLUTION;
-#endif
+	signed_value -= WHEELS_ENCODER_RESOLUTION / 2;
 
-	return counter;
+	/* sense can be negated (ie. "polarity") */
+	return negate ? -1 * signed_value : signed_value;
 }
 
 /**
@@ -48,8 +47,8 @@ polar_t encoder_read(void)
 	polar_t robot_speed;
 
 	/* FIXME: -1 to be replaced by "polarity" in qdec structure */
-	int16_t left_speed = decode(qdec_read(&encoders[0]));
-	int16_t right_speed = decode(-1 * qdec_read(&encoders[1]));
+	int16_t left_speed = decode(qdec_read(&encoders[0]), FALSE);
+	int16_t right_speed = decode(qdec_read(&encoders[1]), TRUE);
 
 #if 0
 	xmega_usart_transmit(&USARTC0, (int8_t) (left_speed >> 8));
