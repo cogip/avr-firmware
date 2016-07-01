@@ -27,12 +27,6 @@ static uint8_t next_timeslot_trigged;
 uint8_t	pose_reached;
 static int16_t	tempo;
 
-static void interrupt_setup(void)
-{
-	/* Programmable Multilevel Interrupt Controller */
-	PMIC.CTRL |= PMIC_LOLVLEN_bm; /* Low-level Interrupt Enable */
-}
-
 /* Timer 0 Overflow interrupt */
 static void irq_timer_tcc0_handler(void)
 {
@@ -51,11 +45,6 @@ static void setup(void)
 
 	/* setup analog conversion */
 	analog_sensor_setup();
-
-	interrupt_setup();
-
-	/* global interrupt enable */
-	sei();
 
 	/* timer setup */
 	next_timeslot_trigged = 0;
@@ -79,9 +68,11 @@ static void setup(void)
 	/* setup qdec */
 	encoder_setup();
 
-	/* controller setup */
-	odometry_setup(WHEELS_DISTANCE);
-	controller_setup();
+	/* Programmable Multilevel Interrupt Controller */
+	PMIC.CTRL |= PMIC_LOLVLEN_bm; /* Low-level Interrupt Enable */
+
+	/* global interrupt enable */
+	sei();
 }
 
 void motor_drive(polar_t command)
@@ -114,6 +105,10 @@ int main(void)
 	/* start first conversion */
 	adc_read(&ADCA, 0);
 	xmega_usart_transmit(&USARTC0, 0xAA);
+
+	/* controller setup */
+	odometry_setup(WHEELS_DISTANCE);
+	controller_setup();
 
 	while (detect_start())
 		gestion_tour();
