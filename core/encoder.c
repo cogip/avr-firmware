@@ -11,16 +11,6 @@
 #include "encoder.h"
 #include "platform.h"
 
-/*
- * setup quadrature decoder A & B (index is not used here)
- * use CH0, CH2 and CH4
- */
-void encoder_setup(void)
-{
-	qdec_setup(&encoders[0]);
-	qdec_setup(&encoders[1]);
-}
-
 /* Counter value is between [0..ENCODER_RES] at hardware stage,
  * Qdec driver shifts its zero reference to ENCODER_RES/2 (as it counter is
  * working on unsigned type) each time the counter is read.

@@ -179,11 +179,11 @@ void mach_setup(void)
 
 	action_setup(); /* TODO: commenter pour debug */
 
-	/* TODO: following should be in platform */
 	hbridge_setup(&hbridges);
 
 	/* setup qdec */
-	encoder_setup();
+	qdec_setup(&encoders[0]);
+	qdec_setup(&encoders[1]);
 
 	/* Programmable Multilevel Interrupt Controller */
 	PMIC.CTRL |= PMIC_LOLVLEN_bm; /* Low-level Interrupt Enable */
