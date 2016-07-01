@@ -5,75 +5,18 @@
  * \author ldo
  */
 
-#include <avr/interrupt.h>
-#include <avr/io.h>
-
-#include <xmega/clksys.h>
-#include <xmega/timer.h>
-#include <xmega/twi.h>
-#include <xmega/usart.h>
-
 #include "action.h"
 #include "analog_sensor.h"
 #include "controller.h"
 #include "encoder.h"
-#include "sd21.h"
 #include "sensor.h"
 #include "odometry.h"
 #include "platform.h"
 #include "route.h"
 
-static uint8_t next_timeslot_trigged;
+uint8_t next_timeslot_trigged;
 uint8_t	pose_reached;
 static int16_t	tempo;
-
-/* Timer 0 Overflow interrupt */
-static void irq_timer_tcc0_handler(void)
-{
-	next_timeslot_trigged = 1;
-}
-
-/**
- *
- */
-static void setup(void)
-{
-#if F_CPU == 32000000UL
-	clksys_intrc_32MHz_setup();
-#endif
-	mach_pinmux_setup();
-
-	/* setup analog conversion */
-	analog_sensor_setup();
-
-	/* timer setup */
-	next_timeslot_trigged = 0;
-	timer_0_register_ovf_cb(irq_timer_tcc0_handler);
-
-	/* TCC0 ClkIn == ClkPer / 1024 == 31.25 KHz */
-	/* Counter set to 625 for 50Hz output (20ms) */
-	timer_normal_mode_setup(&TCC0, 625, TC_CLKSEL_DIV1024_gc);
-
-	/* setup usart communication */
-	xmega_usart_setup(&USARTC0);
-
-	/* setup TWI communication with SD21 */
-	sd21_setup(&TWIC);
-
-	action_setup(); /* TODO: commenter pour debug */
-
-	/* TODO: following should be in platform */
-	hbridge_setup(&hbridges);
-
-	/* setup qdec */
-	encoder_setup();
-
-	/* Programmable Multilevel Interrupt Controller */
-	PMIC.CTRL |= PMIC_LOLVLEN_bm; /* Low-level Interrupt Enable */
-
-	/* global interrupt enable */
-	sei();
-}
 
 void motor_drive(polar_t command)
 {
@@ -100,11 +43,13 @@ int main(void)
 	uint8_t all_irs[] = { 2, 3, 4, 5, 6, 7 };
 	uint8_t stop = 0;
 
-	setup();
+	mach_setup();
 
+#if 0
 	/* start first conversion */
 	adc_read(&ADCA, 0);
 	xmega_usart_transmit(&USARTC0, 0xAA);
+#endif
 
 	/* controller setup */
 	odometry_setup(WHEELS_DISTANCE);

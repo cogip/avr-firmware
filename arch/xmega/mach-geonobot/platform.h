@@ -24,6 +24,6 @@
 extern qdec_t encoders[];
 extern hbridge_t hbridges;
 
-void mach_pinmux_setup(void);
+void mach_setup(void);
 
 #endif /* PLATFORM_H_ */

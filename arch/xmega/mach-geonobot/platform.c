@@ -1,5 +1,13 @@
 #include <avr/io.h>
+
+#include <xmega/clksys.h>
+#include <xmega/usart.h>
+
+#include "action.h"
+#include "analog_sensor.h"
+#include "encoder.h"
 #include "platform.h"
+#include "sd21.h"
 
 /**
  * PORTA : ANA input
@@ -100,7 +108,7 @@ hbridge_t hbridges = {
 	},
 };
 
-void mach_pinmux_setup(void)
+static void mach_pinmux_setup(void)
 {
 	/* analog to digital conversion */
 	PORTA.DIR = 0x00; /*!< PORTA as input pin */
@@ -135,4 +143,51 @@ void mach_pinmux_setup(void)
 	PORTH.DIR = 0x00;
 	PORTJ.DIRCLR = PIN0_bm;
 	PORTJ.DIRCLR = PIN1_bm;
+}
+
+extern uint8_t next_timeslot_trigged;
+
+/* Timer 0 Overflow interrupt */
+static void irq_timer_tcc0_handler(void)
+{
+	next_timeslot_trigged = 1;
+}
+
+void mach_setup(void)
+{
+#if F_CPU == 32000000UL
+	clksys_intrc_32MHz_setup();
+#endif
+	mach_pinmux_setup();
+
+	/* setup analog conversion */
+	analog_sensor_setup();
+
+	/* timer setup */
+	next_timeslot_trigged = 0;
+	timer_0_register_ovf_cb(irq_timer_tcc0_handler);
+
+	/* TCC0 ClkIn == ClkPer / 1024 == 31.25 KHz */
+	/* Counter set to 625 for 50Hz output (20ms) */
+	timer_normal_mode_setup(&TCC0, 625, TC_CLKSEL_DIV1024_gc);
+
+	/* setup usart communication */
+	xmega_usart_setup(&USARTC0);
+
+	/* setup TWI communication with SD21 */
+	sd21_setup(&TWIC);
+
+	action_setup(); /* TODO: commenter pour debug */
+
+	/* TODO: following should be in platform */
+	hbridge_setup(&hbridges);
+
+	/* setup qdec */
+	encoder_setup();
+
+	/* Programmable Multilevel Interrupt Controller */
+	PMIC.CTRL |= PMIC_LOLVLEN_bm; /* Low-level Interrupt Enable */
+
+	/* global interrupt enable */
+	sei();
 }
