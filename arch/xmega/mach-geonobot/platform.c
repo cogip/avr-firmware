@@ -146,12 +146,11 @@ static void mach_pinmux_setup(void)
 	PORTJ.DIRCLR = PIN1_bm;
 }
 
-extern uint8_t next_timeslot_trigged;
-
-/* Timer 0 Overflow interrupt */
-static void irq_timer_tcc0_handler(void)
+void mach_timer_setup(func_cb_t handler)
 {
-	next_timeslot_trigged = 1;
+	/* TCC0 ClkIn == ClkPer / 1024 == 31.25 KHz */
+	/* Counter set to 625 for 50Hz output (20ms) */
+	timer_normal_mode_setup(&TCC0, 625, TC_CLKSEL_DIV1024_gc, handler);
 }
 
 void mach_setup(void)
@@ -163,13 +162,6 @@ void mach_setup(void)
 
 	/* setup analog conversion */
 	analog_sensor_setup();
-
-	/* timer setup */
-	next_timeslot_trigged = 0;
-
-	/* TCC0 ClkIn == ClkPer / 1024 == 31.25 KHz */
-	/* Counter set to 625 for 50Hz output (20ms) */
-	timer_normal_mode_setup(&TCC0, 625, TC_CLKSEL_DIV1024_gc, irq_timer_tcc0_handler);
 
 	/* setup usart communication */
 	xmega_usart_setup(&USARTC0);

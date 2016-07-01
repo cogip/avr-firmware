@@ -17,6 +17,12 @@ uint8_t next_timeslot_trigged;
 uint8_t	pose_reached;
 static int16_t	tempo;
 
+/* Timer 0 Overflow interrupt */
+static void irq_timer_tcc0_handler(void)
+{
+	next_timeslot_trigged = 1;
+}
+
 /**
  *
  */
@@ -74,6 +80,7 @@ int main(void)
 	uint8_t stop = 0;
 
 	mach_setup();
+	mach_timer_setup(irq_timer_tcc0_handler);
 
 #if 0
 	/* start first conversion */

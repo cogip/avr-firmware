@@ -24,6 +24,7 @@
 extern qdec_t encoders[];
 extern hbridge_t hbridges;
 
+void mach_timer_setup(func_cb_t handler);
 void mach_setup(void);
 
 #endif /* PLATFORM_H_ */
