@@ -5,49 +5,6 @@
  * \author ldo
  */
 
-/**
- * PORTA : ANA input
- *	PA0 - PA7 : IR
- * PORTB : JTAG + ANA inputs
- * PORTC : Communication
- *	PC0 (SDA) : i2c communication
- *	PC1 (SCL) : i2c communication
- *	PC2 (RX) : Debug communication
- *	PC3 (TX) :
- *	PC6 (RX1) : (Lidar communication)
- *	PC7 (TX1) :
- * PORTD : Communication
- *	PD2 (RX2) : (MotherBoard communication)
- *	PD3 (TX2) :
- *	PD4 : DIR1 left motor
- *	PD5 : DIR2 right motor
- *	PD6 : DIR3 elevator motor
- * PORTE : Timer + PWM
- *	PE0 (OC0A) : PWM1 left motor
- *	PE1 (OC0B) : PWM2 right motor
- *	PE2 (OC0C) : PWM3
- *	PE3 (OC0D) : -
- *	PE4 : encoder A1 left wheel
- *	PE5 : encoder B1
- * PORTF : Timer decoder quadrature
- *	PF0 : encoder A2 right wheel
- *	PF1 : encoder B2
- *	PF4 : encoder A3
- *	PF5 : encoder B3
- * PORTH : Digital port
- *	PH0 : capteur TOR 19
- *	PH1 : 18
- *	PH2 : 17
- * PORTJ :
- * PORTK :
- * PORTQ : TOSC
- * PORTR : PDI + XTAL
- *
- * use TCC0 as general timer
- * use TCE0 timer to generate PWM signal
- * use TCE1, TCF0 and TCF1 timers to decode quadrature
- */
-
 #include <avr/interrupt.h>
 #include <avr/io.h>
 
