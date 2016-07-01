@@ -24,18 +24,9 @@
 #include "platform.h"
 #include "route.h"
 
-volatile uint8_t controller_flag;
-
-polar_t	robot_speed;
-polar_t	speed_setpoint		= { 60, 60 };
-polar_t	motor_command;
-pose_t	robot_pose		= { 1856.75, 0, 0 }; /* position absolue */
-pose_t	pose_setpoint		= { 0, 0, 0 };
+static uint8_t next_timeslot_trigged;
 uint8_t	pose_reached;
-
-int16_t	speed_elevator;
-int16_t	distance_elevator;
-int16_t	tempo;
+static int16_t	tempo;
 
 static void interrupt_setup(void)
 {
@@ -46,7 +37,7 @@ static void interrupt_setup(void)
 /* Timer 0 Overflow interrupt */
 static void irq_timer_tcc0_handler(void)
 {
-	controller_flag = 1;
+	next_timeslot_trigged = 1;
 }
 
 /**
@@ -68,7 +59,7 @@ static void setup(void)
 	sei();
 
 	/* timer setup */
-	controller_flag = 0;
+	next_timeslot_trigged = 0;
 	timer_0_register_ovf_cb(irq_timer_tcc0_handler);
 
 	/* TCC0 ClkIn == ClkPer / 1024 == 31.25 KHz */
@@ -102,6 +93,11 @@ static void setup(void)
  */
 int main(void)
 {
+	polar_t	robot_speed;
+	polar_t	speed_setpoint		= { 60, 60 };
+	polar_t	motor_command;
+	pose_t	robot_pose		= { 1856.75, 0, 0 }; /* position absolue */
+	pose_t	pose_setpoint		= { 0, 0, 0 };
 	uint8_t all_irs[] = { 2, 3, 4, 5, 6, 7 };
 	uint8_t stop = 0;
 
@@ -116,7 +112,7 @@ int main(void)
 
 	/* main loop == 90s */
 	while (tempo < 4500) {
-		if (controller_flag == 1) {
+		if (next_timeslot_trigged) {
 			/* we enter here every 20ms */
 			tempo++;
 
@@ -179,7 +175,7 @@ int main(void)
 			/* set speed to wheels */
 			motor_drive(motor_command);
 
-			controller_flag = 0;
+			next_timeslot_trigged = 0;
 		}
 
 		attraper_cup();
