@@ -25,6 +25,9 @@
 			 (p) == &TCE1 || (p) == &TCF1)
 
 static func_cb_t irq_tcc0_ovf_handler;
+static func_cb_t irq_tcd0_ovf_handler;
+static func_cb_t irq_tce0_ovf_handler;
+static func_cb_t irq_tcf0_ovf_handler;
 
 /* Timer 0 Overflow interrupt */
 ISR(TCC0_OVF_vect)
@@ -35,7 +38,20 @@ ISR(TCC0_OVF_vect)
 
 ISR(TCD0_OVF_vect)
 {
-	TCD0.CNT = 0;
+	if (irq_tcd0_ovf_handler)
+		irq_tcd0_ovf_handler();
+}
+
+ISR(TCE0_OVF_vect)
+{
+	if (irq_tce0_ovf_handler)
+		irq_tce0_ovf_handler();
+}
+
+ISR(TCF0_OVF_vect)
+{
+	if (irq_tcf0_ovf_handler)
+		irq_tcf0_ovf_handler();
 }
 
 /**
@@ -52,13 +68,24 @@ ISR(TCD0_OVF_vect)
  *
  */
 void timer_normal_mode_setup(volatile timer_t *tc, uint16_t period,
-			     TC_CLKSEL_t clock_source)
+			     TC_CLKSEL_t clock_source, func_cb_t handler)
 {
 	volatile TC0_t *tc0;
 	/*volatile TC1_t *tc1;*/
 
 	if (IS_TIMER0(tc)) {
 		tc0 = (TC0_t *)tc;
+
+		if (handler) {
+			if (tc0 == &TCC0)
+				irq_tcc0_ovf_handler = handler;
+			else if (tc0 == &TCD0)
+				irq_tcd0_ovf_handler = handler;
+			else if (tc0 == &TCE0)
+				irq_tce0_ovf_handler = handler;
+			else if (tc0 == &TCF0)
+				irq_tcf0_ovf_handler = handler;
+		}
 
 		/* set the PER[H:L] register to select the timer period */
 		tc0->PER = period; /* PER is TOP; */
@@ -225,12 +252,6 @@ void timer_pwm_duty_cycle(volatile timer_t *tc, const uint8_t channel,
 		/* TODO */
 	}
 }
-
-void timer_0_register_ovf_cb(func_cb_t handler)
-{
-	irq_tcc0_ovf_handler = handler;
-}
-
 
 inline uint16_t timer_get_cnt(volatile timer_t *tc)
 {

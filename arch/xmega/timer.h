@@ -16,7 +16,7 @@
 typedef void timer_t;
 
 void timer_normal_mode_setup(volatile timer_t *tc, uint16_t period,
-			     TC_CLKSEL_t clock_source);
+			     TC_CLKSEL_t clock_source, func_cb_t handler);
 
 void timer_qdec_mode_setup(volatile timer_t *tc, TC_EVSEL_t event_channel,
 			   const uint16_t line_count);
@@ -31,8 +31,6 @@ void timer_pwm_enable(volatile timer_t *tc, const uint8_t channel);
 
 void timer_pwm_duty_cycle(volatile timer_t *tc, const uint8_t channel,
 			  uint8_t duty_cycle);
-
-void timer_0_register_ovf_cb(func_cb_t handler);
 
 uint16_t timer_get_cnt(volatile timer_t *tc);
 

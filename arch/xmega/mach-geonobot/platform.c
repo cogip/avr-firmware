@@ -166,11 +166,10 @@ void mach_setup(void)
 
 	/* timer setup */
 	next_timeslot_trigged = 0;
-	timer_0_register_ovf_cb(irq_timer_tcc0_handler);
 
 	/* TCC0 ClkIn == ClkPer / 1024 == 31.25 KHz */
 	/* Counter set to 625 for 50Hz output (20ms) */
-	timer_normal_mode_setup(&TCC0, 625, TC_CLKSEL_DIV1024_gc);
+	timer_normal_mode_setup(&TCC0, 625, TC_CLKSEL_DIV1024_gc, irq_timer_tcc0_handler);
 
 	/* setup usart communication */
 	xmega_usart_setup(&USARTC0);
