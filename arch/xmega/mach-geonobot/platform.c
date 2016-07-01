@@ -164,7 +164,7 @@ void mach_setup(void)
 	analog_sensor_setup();
 
 	/* setup usart communication */
-	xmega_usart_setup(&USARTC0);
+	usart_setup(&USARTC0);
 
 	/* setup TWI communication with SD21 */
 	sd21_setup(&TWIC);

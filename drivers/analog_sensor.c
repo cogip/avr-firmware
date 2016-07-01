@@ -73,10 +73,12 @@ uint8_t gp2y0a21_read(uint16_t adc)
 void read_analog_sensor(void)
 {
 	if (adc_flag) {
-		/*xmega_usart_transmit (&USARTC0, 0xAA);
-		xmega_usart_transmit (&USARTC0, 0xAA);
-		xmega_usart_transmit (&USARTC0, 0x00);
-		xmega_usart_transmit (&USARTC0, distance[7][value_index]);*/
+#if 0
+		usart_send(&USARTC0, 0xAA);
+		usart_send(&USARTC0, 0xAA);
+		usart_send(&USARTC0, 0x00);
+		usart_send(&USARTC0, distance[7][value_index]);
+#endif
 		distance[sensor_index] = gp2y0a21_read(adc_result);
 
 		sensor_index++;
@@ -96,11 +98,13 @@ uint8_t detect_obstacle(uint8_t *ir_ids, uint8_t ir_nb)
 
 	for (i = 0; i < ir_nb; i++) {
 		if ((distance[ir_ids[i]] < 20) && (distance[ir_ids[i]] != 0)) {
-		  stop = 1;
-		  /*xmega_usart_transmit (&USARTC0, 0xCC);
-		   xmega_usart_transmit (&USARTC0, 0xCC);
-		   xmega_usart_transmit (&USARTC0, i);
-		   xmega_usart_transmit (&USARTC0, distance_filtered);*/
+			stop = 1;
+#if 0
+			usart_send(&USARTC0, 0xCC);
+			usart_send(&USARTC0, 0xCC);
+			usart_send(&USARTC0, i);
+			usart_send(&USARTC0, distance_filtered);
+#endif
 		}
 	}
 

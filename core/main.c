@@ -34,10 +34,10 @@ polar_t encoder_read(void)
 	int16_t right_speed = qdec_read(&encoders[1]);
 
 #if 0
-	xmega_usart_transmit(&USARTC0, (int8_t) (left_speed >> 8));
-	xmega_usart_transmit(&USARTC0, (int8_t) left_speed);
-	xmega_usart_transmit(&USARTC0, (int8_t) (right_speed >> 8));
-	xmega_usart_transmit(&USARTC0, (int8_t) right_speed);
+	usart_send(&USARTC0, (int8_t) (left_speed >> 8));
+	usart_send(&USARTC0, (int8_t) left_speed);
+	usart_send(&USARTC0, (int8_t) (right_speed >> 8));
+	usart_send(&USARTC0, (int8_t) right_speed);
 #endif
 
 	/* update speed */
@@ -45,6 +45,10 @@ polar_t encoder_read(void)
 	robot_speed.angle = right_speed - left_speed;
 
 #if 0
+	usart_send(&USARTC0, (int8_t) (robot_speed.distance >> 8));
+	usart_send(&USARTC0, (int8_t) robot_speed.distance);
+	usart_send(&USARTC0, (int8_t) (robot_speed.angle >> 8));
+	usart_send(&USARTC0, (int8_t) robot_speed.angle);
 	xmega_usart_transmit(&USARTC0, (int8_t) (robot_speed.distance >> 8));
 	xmega_usart_transmit(&USARTC0, (int8_t) robot_speed.distance);
 	xmega_usart_transmit(&USARTC0, (int8_t) (robot_speed.angle >> 8));
@@ -85,7 +89,7 @@ int main(void)
 #if 0
 	/* start first conversion */
 	adc_read(&ADCA, 0);
-	xmega_usart_transmit(&USARTC0, 0xAA);
+	usart_send(&USARTC0, 0xAA);
 #endif
 
 	/* controller setup */
