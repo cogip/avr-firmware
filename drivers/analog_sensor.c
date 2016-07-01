@@ -16,7 +16,7 @@ static volatile uint8_t sensor_index;
 static volatile uint8_t adc_flag;
 static volatile uint16_t adc_result;
 
-void irq_adc_handler(void)
+static void irq_adc_handler(void)
 {
        adc_result = ADCA.CH0.RES;
        adc_flag = 1;
@@ -105,4 +105,9 @@ uint8_t detect_obstacle(uint8_t *ir_ids, uint8_t ir_nb)
 	}
 
 	return stop;
+}
+
+void analog_sensor_setup(void)
+{
+	adc_setup(&ADCA, irq_adc_handler);
 }

@@ -1,5 +1,4 @@
 src-y += core/action.c
-src-y += core/analog_sensor.c
 src-y += core/controller.c
 src-y += core/encoder.c
 src-y += core/main.c

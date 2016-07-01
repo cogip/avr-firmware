@@ -50,7 +50,7 @@ static void setup(void)
 	mach_pinmux_setup();
 
 	/* setup analog conversion */
-	adc_setup(&ADCA, irq_adc_handler);
+	analog_sensor_setup();
 
 	interrupt_setup();
 
