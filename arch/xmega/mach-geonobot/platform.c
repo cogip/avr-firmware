@@ -5,7 +5,6 @@
 
 #include "action.h"
 #include "analog_sensor.h"
-#include "encoder.h"
 #include "platform.h"
 #include "sd21.h"
 
