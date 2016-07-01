@@ -87,7 +87,7 @@ hbridge_t hbridges = {
 
 	.pwm_port = &PORTE, /* TODO: can be 'guessed' from timer ref above */
 
-	.engine_nb = 2,
+	.engine_nb = 3,
 	.engines = {
 		[HBRIDGE_MOTOR_LEFT] = {
 			/* left motor */
