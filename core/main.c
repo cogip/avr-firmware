@@ -19,7 +19,6 @@
 #include "encoder.h"
 #include "sd21.h"
 #include "sensor.h"
-#include "motor.h"
 #include "odometry.h"
 #include "platform.h"
 #include "route.h"
@@ -74,9 +73,8 @@ static void setup(void)
 
 	action_setup(); /* TODO: commenter pour debug */
 
-	/* setup frequency waveform generation (PWM) */
 	/* TODO: following should be in platform */
-	motor_setup();
+	hbridge_setup(&hbridges);
 
 	/* setup qdec */
 	encoder_setup();
@@ -84,6 +82,16 @@ static void setup(void)
 	/* controller setup */
 	odometry_setup(WHEELS_DISTANCE);
 	controller_setup();
+}
+
+void motor_drive(polar_t command)
+{
+	/************************ commandes moteur ************************/
+	int16_t right_command = (int16_t) (command.distance + command.angle);
+	int16_t left_command = (int16_t) (command.distance - command.angle);
+
+	hbridge_engine_update(&hbridges, &hbridges.engines[HBRIDGE_MOTOR_RIGHT], right_command);
+	hbridge_engine_update(&hbridges, &hbridges.engines[HBRIDGE_MOTOR_LEFT],  left_command);
 }
 
 /**
