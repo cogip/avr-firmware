@@ -8,6 +8,7 @@
 
 #include "action.h"
 #include "analog_sensor.h"
+#include "platform.h"
 #include "sd21.h"
 #include "sensor.h"
 #include "utils.h"
@@ -156,13 +157,15 @@ void open_half_door(void)
 
 void spot_up(void)
 {
-	PORTD.OUTCLR = PIN6_bm;
-
 	/* elevator */
 	if (detect_elevator_up())
-		timer_pwm_duty_cycle(&TCE0, 2, 0);
+		hbridge_engine_update(&hbridges,
+				      &hbridges.engines[HBRIDGE_MOTOR_TOWER],
+				      0);
 	else
-		timer_pwm_duty_cycle(&TCE0, 2, 200);
+		hbridge_engine_update(&hbridges,
+				      &hbridges.engines[HBRIDGE_MOTOR_TOWER],
+				      -200);
 }
 
 /**
@@ -170,13 +173,15 @@ void spot_up(void)
  */
 void spot_down(void)
 {
-	PORTD.OUTSET = PIN6_bm;
-
 	/* elevator */
 	if (detect_elevator_down())
-		timer_pwm_duty_cycle(&TCE0, 2, 0);
+		hbridge_engine_update(&hbridges,
+				      &hbridges.engines[HBRIDGE_MOTOR_TOWER],
+				      0);
 	else
-		timer_pwm_duty_cycle(&TCE0, 2, 200);
+		hbridge_engine_update(&hbridges,
+				      &hbridges.engines[HBRIDGE_MOTOR_TOWER],
+				      200);
 }
 
 static uint8_t spot_get_up = 1;

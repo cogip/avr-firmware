@@ -48,6 +48,12 @@ hbridge_t hbridges = {
 			.direction_pin_id = PIN5_bm,
 			.pwm_channel = PIN1_bp,
 		},
+		[HBRIDGE_MOTOR_TOWER] = {
+			/* tower motor */
+			.direction_pin_port = &PORTD,
+			.direction_pin_id = PIN6_bm,
+			.pwm_channel = PIN2_bp,
+		},
 	},
 };
 

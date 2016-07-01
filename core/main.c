@@ -129,7 +129,6 @@ static void setup(void)
 	/* setup frequency waveform generation (PWM) */
 	/* TODO: following should be in platform */
 	motor_setup();
-	timer_pwm_enable(&TCE0, 2); /* PE2 */
 
 	/* setup qdec */
 	encoder_setup();
