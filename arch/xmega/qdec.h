@@ -12,10 +12,10 @@ typedef struct {
 	TC_EVSEL_t event_channel;
 	timer_t *tc;
 	uint16_t line_count;
-	/* TODO: add polarity */
+	int8_t polarity; /* -1 to negate, 1 otherwise */
 } qdec_t;
 
 int8_t qdec_setup(qdec_t *qdec);
-uint16_t qdec_read(qdec_t *qdec);
+int16_t qdec_read(qdec_t *qdec);
 
 #endif /* QDEC_H_ */

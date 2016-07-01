@@ -104,13 +104,33 @@ int8_t qdec_setup(qdec_t *qdec)
 	return 0;
 }
 
-uint16_t qdec_read(qdec_t *qdec)
+/* Counter value is between [0..ENCODER_RES] at hardware stage,
+ * Qdec driver shifts its zero reference to ENCODER_RES/2 (as it counter is
+ * working on unsigned type) each time the counter is read.
+ *
+ * This function translate [0..ENCODER_RES/2] range to backward direction
+ * all value in [ENCODER_RES/2..ENCODER_RES] are considered as forward
+ * direction.
+ */
+static int16_t decode(qdec_t *qdec, const uint16_t counter)
 {
-	uint16_t value = 0;
+	int16_t signed_value = (int16_t) counter;
+
+	signed_value -= qdec->line_count >> 1;
+
+	return qdec->polarity * signed_value;
+}
+
+int16_t qdec_read(qdec_t *qdec)
+{
+	int16_t value;
+	uint16_t unsigned_value;
 
 	/* TODO: both following lines should be in a critical section */
-	value = timer_get_cnt(qdec->tc);
+	unsigned_value = timer_get_cnt(qdec->tc);
 	timer_set_cnt(qdec->tc, qdec->line_count >> 1);
+
+	value = decode(qdec, unsigned_value);
 
 	return value;
 }
