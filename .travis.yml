@@ -14,4 +14,4 @@ before_script:
         avr-gcc --version
 
       - make defconfig
-script: make V=1
+script: make
