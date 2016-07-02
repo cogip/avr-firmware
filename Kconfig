@@ -23,6 +23,21 @@ config F_CPU
 	help
 	  This define the micro-controller CPU frequency (default: 32 MHz).
 
+config ENABLE_LOGGING
+	bool "Enable logs on UART"
+	default n
+	help
+	  Select this if you want to enable the logs output on a dedicated UART.
+
+config DEFAULT_LOGLEVEL
+	int "Logs level"
+	depends on ENABLE_LOGGING
+	default 0
+	help
+	  Configure loglevel. Valid loglevels are 0 for error logs to 3
+	  which activates all log for: errors(0), warning(1), info(2) and
+	  debug(3).
+
 choice
 	prompt "Platform selection"
 	default BIG_BOT

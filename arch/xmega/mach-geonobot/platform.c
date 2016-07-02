@@ -5,6 +5,7 @@
 
 #include "action.h"
 #include "analog_sensor.h"
+#include "log.h"
 #include "platform.h"
 #include "sd21.h"
 
@@ -146,6 +147,13 @@ static void mach_pinmux_setup(void)
 	PORTJ.DIRCLR = PIN1_bm;
 }
 
+#ifdef CONFIG_ENABLE_LOGGING
+static void usartc0_putchar(const char c)
+{
+	usart_send(&USARTC0, c);
+}
+#endif
+
 void mach_timer_setup(func_cb_t handler)
 {
 	/* TCC0 ClkIn == ClkPer / 1024 == 31.25 KHz */
@@ -160,11 +168,14 @@ void mach_setup(void)
 #endif
 	mach_pinmux_setup();
 
+#ifdef CONFIG_ENABLE_LOGGING
+	/* setup logs through usart communication */
+	usart_setup(&USARTC0);
+	log_init(usartc0_putchar);
+#endif
+
 	/* setup analog conversion */
 	analog_sensor_setup();
-
-	/* setup usart communication */
-	usart_setup(&USARTC0);
 
 	/* setup TWI communication with SD21 */
 	sd21_setup(&TWIC);

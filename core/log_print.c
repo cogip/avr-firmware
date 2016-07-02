@@ -2,9 +2,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <log.h>
+#include "log.h"
 
-#ifdef CONFIG_LOGGING_TIME
+static int uart_putchar(char c, FILE *stream);
+static FILE uart_stdout = FDEV_SETUP_STREAM(uart_putchar, NULL,
+					    _FDEV_SETUP_WRITE);
+
+static putchar_cb_t putchar_cb;
+
+#if 0
+/* #ifdef CONFIG_LOGGING_TIME */
 #include <sys/time.h>
 
 static void print_logtime(FILE *stream)
@@ -24,7 +31,7 @@ static void print_logtime(FILE *stream)
 	now.tv_sec -= first.tv_sec;
 	now.tv_usec -= first.tv_usec;
 
-	fprintf(stream, " %d.%06d",
+	fprintf(stream, "[%d.%06d]",
 		(int)now.tv_sec, (int)now.tv_usec);
 }
 #else
@@ -36,46 +43,32 @@ static void print_log_v(int level, const char *function, const char *format,
 {
 	FILE *stream = stdout;
 	const char *prefix;
-	static int initialized = 0;
-	static int dbg = CONFIG_DEFAULT_LOGLEVEL;
-
-	if (!initialized) {
-		char *dbg_env = getenv("MYAPP_LOGLEVEL");
-
-		if (dbg_env)
-			dbg = atoi(dbg_env);
-
-		initialized = 1;
-	}
+	const int dbg = CONFIG_DEFAULT_LOGLEVEL;
 
 	if (dbg <= level)
 		return;
 
 	switch (level) {
 	case LOG_LEVEL_INFO:
-		prefix = "info";
+		prefix = "<I>";
 		break;
 	case LOG_LEVEL_WARNING:
-		stream = stderr;
-		prefix = "warning";
+		prefix = "<W>";
 		break;
 	case LOG_LEVEL_ERROR:
-		stream = stderr;
-		prefix = "error";
+		prefix = "<E>";
 		break;
 	case LOG_LEVEL_DEBUG:
-		stream = stderr;
-		prefix = "debug";
+		prefix = "<D>";
 		break;
 	default:
-		stream = stderr;
-		prefix = "unknown";
+		prefix = "<U>";
 		break;
 	}
 
-	fprintf(stream, "myapp:");
+	fprintf(stream, "%s", prefix);
 	print_logtime(stream);
-	fprintf(stream, " %s [%s] ", prefix, function);
+	fprintf(stream, " %s(): ", function);
 
 	vfprintf(stream, format, args);
 }
@@ -87,4 +80,21 @@ void print_log(int level, const char *function, const char *format, ...)
 	va_start (args, format);
 	print_log_v(level, function, format, args);
 	va_end (args);
+}
+
+static int uart_putchar(char c, FILE *stream)
+{
+	if (putchar_cb) {
+		if (c == '\n')
+			uart_putchar('\r', stream);
+
+		putchar_cb(c);
+	}
+	return 0;
+}
+
+void log_init(putchar_cb_t callback)
+{
+	putchar_cb = callback;
+	stdout = &uart_stdout;
 }
