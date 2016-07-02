@@ -168,7 +168,7 @@ int main(void)
 		}
 
 		attraper_cup();
-		read_analog_sensor();
+		analog_sensor_read();
 		gestion_tour();
 	}
 

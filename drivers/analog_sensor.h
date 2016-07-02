@@ -23,9 +23,9 @@ uint8_t gp2d120_read(uint16_t adc);
 uint8_t gp2y0a41_read(uint16_t adc);
 uint8_t gp2y0a21_read(uint16_t adc);
 
-void read_analog_sensor(void);
+uint8_t stop_robot(uint8_t *ir_ids, uint8_t ir_nb);
 
-uint8_t detect_obstacle(uint8_t *ir_ids, uint8_t ir_nb);
+void analog_sensor_read(void);
 void analog_sensor_setup(void);
 
 #endif /* ANALOG_SENSOR_H_ */

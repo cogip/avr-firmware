@@ -265,19 +265,3 @@ void attraper_cup(void)
 	else
 		open_left_cup();
 }
-
-uint8_t stop_robot(uint8_t *ir_ids, uint8_t ir_nb)
-{
-	uint8_t stop = 0;
-
-	if (((detect_spot()) && (!detect_elevator_down()))
-	    || (!detect_elevator_up() && !flag_tower_down)
-	    || (!detect_elevator_down() && flag_tower_down)
-	   )
-		stop = 1;
-	else
-		if (detect_obstacle(ir_ids, ir_nb))
-			stop = 2;
-
-	return stop;
-}

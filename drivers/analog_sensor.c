@@ -9,6 +9,7 @@
 #include <avr/io.h>
 
 #include "analog_sensor.h"
+#include "sensor.h"
 
 static volatile uint8_t distance[8];
 static volatile uint8_t sensor_index;
@@ -70,7 +71,7 @@ uint8_t gp2y0a21_read(uint16_t adc)
 	return (uint8_t) distance;
 }
 
-void read_analog_sensor(void)
+void analog_sensor_read(void)
 {
 	if (adc_flag) {
 #if 0
@@ -82,8 +83,7 @@ void read_analog_sensor(void)
 		distance[sensor_index] = gp2y0a21_read(adc_result);
 
 		sensor_index++;
-		if (sensor_index > 7)
-			sensor_index = 0;
+		sensor_index %= 7;
 
 		adc_read(&ADCA, sensor_index);
 
@@ -91,7 +91,16 @@ void read_analog_sensor(void)
 	}
 }
 
-uint8_t detect_obstacle(uint8_t *ir_ids, uint8_t ir_nb)
+void analog_sensor_setup(void)
+{
+	adc_setup(&ADCA, irq_adc_handler);
+}
+
+/*
+ * FIXME: following should be put elsewhere...
+ */
+
+static uint8_t detect_obstacle(uint8_t *ir_ids, uint8_t ir_nb)
 {
 	uint8_t stop = 0;
 	uint8_t i;
@@ -111,7 +120,18 @@ uint8_t detect_obstacle(uint8_t *ir_ids, uint8_t ir_nb)
 	return stop;
 }
 
-void analog_sensor_setup(void)
+uint8_t stop_robot(uint8_t *ir_ids, uint8_t ir_nb)
 {
-	adc_setup(&ADCA, irq_adc_handler);
+	uint8_t stop = 0;
+
+	if (((detect_spot()) && (!detect_elevator_down()))
+	    || (!detect_elevator_up() && !flag_tower_down)
+	    || (!detect_elevator_down() && flag_tower_down)
+	   )
+		stop = 1;
+	else
+		if (detect_obstacle(ir_ids, ir_nb))
+			stop = 2;
+
+	return stop;
 }
