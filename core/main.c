@@ -27,7 +27,7 @@ static void irq_timer_tcc0_handler(void)
 /**
  *
  */
-polar_t encoder_read(void)
+static polar_t encoder_read(void)
 {
 	polar_t robot_speed;
 
@@ -46,7 +46,7 @@ polar_t encoder_read(void)
 	return robot_speed;
 }
 
-void motor_drive(polar_t command)
+static void motor_drive(polar_t command)
 {
 	/************************ commandes moteur ************************/
 	int16_t right_command = (int16_t) (command.distance + command.angle);
