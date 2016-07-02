@@ -9,6 +9,7 @@
 #include "analog_sensor.h"
 #include "controller.h"
 #include "sensor.h"
+#include "log.h"
 #include "odometry.h"
 #include "platform.h"
 #include "route.h"
@@ -33,27 +34,14 @@ polar_t encoder_read(void)
 	int16_t left_speed = qdec_read(&encoders[0]);
 	int16_t right_speed = qdec_read(&encoders[1]);
 
-#if 0
-	usart_send(&USARTC0, (int8_t) (left_speed >> 8));
-	usart_send(&USARTC0, (int8_t) left_speed);
-	usart_send(&USARTC0, (int8_t) (right_speed >> 8));
-	usart_send(&USARTC0, (int8_t) right_speed);
-#endif
+	print_dbg("encoders(L,R) = (%d, %d)\n", left_speed, right_speed);
 
 	/* update speed */
 	robot_speed.distance = (right_speed + left_speed) / 2.0;
 	robot_speed.angle = right_speed - left_speed;
 
-#if 0
-	usart_send(&USARTC0, (int8_t) (robot_speed.distance >> 8));
-	usart_send(&USARTC0, (int8_t) robot_speed.distance);
-	usart_send(&USARTC0, (int8_t) (robot_speed.angle >> 8));
-	usart_send(&USARTC0, (int8_t) robot_speed.angle);
-	xmega_usart_transmit(&USARTC0, (int8_t) (robot_speed.distance >> 8));
-	xmega_usart_transmit(&USARTC0, (int8_t) robot_speed.distance);
-	xmega_usart_transmit(&USARTC0, (int8_t) (robot_speed.angle >> 8));
-	xmega_usart_transmit(&USARTC0, (int8_t) robot_speed.angle);
-#endif
+	print_dbg("(dist, angle) = (%d, %d)\n",
+		  robot_speed.distance, robot_speed.angle);
 
 	return robot_speed;
 }
@@ -89,7 +77,6 @@ int main(void)
 #if 0
 	/* start first conversion */
 	adc_read(&ADCA, 0);
-	usart_send(&USARTC0, 0xAA);
 #endif
 
 	/* controller setup */

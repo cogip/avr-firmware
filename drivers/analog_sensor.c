@@ -9,6 +9,7 @@
 #include <avr/io.h>
 
 #include "analog_sensor.h"
+#include "log.h"
 #include "sensor.h"
 
 static volatile uint8_t distance[8];
@@ -74,13 +75,10 @@ uint8_t gp2y0a21_read(uint16_t adc)
 void analog_sensor_read(void)
 {
 	if (adc_flag) {
-#if 0
-		usart_send(&USARTC0, 0xAA);
-		usart_send(&USARTC0, 0xAA);
-		usart_send(&USARTC0, 0x00);
-		usart_send(&USARTC0, distance[7][value_index]);
-#endif
 		distance[sensor_index] = gp2y0a21_read(adc_result);
+
+		print_dbg("index = %d\tdist = %d\n",
+			   sensor_index, distance[sensor_index]);
 
 		sensor_index++;
 		sensor_index %= 7;
@@ -108,12 +106,6 @@ static uint8_t detect_obstacle(uint8_t *ir_ids, uint8_t ir_nb)
 	for (i = 0; i < ir_nb; i++) {
 		if ((distance[ir_ids[i]] < 20) && (distance[ir_ids[i]] != 0)) {
 			stop = 1;
-#if 0
-			usart_send(&USARTC0, 0xCC);
-			usart_send(&USARTC0, 0xCC);
-			usart_send(&USARTC0, i);
-			usart_send(&USARTC0, distance_filtered);
-#endif
 		}
 	}
 
