@@ -1,5 +1,8 @@
 # Geonobot AVR firmware repackaged
 
+## Build status
+[![Build Status](https://travis-ci.org/cogip/avr-firmware.svg?branch=master)](https://travis-ci.org/cogip/avr-firmware)
+
 ## Dependencies
 
 To install AVR toolchain on debian/ubuntu:
