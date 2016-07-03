@@ -20,7 +20,7 @@
  * Notation USARTC0, USARTC1, USARTD0, USARTD1, USARTE0, USARTE1, USARTF0 and
  * USARTF1.
  */
-void usart_setup(USART_t *usart)
+void usart_setup(usart_t *usart)
 {
 	/* Clock generation : BSEL = fOSC / (2^BSCALE * 16 * fBAUD) - 1 */
 #if F_CPU == 32000000UL
@@ -39,7 +39,7 @@ void usart_setup(USART_t *usart)
 }
 
 /* transmit a char */
-void usart_send(USART_t *usart, uint8_t data)
+void usart_send(usart_t *usart, uint8_t data)
 {
 	/* Wait for last character */
 	while (!(usart->STATUS & USART_DREIF_bm))
