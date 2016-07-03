@@ -1,3 +1,5 @@
-src-y		+= arch/xmega/mach-geonobot/action.c
-src-y		+= arch/xmega/mach-geonobot/platform.c
-src-y		+= arch/xmega/mach-geonobot/sensor.c
+abs-path		:= arch/xmega/mach-geonobot
+
+src-y			+= $(abs-path)/action.c
+src-y			+= $(abs-path)/platform.c
+src-y			+= $(abs-path)/sensor.c
