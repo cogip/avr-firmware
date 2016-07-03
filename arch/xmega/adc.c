@@ -7,13 +7,13 @@
 
 #include "adc.h"
 
-static func_cb_t irq_handler;
+static adc_cb_t irq_handler;
 
 /* Interrupt Service Routine for handling the ADC conversion complete IT */
 ISR(ADCA_CH0_vect)
 {
 	if (irq_handler)
-		irq_handler();
+		irq_handler(ADCA.CH0.RES);
 
 	/* Interrupt flag is cleared upon return from ISR */
 }
@@ -25,7 +25,7 @@ ISR(ADCA_CH0_vect)
  * single ended measurement
  * TODO param CH0 and PRPA
  */
-void adc_setup(ADC_t *adc, func_cb_t callback)
+void adc_setup(ADC_t *adc, adc_cb_t callback)
 {
 	/* Clear ADC bit in Power Reduction Port A Register */
 	PR.PRPA &= ~0x02; /* TODO */
@@ -59,7 +59,7 @@ void adc_setup(ADC_t *adc, func_cb_t callback)
 /**
  * TODO param CH0
  */
-void adc_read(ADC_t *adc, uint8_t pin)
+void adc_async_read_start(ADC_t *adc, uint8_t pin)
 {
 	/* define the MUX selection for the positive ADC input */
 	adc->CH0.MUXCTRL &= 0x83;

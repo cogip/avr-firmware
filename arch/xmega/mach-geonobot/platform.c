@@ -4,7 +4,6 @@
 #include <xmega/usart.h>
 
 #include "action.h"
-#include "analog_sensor.h"
 #include "log.h"
 #include "platform.h"
 #include "route.h"
@@ -52,6 +51,10 @@
  * use TCE0 timer to generate PWM signal
  * use TCE1, TCF0 and TCF1 timers to decode quadrature
  */
+
+analog_sensors_t ana_sensors = {
+	.adc = &ADCA,
+};
 
 qdec_t encoders[] = {
 	{
@@ -207,7 +210,7 @@ void mach_setup(void)
 #endif
 
 	/* setup analog conversion */
-	analog_sensor_setup();
+	analog_sensor_setup(&ana_sensors);
 
 	/* setup TWI communication with SD21 */
 	sd21_setup(&TWIC);

@@ -11,9 +11,9 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-#include "utils.h"
+typedef void (*adc_cb_t)(uint16_t);
 
-void adc_setup(ADC_t *adc, func_cb_t callback);
-void adc_read(ADC_t *adc, uint8_t pin);
+void adc_setup(ADC_t *adc, adc_cb_t callback);
+void adc_async_read_start(ADC_t *adc, uint8_t pin);
 
 #endif /* ADC_H_ */

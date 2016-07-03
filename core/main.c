@@ -73,11 +73,6 @@ int main(void)
 	mach_setup();
 	mach_timer_setup(irq_timer_tcc0_handler);
 
-#if 0
-	/* start first conversion */
-	adc_read(&ADCA, 0);
-#endif
-
 	/* controller setup */
 	odometry_setup(WHEELS_DISTANCE);
 	controller_setup();
@@ -138,7 +133,7 @@ int main(void)
 		}
 
 		attraper_cup();
-		analog_sensor_read();
+		analog_sensor_read(&ana_sensors);
 		gestion_tour();
 	}
 

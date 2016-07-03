@@ -1,6 +1,7 @@
 #ifndef PLATFORM_H_
 #define PLATFORM_H_
 
+#include "analog_sensor.h"
 #include "qdec.h"
 #include "hbridge.h"
 
@@ -21,6 +22,7 @@
 #define HBRIDGE_MOTOR_RIGHT		1
 #define HBRIDGE_MOTOR_TOWER		2
 
+extern analog_sensors_t ana_sensors;
 extern qdec_t encoders[];
 extern hbridge_t hbridges;
 

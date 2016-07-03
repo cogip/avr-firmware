@@ -18,10 +18,10 @@ static volatile uint8_t sensor_index;
 static volatile uint8_t adc_flag;
 static volatile uint16_t adc_result;
 
-static void irq_adc_handler(void)
+static void irq_adc_handler(uint16_t value)
 {
-       adc_result = ADCA.CH0.RES;
-       adc_flag = 1;
+	adc_result = value;
+	adc_flag = 1;
 }
 
 /*
@@ -72,7 +72,7 @@ uint8_t gp2y0a21_read(uint16_t adc)
 	return (uint8_t) distance;
 }
 
-void analog_sensor_read(void)
+void analog_sensor_read(analog_sensors_t *as)
 {
 	if (adc_flag) {
 		distance[sensor_index] = gp2y0a21_read(adc_result);
@@ -83,15 +83,20 @@ void analog_sensor_read(void)
 		sensor_index++;
 		sensor_index %= 7;
 
-		adc_read(&ADCA, sensor_index);
+		adc_async_read_start(as->adc, sensor_index);
 
 		adc_flag = 0;
 	}
 }
 
-void analog_sensor_setup(void)
+void analog_sensor_setup(analog_sensors_t *as)
 {
-	adc_setup(&ADCA, irq_adc_handler);
+	adc_setup(as->adc, irq_adc_handler);
+
+#if 0
+	/* start first conversion */
+	adc_async_read_start(as->adc, 0);
+#endif
 }
 
 /*
