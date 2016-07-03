@@ -25,7 +25,7 @@ uint8_t gp2y0a21_read(uint16_t adc);
 
 
 typedef struct {
-	ADC_t *adc;
+	adc_t *adc;
 
 } analog_sensors_t;
 
