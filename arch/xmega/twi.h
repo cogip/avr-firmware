@@ -1,21 +1,21 @@
 /*
- * xmega_twi.h
+ * twi.h
  *
  *  Created on: 29 janv. 2015
  *      Author: ldo
  */
 
-#ifndef XMEGA_TWI_H_
-#define XMEGA_TWI_H_
+#ifndef TWI_H_
+#define TWI_H_
 
 #include <avr/interrupt.h>
 
-void xmega_twi_master_setup(TWI_t *twi, uint16_t freq);
+void twi_master_setup(TWI_t *twi, uint16_t freq);
 
-void xmega_twi_master_write_handler(TWI_t *twi);
+void twi_master_write_handler(TWI_t *twi);
 
-void xmega_twi_write(TWI_t *twi, uint8_t slave_address, uint8_t *writeData,
-		     uint8_t bytesToWrite);
+void twi_write(TWI_t *twi, uint8_t slave_address, uint8_t *write_data,
+	       uint8_t bytesToWrite);
 
 /**
  * \fn
@@ -26,7 +26,7 @@ void xmega_twi_write(TWI_t *twi, uint8_t slave_address, uint8_t *writeData,
  * \param read_data
  * \param nb_byte_to_read
  */
-void xmega_twi_read(TWI_t *twi, uint8_t slave_address, uint8_t *write_data,
-		    uint8_t *read_data, uint8_t nb_byte_to_read);
+void twi_read(TWI_t *twi, uint8_t slave_address, uint8_t *write_data,
+	      uint8_t *read_data, uint8_t nb_byte_to_read);
 
 #endif /* XMEGA_TWI_H_ */

@@ -4,7 +4,7 @@
  * \date 10 fevr. 2015
  * \author ldo
  *
- * \brief sd21 library use xmega_twi library
+ * \brief sd21 library use twi library
  */
 
 #include "sd21.h"
@@ -16,7 +16,7 @@ TWI_t *sd21_twi;
 void sd21_setup(TWI_t *twi)
 {
 	sd21_twi = twi;
-	xmega_twi_master_setup(twi, 100);
+	twi_master_setup(twi, 100);
 }
 
 /**
@@ -27,7 +27,7 @@ uint8_t sd21_version(void)
 	uint8_t reg = REG_VERSION;
 	uint8_t data = 0x00;
 
-	xmega_twi_read(sd21_twi, SD21_ADDRESS, &reg, &data, 1);
+	twi_read(sd21_twi, SD21_ADDRESS, &reg, &data, 1);
 
 	return data;
 }
@@ -41,7 +41,7 @@ double sd21_battery_voltage(void)
 	uint8_t reg = REG_VOLTAGE;
 	uint8_t data = 0x00;
 
-	xmega_twi_read(sd21_twi, SD21_ADDRESS, &reg, &data, 1);
+	twi_read(sd21_twi, SD21_ADDRESS, &reg, &data, 1);
 
 	double voltage = data * 0.039;
 
@@ -60,13 +60,13 @@ void sd21_control_servo(uint8_t servo, uint8_t speed, uint16_t position)
 
 	data[0] = reg;
 	data[1] = speed;
-	xmega_twi_write(sd21_twi, SD21_ADDRESS, data, 2);
+	twi_write(sd21_twi, SD21_ADDRESS, data, 2);
 
 	data[0] = reg + 1;
 	data[1] = (uint8_t) position;
-	xmega_twi_write(sd21_twi, SD21_ADDRESS, data, 2);
+	twi_write(sd21_twi, SD21_ADDRESS, data, 2);
 
 	data[0] = reg + 2;
 	data[1] = position >> 8;
-	xmega_twi_write(sd21_twi, SD21_ADDRESS, data, 2);
+	twi_write(sd21_twi, SD21_ADDRESS, data, 2);
 }

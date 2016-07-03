@@ -1,5 +1,5 @@
 /*
- * xmega_twi.c
+ * twi.c
  *
  *  Created on: 28 janv. 2015
  *      Author: ldo
@@ -15,11 +15,11 @@ ISR(TWIC_TWIM_vect)
 {
 	/* If master write interrupt. */
 	if (TWIC.MASTER.STATUS & TWI_MASTER_WIF_bm)
-		xmega_twi_master_write_handler (&TWIC);
+		twi_master_write_handler(&TWIC);
 
 	/* If master read interrupt. */
 	else if (TWIC.MASTER.STATUS & TWI_MASTER_RIF_bm)
-		; /* TWI_MasterReadHandler (TWIC); */
+		; /* TWI_MasterReadHandler(TWIC); */
 }
 
 static volatile uint8_t twi_i;
@@ -30,7 +30,7 @@ static uint8_t *twi_write_data;
  * RXACK : When read as zero, the most recent acknowledge bit from the slave
  * was ACK, and when read as one the most recent acknowledge bit was NACK
  */
-void xmega_twi_master_write_handler(TWI_t *twi)
+void twi_master_write_handler(TWI_t *twi)
 {
 	if (twi->MASTER.STATUS & TWI_MASTER_RXACK_bm)
 		/* received slave non-acknowledge (NACK) : send STOP */
@@ -52,7 +52,7 @@ void xmega_twi_master_write_handler(TWI_t *twi)
  * \param freq [kHz]: TWI frequency (usual 100 or 400 kHz)
  * BAUD = (Fosc / (2*ftwi)) - 5
  */
-void xmega_twi_master_setup(TWI_t *twi, uint16_t freq)
+void twi_master_setup(TWI_t *twi, uint16_t freq)
 {
 	/* When smart mode is enabled, the acknowledge action, as set by the
 	 * ACKACT bit in the CTRLC register, is sent immediately after reading
@@ -73,8 +73,8 @@ void xmega_twi_master_setup(TWI_t *twi, uint16_t freq)
 /**
  *
  */
-void xmega_twi_write(TWI_t *twi, uint8_t slave_address, uint8_t *write_data,
-		     uint8_t nb_bytes_to_write)
+void twi_write(TWI_t *twi, uint8_t slave_address, uint8_t *write_data,
+	       uint8_t nb_bytes_to_write)
 {
 	twi_i = 0;
 	twi_nb_bytes_to_write = nb_bytes_to_write;
@@ -103,8 +103,8 @@ void xmega_twi_write(TWI_t *twi, uint8_t slave_address, uint8_t *write_data,
 /**
  *
  */
-void xmega_twi_read(TWI_t *twi, uint8_t slave_address, uint8_t *write_data,
-		    uint8_t *read_data, uint8_t nb_byte_to_read)
+void twi_read(TWI_t *twi, uint8_t slave_address, uint8_t *write_data,
+	      uint8_t *read_data, uint8_t nb_byte_to_read)
 {
 	uint8_t i;
 
