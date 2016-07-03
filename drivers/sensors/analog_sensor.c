@@ -98,7 +98,7 @@ void analog_sensor_setup(void)
  * FIXME: following should be put elsewhere...
  */
 
-static uint8_t detect_obstacle(uint8_t *ir_ids, uint8_t ir_nb)
+uint8_t analog_sensor_detect_obstacle(uint8_t *ir_ids, uint8_t ir_nb)
 {
 	uint8_t stop = 0;
 	uint8_t i;
@@ -108,22 +108,6 @@ static uint8_t detect_obstacle(uint8_t *ir_ids, uint8_t ir_nb)
 			stop = 1;
 		}
 	}
-
-	return stop;
-}
-
-uint8_t stop_robot(uint8_t *ir_ids, uint8_t ir_nb)
-{
-	uint8_t stop = 0;
-
-	if (((detect_spot()) && (!detect_elevator_down()))
-	    || (!detect_elevator_up() && !flag_tower_down)
-	    || (!detect_elevator_down() && flag_tower_down)
-	   )
-		stop = 1;
-	else
-		if (detect_obstacle(ir_ids, ir_nb))
-			stop = 2;
 
 	return stop;
 }

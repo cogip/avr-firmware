@@ -265,3 +265,17 @@ void attraper_cup(void)
 	else
 		open_left_cup();
 }
+
+/* TODO: a 'speed' entry in route_t should be a more generic way to do this */
+uint8_t action_require_stop_robot()
+{
+	uint8_t stop = 0;
+
+	if (((detect_spot()) && (!detect_elevator_down()))
+	    || (!detect_elevator_up() && !flag_tower_down)
+	    || (!detect_elevator_down() && flag_tower_down)
+	   )
+		stop = 1;
+
+	return stop;
+}

@@ -43,4 +43,6 @@ void open_half_door(void);
 void spot_up(void);
 void spot_down(void);
 
+uint8_t action_require_stop_robot();
+
 #endif /* ACTION_H_ */

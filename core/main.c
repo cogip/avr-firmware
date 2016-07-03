@@ -68,7 +68,6 @@ int main(void)
 	polar_t	motor_command;
 	pose_t	robot_pose		= { 1856.75, 0, 0 }; /* position absolue */
 	pose_t	pose_setpoint		= { 0, 0, 0 };
-	uint8_t all_irs[] = { 2, 3, 4, 5, 6, 7 };
 	uint8_t stop = 0;
 
 	mach_setup();
@@ -111,28 +110,12 @@ int main(void)
 				pose_setpoint.O *= -1;
 			}
 
-			/* collision detect */
+			/* collision detection */
+			stop = mach_stop_robot();
 
-#if 0
-			uint8_t side_irs[] = { 0, 1 };
-			uint8_t rear_irs[] = { 2, 3 };
-			uint8_t front_irs[] = { 4, 5, 6, 7 };
-
-			if ((right_command > 0) && (left_command > 0))
-			stop = stop_robot(front_irs, 4);
-			else if ((right_command < 0) && (left_command < 0))
-			stop = stop_robot(rear_irs, 2);
-			else
-#endif
-			stop = stop_robot(all_irs, 6);
-
-			if (stop && get_route_index()) {
+			if (stop) {
 				speed_setpoint.distance = 0;
 				speed_setpoint.angle = 0;
-#if 0
-				if ((stop > 1) && (get_can_retro()))
-				down_route_index();
-#endif
 			} else {
 				speed_setpoint.distance = 60;
 				speed_setpoint.angle = 60;

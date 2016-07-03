@@ -7,6 +7,7 @@
 #include "analog_sensor.h"
 #include "log.h"
 #include "platform.h"
+#include "route.h"
 #include "sd21.h"
 
 /**
@@ -109,6 +110,37 @@ hbridge_t hbridges = {
 		},
 	},
 };
+
+uint8_t mach_stop_robot(void)
+{
+	uint8_t all_irs[] = { 2, 3, 4, 5, 6, 7 };
+	uint8_t stop = 0;
+
+	if (action_require_stop_robot())
+		return 1;
+
+/* TODO: define robot collision area to compute trajectory */
+#if 0
+	uint8_t side_irs[] = { 0, 1 };
+	uint8_t rear_irs[] = { 2, 3 };
+	uint8_t front_irs[] = { 4, 5, 6, 7 };
+
+	if ((right_command > 0) && (left_command > 0))
+	stop = stop_robot(front_irs, 4);
+	else if ((right_command < 0) && (left_command < 0))
+	stop = stop_robot(rear_irs, 2);
+	else
+#endif
+
+	if (analog_sensor_detect_obstacle(all_irs, 6) && get_route_index())
+		stop = 2;
+#if 0
+	if ((stop > 1) && (get_can_retro()))
+	down_route_index();
+#endif
+
+	return stop;
+}
 
 static void mach_pinmux_setup(void)
 {
