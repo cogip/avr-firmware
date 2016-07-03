@@ -16,7 +16,6 @@
 typedef struct {
 	pose_t p;
 	func_cb_t action_function;
-	uint8_t __to_remove__;
 	uint8_t can_retro;
 } action_t;
 
