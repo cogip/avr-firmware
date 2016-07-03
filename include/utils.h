@@ -10,7 +10,6 @@
 
 /* FIXME: to rework */
 extern uint8_t pose_reached;
-extern uint8_t flag_tower_down;
 
 typedef void (*func_cb_t)(void);
 

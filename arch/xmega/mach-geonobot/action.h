@@ -21,6 +21,8 @@ typedef struct {
 
 void action_setup(void);
 void gestion_tour(void);
+void set_flag_tower_down(void);
+void reset_flag_tower_down(void);
 
 void open_clap_arm(void);
 void close_clap_arm(void);

@@ -8,24 +8,11 @@
 #include <stdio.h>
 
 #include "action.h"
-#include "utils.h" /* FIXME: for global var ugly hack. to remove! */
-
 #include "route.h"
+#include "utils.h" /* FIXME: for global var ugly hack. to remove! */
 
 #define NB_POSE		21
 // 10610 pour 1 m - 4650 pour 1/4 tour 90°
-
-uint8_t flag_tower_down = 0;
-
-void set_flag_tower_down(void)
-{
-	flag_tower_down = 1;
-}
-
-void reset_flag_tower_down(void)
-{
-	flag_tower_down = 0;
-}
 
 action_t route[NB_POSE] =
   {

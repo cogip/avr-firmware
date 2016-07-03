@@ -11,7 +11,6 @@
 #include "platform.h"
 #include "sd21.h"
 #include "sensor.h"
-#include "utils.h"
 
 /**
  * servo map
@@ -33,6 +32,18 @@
 static uint8_t flag_opened_clamp;
 static uint8_t released_right_cup;
 static uint8_t released_left_cup;
+
+static uint8_t flag_tower_down = 0;
+
+void set_flag_tower_down(void)
+{
+	flag_tower_down = 1;
+}
+
+void reset_flag_tower_down(void)
+{
+	flag_tower_down = 0;
+}
 
 /**
  * close all
