@@ -14,7 +14,7 @@
 #include "platform.h"
 #include "route.h"
 
-uint8_t next_timeslot_trigged;
+static uint8_t next_timeslot_trigged;
 uint8_t	pose_reached;
 static int16_t	tempo;
 
