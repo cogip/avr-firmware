@@ -1,8 +1,5 @@
 ARCH		:= xmega
 
-# target file basename
-binname		:= progname
-
 # list of sources dirs which contains a Makefile included from the current one:
 scripts-dir	:= scripts
 src-dirs 	:= arch/$(ARCH) core drivers
@@ -83,7 +80,7 @@ ifeq ($(clean-targets),1)
 clean:
 	$(Q)find . -name *.d -exec rm '{}' \;
 	$(Q)find . -name *.o -exec rm '{}' \;
-	$(Q)rm -f $(binname).elf $(binname).hex $(binname).elf.map
+	$(Q)rm -f *.eep *.elf *.hex *.elf.map
 
 .PHONY: mrproper
 mrproper: clean
@@ -95,10 +92,13 @@ endif
 # Build targets
 ifeq ($(build-targets),1)
 
+-include include/config/auto.conf
+binname			:= $(subst $(quote),,$(CONFIG_PLATFORM_NAME))
+
 .PHONY: all
 all: $(binname).hex $(binname).eep
 
-.config:
+include/config/auto.conf:
 	@echo "Configuration file not found."
 	@echo "You need to configure before building. Available targets:"
 	@echo
@@ -106,8 +106,6 @@ all: $(binname).hex $(binname).eep
 	@echo "    make menuconfig"
 	@echo
 	@false
-
--include .config
 
 # aliases for CONFIG_ variables
 CROSS_COMPILE	:= $(subst $(quote),,$(CONFIG_CROSS_COMPILE))
@@ -175,7 +173,7 @@ $(binname).elf: $(deps-y) $(objs)
 -include $(deps-y)
 
 # calculate C include dependencies
-$(deps-y): .config
+$(deps-y): include/config/auto.conf
 $(dot)%.d: %.c
 	$(Q)$(scripts-dir)/depends.sh `dirname $*.c` $(CFLAGS) $*.c > $@
 
