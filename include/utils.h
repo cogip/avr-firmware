@@ -8,9 +8,6 @@
 #ifndef UTILS_H_
 #define UTILS_H_
 
-/* FIXME: to rework */
-extern uint8_t pose_reached;
-
 typedef void (*func_cb_t)(void);
 
 #define FALSE	(0)

@@ -16,6 +16,8 @@
 PID_t linear_speed_pid, angular_speed_pid;
 PID_t linear_pose_pid, angular_pose_pid;
 
+static uint8_t pose_reached;
+
 /**
  * TODO reglage des coeffs PID position
  * speed PI controller
@@ -35,7 +37,7 @@ void controller_setup(void)
  * \param p2 : measure pose
  * \return distance and angle errors between 2 poses
  */
-polar_t compute_error(const pose_t p1, const pose_t p2)
+static polar_t compute_error(const pose_t p1, const pose_t p2)
 {
 	polar_t error;
 
@@ -57,9 +59,9 @@ polar_t compute_error(const pose_t p1, const pose_t p2)
  * \param real_speed
  * \return speed_setpoint
  */
-double limit_speed_command(double command,
-			   double final_speed,
-			   double real_speed)
+static double limit_speed_command(double command,
+				  double final_speed,
+				  double real_speed)
 {
 	/* limit speed command (maximum acceleration) */
 	int16_t a = command - real_speed;
@@ -109,6 +111,8 @@ polar_t controller_update(pose_t pose_setpoint,
 	/* compute position error */
 	polar_t position_error = compute_error(pose_setpoint, current_pose);
 
+	pose_reached = 0;
+
 	/* position correction */
 	if (position_error.distance > 500) {
 		position_error.angle -= current_pose.O; /* [pulse] */
@@ -157,4 +161,9 @@ polar_t controller_update(pose_t pose_setpoint,
 
 	/* ********************** speed pid controller ********************* */
 	return speed_controller(speed, current_speed);
+}
+
+inline uint8_t controller_get_pose_reached()
+{
+	return pose_reached;
 }

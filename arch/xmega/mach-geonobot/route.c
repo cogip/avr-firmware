@@ -8,8 +8,8 @@
 #include <stdio.h>
 
 #include "action.h"
+#include "controller.h"
 #include "route.h"
-#include "utils.h" /* FIXME: for global var ugly hack. to remove! */
 
 #define NB_POSE		21
 // 10610 pour 1 m - 4650 pour 1/4 tour 90°
@@ -85,7 +85,7 @@ pose_t route_update(void)
 {
 	uint8_t (*route_function)(void);
 
-	if (pose_reached == 1) {
+	if (controller_get_pose_reached()) {
 		route_retro = 0;
 		route_function = route[route_index].action_function;
 
@@ -94,8 +94,6 @@ pose_t route_update(void)
 
 		if (route_index < (NB_POSE - 1))
 			route_index++;
-
-		pose_reached = 0;
 	}
 
 	return route[route_index].p;

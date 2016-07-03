@@ -15,7 +15,6 @@
 #include "route.h"
 
 static uint8_t next_timeslot_trigged;
-uint8_t	pose_reached;
 static int16_t	tempo;
 
 /* Timer 0 Overflow interrupt */
