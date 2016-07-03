@@ -83,14 +83,14 @@ static uint8_t route_retro;
 
 pose_t route_update(void)
 {
-	uint8_t (*route_function)(void);
+	func_cb_t route_function;
 
 	if (controller_get_pose_reached()) {
 		route_retro = 0;
 		route_function = route[route_index].action_function;
 
 		if (route_function)
-			route[route_index].status = route_function();
+			route_function();
 
 		if (route_index < (NB_POSE - 1))
 			route_index++;

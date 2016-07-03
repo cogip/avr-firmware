@@ -11,11 +11,12 @@
 #include <stdint.h>
 
 #include "odometry.h"
+#include "utils.h"
 
 typedef struct {
 	pose_t p;
-	void * action_function;
-	uint8_t status;
+	func_cb_t action_function;
+	uint8_t __to_remove__;
 	uint8_t can_retro;
 } action_t;
 
@@ -32,7 +33,7 @@ void open_left_cup(void);
 void close_left_cup(void);
 void close_pince(void);
 void monter_tour(void);
-uint8_t descendre_tour(void);
+void descendre_tour(void);
 void set_release_right_cup(void);
 void reset_release_right_cup(void);
 void set_release_left_cup(void);

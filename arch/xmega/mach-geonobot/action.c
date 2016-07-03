@@ -220,20 +220,15 @@ void monter_tour(void)
 	}
 }
 
-uint8_t descendre_tour(void)
+void descendre_tour(void)
 {
-	uint8_t tour_down = 0;
-
 	spot_down();
 
 	if (detect_elevator_down()) {
 		open_door();
 		open_pince();
-		tour_down = 1;
 	} else
 		open_half_door();
-
-	return tour_down;
 }
 
 void gestion_tour(void)
