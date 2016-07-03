@@ -1,5 +1,3 @@
-#include <xmega/timer.h>
-
 #include "hbridge.h"
 
 /** limits speed command
@@ -19,12 +17,8 @@ void hbridge_engine_update(hbridge_t *b, uint8_t engine_idx, int16_t pwm)
 	uint8_t pwm_period = pwm_limitation(pwm, b->period);
 	engine_t *e = &b->engines[engine_idx];
 
-	if (pwm > 0)
-		/* forward direction */
-		e->direction_pin_port->OUTSET = e->direction_pin_id;
-	else
-		/* backward direction */
-		e->direction_pin_port->OUTCLR = e->direction_pin_id;
+	/* signed of pwm value is applied on direction gpio */
+	gpio_set_output(e->direction_pin_port, e->direction_pin_id, pwm > 0);
 
 	/* generate PWM */
 	timer_pwm_duty_cycle(b->tc, e->pwm_channel, pwm_period);
@@ -36,7 +30,9 @@ void hbridge_setup(hbridge_t *b)
 
 	/* Configure PWM pin as output */
 	for (i = 0; i < b->engine_nb; i++)
-		b->pwm_port->DIRSET = (1 << b->engines[i].pwm_channel);
+		gpio_set_direction(b->pwm_port,
+				   b->engines[i].pwm_channel,
+				   GPIO_DIR_OUT);
 
 	/* setup frequency waveform generation (PWM) */
 	timer_pwm_mode_setup(b->tc, b->period, b->prescaler);

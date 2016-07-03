@@ -1,11 +1,11 @@
 #ifndef HBRIDGE_H_
 #define HBRIDGE_H_
 
-#include <avr/io.h>
-#include <xmega/timer.h>
+#include <gpio.h>
+#include <timer.h>
 
 typedef struct {
-	PORT_t *direction_pin_port;
+	gpio_port_t *direction_pin_port;
 	uint8_t direction_pin_id;
 	uint8_t pwm_channel;
 } engine_t;
@@ -13,9 +13,9 @@ typedef struct {
 typedef struct {
 	timer_t *tc;
 	uint8_t period;
-	TC_CLKSEL_t prescaler;
+	tc_clksel_t prescaler;
 
-	PORT_t *pwm_port;
+	gpio_port_t *pwm_port;
 
 	uint8_t engine_nb;
 	engine_t engines[];
