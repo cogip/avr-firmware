@@ -5,14 +5,10 @@
  * \author ldo
  */
 
-#include "action.h"
-#include "analog_sensor.h"
 #include "controller.h"
-#include "sensor.h"
 #include "log.h"
 #include "odometry.h"
 #include "platform.h"
-#include "route.h"
 
 static uint8_t next_timeslot_trigged;
 static int16_t	tempo;
@@ -76,8 +72,9 @@ int main(void)
 	odometry_setup(WHEELS_DISTANCE);
 	controller_setup();
 
-	while (detect_start())
-		gestion_tour();
+	/* active loop waiting for the game to start */
+	while (mach_detect_start())
+		mach_evtloop_before_game();
 
 	/* main loop == 90s */
 	while (tempo < 4500) {
@@ -92,17 +89,11 @@ int main(void)
 			odometry_update(&robot_pose, &robot_speed, SEGMENT);
 
 			/* get next pose_t to reach */
-			pose_setpoint = route_update();
+			pose_setpoint = mach_trajectory_get_route_update();
 
 			pose_setpoint.x *= PULSE_PER_MM;
 			pose_setpoint.y *= PULSE_PER_MM;
 			pose_setpoint.O *= PULSE_PER_DEGREE;
-
-			/* mirror mode: invert path regarding bot's camp */
-			if (detect_color()) {
-				pose_setpoint.y *= -1;
-				pose_setpoint.O *= -1;
-			}
 
 			/* collision detection */
 			stop = mach_stop_robot();
@@ -131,17 +122,13 @@ int main(void)
 			next_timeslot_trigged = 0;
 		}
 
-		attraper_cup();
-		analog_sensor_read(&ana_sensors);
-		gestion_tour();
+		mach_evtloop_in_game();
 	}
 
 	/* final position */
-	while (1) {
-		open_pince();
-		open_door();
-		set_release_right_cup();
-		set_release_left_cup();
+	for (;;) {
+		mach_evtloop_end_of_game();
+
 		motor_command.distance = 0;
 		motor_command.angle = 0;
 		motor_drive(motor_command);

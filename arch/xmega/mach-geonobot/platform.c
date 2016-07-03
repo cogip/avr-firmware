@@ -8,6 +8,7 @@
 #include "platform.h"
 #include "route.h"
 #include "sd21.h"
+#include "sensor.h"
 
 /**
  * PORTA : ANA input
@@ -113,6 +114,36 @@ hbridge_t hbridges = {
 		},
 	},
 };
+
+uint8_t mach_detect_start(void)
+{
+	return detect_start();
+}
+
+void mach_evtloop_before_game(void)
+{
+	gestion_tour();
+}
+
+void mach_evtloop_in_game(void)
+{
+	attraper_cup();
+	analog_sensor_read(&ana_sensors);
+	gestion_tour();
+}
+
+void mach_evtloop_end_of_game(void)
+{
+	open_pince();
+	open_door();
+	set_release_right_cup();
+	set_release_left_cup();
+}
+
+pose_t mach_trajectory_get_route_update(void)
+{
+	return route_update();
+}
 
 uint8_t mach_stop_robot(void)
 {

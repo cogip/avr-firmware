@@ -10,6 +10,7 @@
 #include "action.h"
 #include "controller.h"
 #include "route.h"
+#include "sensor.h"
 
 #define NB_POSE		21
 // 10610 pour 1 m - 4650 pour 1/4 tour 90°
@@ -83,6 +84,7 @@ static uint8_t route_retro;
 
 pose_t route_update(void)
 {
+	pose_t pose_to_reach;
 	func_cb_t route_function;
 
 	if (controller_get_pose_reached()) {
@@ -96,7 +98,15 @@ pose_t route_update(void)
 			route_index++;
 	}
 
-	return route[route_index].p;
+	pose_to_reach = route[route_index].p;
+
+	/* mirror mode: invert path regarding bot's camp */
+	if (detect_color()) {
+		pose_to_reach.y *= -1;
+		pose_to_reach.O *= -1;
+	}
+
+	return pose_to_reach;
 }
 
 void down_route_index()

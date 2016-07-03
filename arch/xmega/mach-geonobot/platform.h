@@ -26,6 +26,12 @@ extern analog_sensors_t ana_sensors;
 extern qdec_t encoders[];
 extern hbridge_t hbridges;
 
+uint8_t mach_detect_start(void);
+void mach_evtloop_before_game(void);
+void mach_evtloop_in_game(void);
+void mach_evtloop_end_of_game(void);
+
+pose_t mach_trajectory_get_route_update(void);
 uint8_t mach_stop_robot(void);
 
 void mach_timer_setup(func_cb_t handler);
