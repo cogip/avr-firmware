@@ -170,13 +170,9 @@ void spot_up(void)
 {
 	/* elevator */
 	if (detect_elevator_up())
-		hbridge_engine_update(&hbridges,
-				      &hbridges.engines[HBRIDGE_MOTOR_TOWER],
-				      0);
+		hbridge_engine_update(&hbridges, HBRIDGE_MOTOR_TOWER, 0);
 	else
-		hbridge_engine_update(&hbridges,
-				      &hbridges.engines[HBRIDGE_MOTOR_TOWER],
-				      -200);
+		hbridge_engine_update(&hbridges, HBRIDGE_MOTOR_TOWER, -200);
 }
 
 /**
@@ -186,13 +182,9 @@ void spot_down(void)
 {
 	/* elevator */
 	if (detect_elevator_down())
-		hbridge_engine_update(&hbridges,
-				      &hbridges.engines[HBRIDGE_MOTOR_TOWER],
-				      0);
+		hbridge_engine_update(&hbridges, HBRIDGE_MOTOR_TOWER, 0);
 	else
-		hbridge_engine_update(&hbridges,
-				      &hbridges.engines[HBRIDGE_MOTOR_TOWER],
-				      200);
+		hbridge_engine_update(&hbridges, HBRIDGE_MOTOR_TOWER, 200);
 }
 
 static uint8_t spot_get_up = 1;

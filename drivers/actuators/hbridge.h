@@ -21,7 +21,7 @@ typedef struct {
 	engine_t engines[];
 } hbridge_t;
 
-void hbridge_engine_update(hbridge_t *b, engine_t *e, int16_t pwm);
+void hbridge_engine_update(hbridge_t *b, uint8_t engine_idx, int16_t pwm);
 void hbridge_setup(hbridge_t *b);
 
 #endif /* HBRIDGE_H_ */

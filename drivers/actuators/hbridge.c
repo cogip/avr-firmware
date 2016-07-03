@@ -13,10 +13,11 @@ static uint8_t pwm_limitation(int16_t value, uint8_t max)
 	return out > max ? max : (uint8_t) out;
 }
 
-void hbridge_engine_update(hbridge_t *b, engine_t *e, int16_t pwm)
+void hbridge_engine_update(hbridge_t *b, uint8_t engine_idx, int16_t pwm)
 {
 	/* limits speed command */
 	uint8_t pwm_period = pwm_limitation(pwm, b->period);
+	engine_t *e = &b->engines[engine_idx];
 
 	if (pwm > 0)
 		/* forward direction */

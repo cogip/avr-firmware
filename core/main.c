@@ -47,8 +47,8 @@ static void motor_drive(polar_t command)
 	int16_t right_command = (int16_t) (command.distance + command.angle);
 	int16_t left_command = (int16_t) (command.distance - command.angle);
 
-	hbridge_engine_update(&hbridges, &hbridges.engines[HBRIDGE_MOTOR_RIGHT], right_command);
-	hbridge_engine_update(&hbridges, &hbridges.engines[HBRIDGE_MOTOR_LEFT],  left_command);
+	hbridge_engine_update(&hbridges, HBRIDGE_MOTOR_RIGHT, right_command);
+	hbridge_engine_update(&hbridges, HBRIDGE_MOTOR_LEFT,  left_command);
 }
 
 /**
