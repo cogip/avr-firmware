@@ -8,7 +8,7 @@
 #ifndef ANALOG_SENSOR_H_
 #define ANALOG_SENSOR_H_
 
-#include <xmega/adc.h>
+#include <adc.h>
 
 #define GP2Y0A41_DIST_MIN	4
 #define GP2Y0A41_DIST_MAX	30

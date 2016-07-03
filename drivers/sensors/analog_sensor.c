@@ -5,12 +5,9 @@
  *      Author: ldo
  */
 
-#include <avr/interrupt.h>
-#include <avr/io.h>
 
 #include "analog_sensor.h"
 #include "log.h"
-#include "sensor.h"
 
 static volatile uint8_t distance[8];
 static volatile uint8_t sensor_index;
