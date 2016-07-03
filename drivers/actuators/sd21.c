@@ -9,11 +9,11 @@
 
 #include "sd21.h"
 
-TWI_t *sd21_twi;
+static twi_t *sd21_twi;
 
 /**
  */
-void sd21_setup(TWI_t *twi)
+void sd21_setup(twi_t *twi)
 {
 	sd21_twi = twi;
 	twi_master_setup(twi, 100);

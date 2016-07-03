@@ -10,11 +10,15 @@
 
 #include <avr/interrupt.h>
 
-void twi_master_setup(TWI_t *twi, uint16_t freq);
+typedef struct {
+	volatile TWI_t *avr;
+} twi_t;
 
-void twi_master_write_handler(TWI_t *twi);
+void twi_master_setup(twi_t *twi, uint16_t freq);
 
-void twi_write(TWI_t *twi, uint8_t slave_address, uint8_t *write_data,
+void twi_master_write_handler(twi_t *twi);
+
+void twi_write(twi_t *twi, uint8_t slave_address, uint8_t *write_data,
 	       uint8_t bytesToWrite);
 
 /**
@@ -26,7 +30,7 @@ void twi_write(TWI_t *twi, uint8_t slave_address, uint8_t *write_data,
  * \param read_data
  * \param nb_byte_to_read
  */
-void twi_read(TWI_t *twi, uint8_t slave_address, uint8_t *write_data,
+void twi_read(twi_t *twi, uint8_t slave_address, uint8_t *write_data,
 	      uint8_t *read_data, uint8_t nb_byte_to_read);
 
 #endif /* XMEGA_TWI_H_ */

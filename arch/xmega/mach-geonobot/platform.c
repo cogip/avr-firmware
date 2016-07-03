@@ -80,6 +80,10 @@ qdec_t encoders[] = {
 	},
 };
 
+twi_t twi = {
+	.avr = &TWIC,
+};
+
 /* TCE0 ClkIn == ClkPer / 8 == 4000 KHz */
 /* Counter set to 200 for 20KHz output */
 #define TCE0_MOTOR_PRESCALER		TC_CLKSEL_DIV8_gc
@@ -244,7 +248,7 @@ void mach_setup(void)
 	analog_sensor_setup(&ana_sensors);
 
 	/* setup TWI communication with SD21 */
-	sd21_setup(&TWIC);
+	sd21_setup(&twi);
 
 	action_setup(); /* TODO: commenter pour debug */
 

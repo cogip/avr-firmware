@@ -9,7 +9,7 @@
 #define SD21_H_
 
 #include <stdint.h>
-#include <xmega/twi.h>
+#include <twi.h>
 
 #define SD21_ADDRESS	(0xC2 >> 1)
 
@@ -21,7 +21,7 @@
  * \brief setup twi port
  * \param twi twi port
  */
-void sd21_setup(TWI_t *twi);
+void sd21_setup(twi_t *twi);
 
 /**
  * \fn uint8_t sd21_version (void)
