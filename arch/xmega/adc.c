@@ -1,5 +1,5 @@
 /*
- * xmega_adc.c
+ * adc.c
  *
  *  Created on: 8 avr. 2015
  *      Author: ldo

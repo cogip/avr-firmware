@@ -1,12 +1,12 @@
 /**
- * \file xmega_usart.h
+ * \file usart.h
  *
  * \date 23 nov. 2014
  *  \author ldo
  */
 
-#ifndef XMEGA_USART_H_
-#define XMEGA_USART_H_
+#ifndef USART_H_
+#define USART_H_
 
 #include <avr/io.h>
 
@@ -19,4 +19,4 @@ void usart_setup(USART_t *usart);
 /* transmit a char */
 void usart_send(USART_t *usart, uint8_t data);
 
-#endif /* XMEGA_USART_H_ */
+#endif /* USART_H_ */
