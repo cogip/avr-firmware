@@ -68,7 +68,7 @@ ISR(TCF0_OVF_vect)
  *
  */
 void timer_normal_mode_setup(volatile timer_t *tc, uint16_t period,
-			     TC_CLKSEL_t clock_source, func_cb_t handler)
+			     tc_clksel_t clock_source, func_cb_t handler)
 {
 	volatile TC0_t *tc0;
 	/*volatile TC1_t *tc1;*/
@@ -115,7 +115,7 @@ void timer_normal_mode_setup(volatile timer_t *tc, uint16_t period,
  *  Configure TC as a quadrature counter
  */
 void timer_qdec_mode_setup(volatile timer_t *tc,
-			   TC_EVSEL_t event_channel,
+			   tc_evsel_t event_channel,
 			   const uint16_t line_count)
 {
 	volatile TC0_t *tc0;
@@ -152,7 +152,7 @@ void timer_qdec_mode_setup(volatile timer_t *tc,
  * the CNT and CCx registers
  */
 void timer_pwm_mode_setup(volatile timer_t *tc, const uint8_t period,
-			  TC_CLKSEL_t prescaler)
+			  tc_clksel_t prescaler)
 {
 	volatile TC0_t *tc0;
 	/*volatile TC0_t *tc1;*/

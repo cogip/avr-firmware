@@ -14,18 +14,17 @@
 #include "utils.h"
 
 typedef void timer_t;
+typedef TC_CLKSEL_t tc_clksel_t;
+typedef TC_EVSEL_t tc_evsel_t;
 
 void timer_normal_mode_setup(volatile timer_t *tc, uint16_t period,
-			     TC_CLKSEL_t clock_source, func_cb_t handler);
+			     tc_clksel_t clock_source, func_cb_t handler);
 
-void timer_qdec_mode_setup(volatile timer_t *tc, TC_EVSEL_t event_channel,
-			   const uint16_t line_count);
-
-void timer_qdec_mode_setup(volatile timer_t *tc, TC_EVSEL_t event_channel,
+void timer_qdec_mode_setup(volatile timer_t *tc, tc_evsel_t event_channel,
 			   const uint16_t line_count);
 
 void timer_pwm_mode_setup(volatile timer_t *tc, const uint8_t period,
-			  TC_CLKSEL_t prescaler);
+			  tc_clksel_t prescaler);
 
 void timer_pwm_enable(volatile timer_t *tc, const uint8_t channel);
 
