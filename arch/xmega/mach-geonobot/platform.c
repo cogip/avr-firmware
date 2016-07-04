@@ -54,6 +54,42 @@
 
 analog_sensors_t ana_sensors = {
 	.adc = &ADCA,
+
+	.sensors_nb = 8,
+	.sensors = {
+		[0] = {
+			.pin_id = PIN0_bp,
+			.adc2cm_cb = gp2y0a21_read,
+		},
+		[1] = {
+			.pin_id = PIN1_bp,
+			.adc2cm_cb = gp2y0a21_read,
+		},
+		[2] = {
+			.pin_id = PIN2_bp,
+			.adc2cm_cb = gp2y0a21_read,
+		},
+		[3] = {
+			.pin_id = PIN3_bp,
+			.adc2cm_cb = gp2y0a21_read,
+		},
+		[4] = {
+			.pin_id = PIN4_bp,
+			.adc2cm_cb = gp2y0a21_read,
+		},
+		[5] = {
+			.pin_id = PIN5_bp,
+			.adc2cm_cb = gp2y0a21_read,
+		},
+		[6] = {
+			.pin_id = PIN6_bp,
+			.adc2cm_cb = gp2y0a21_read,
+		},
+		[7] = {
+			.pin_id = PIN7_bp,
+			.adc2cm_cb = gp2y0a21_read,
+		},
+	}
 };
 
 qdec_t encoders[] = {
@@ -199,7 +235,6 @@ pose_t mach_trajectory_get_route_update(void)
 
 uint8_t mach_stop_robot(void)
 {
-	uint8_t all_irs[] = { 2, 3, 4, 5, 6, 7 };
 	uint8_t stop = 0;
 
 	if (action_require_stop_robot())
@@ -218,8 +253,13 @@ uint8_t mach_stop_robot(void)
 	else
 #endif
 
-	if (analog_sensor_detect_obstacle(all_irs, 6) && get_route_index())
-		stop = 2;
+	{
+		uint8_t all_irs[] = { 2, 3, 4, 5, 6, 7 };
+
+		if (analog_sensor_detect_obstacle(&ana_sensors, all_irs, 6) &&
+		    get_route_index())
+			stop = 2;
+	}
 #if 0
 	if ((stop > 1) && (get_can_retro()))
 	down_route_index();

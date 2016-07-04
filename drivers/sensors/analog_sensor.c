@@ -9,11 +9,9 @@
 #include "analog_sensor.h"
 #include "log.h"
 
-static volatile uint8_t distance[8];
-static volatile uint8_t sensor_index;
 
-static volatile uint8_t adc_flag;
-static volatile uint16_t adc_result;
+static uint8_t adc_flag;
+static uint16_t adc_result;
 
 static void irq_adc_handler(uint16_t value)
 {
@@ -72,15 +70,18 @@ uint8_t gp2y0a21_read(uint16_t adc)
 void analog_sensor_read(analog_sensors_t *as)
 {
 	if (adc_flag) {
-		distance[sensor_index] = gp2y0a21_read(adc_result);
+		uint8_t i = as->sensor_index;
+
+		as->sensors[i].latest_dist = gp2y0a21_read(adc_result);
 
 		print_dbg("index = %d\tdist = %d\n",
-			   sensor_index, distance[sensor_index]);
+			   i, as->sensors[i].latest_dist);
 
-		sensor_index++;
-		sensor_index %= 7;
+		/* round robin acquisition using 1 ADC channel */
+		as->sensor_index += 1;
+		as->sensor_index %= as->sensors_nb;
 
-		adc_async_read_start(as->adc, sensor_index);
+		adc_async_read_start(as->adc, as->sensor_index);
 
 		adc_flag = 0;
 	}
@@ -100,14 +101,18 @@ void analog_sensor_setup(analog_sensors_t *as)
  * FIXME: following should be put elsewhere...
  */
 
-uint8_t analog_sensor_detect_obstacle(uint8_t *ir_ids, uint8_t ir_nb)
+uint8_t analog_sensor_detect_obstacle(analog_sensors_t *as,
+				      uint8_t *ir_ids,
+				      uint8_t ir_nb)
 {
-	uint8_t stop = 0;
 	uint8_t i;
+	uint8_t stop = 0;
 
 	for (i = 0; i < ir_nb; i++) {
-		if ((distance[ir_ids[i]] < 20) && (distance[ir_ids[i]] != 0)) {
+		if ((as->sensors[ir_ids[i]].latest_dist < 20) &&
+		    (as->sensors[ir_ids[i]].latest_dist != 0)) {
 			stop = 1;
+			break;
 		}
 	}
 
