@@ -11,31 +11,24 @@
 #include <stdint.h>
 #include <twi.h>
 
+typedef struct {
+	twi_t *twi;
+	uint16_t twi_speed_khz;
+
+	uint8_t servos_nb;
+	struct {
+		uint16_t value_init; /* pulse width in us */
+	} servos[];
+} sd21_t;
+
 #define SD21_ADDRESS	(0xC2 >> 1)
 
 #define REG_VERSION	64
 #define REG_VOLTAGE	65
 
-/**
- * \fn void sd21_setup (TWI_t *twi)
- * \brief setup twi port
- * \param twi twi port
- */
-void sd21_setup(twi_t *twi);
-
-/**
- * \fn uint8_t sd21_version (void)
- * \brief
- * \return software revision number
- */
-uint8_t sd21_version(void);
-
-/**
- * \fn double sd21_battery_voltage (void)
- * \brief
- * \return servo battery voltage [V]
- */
-double sd21_battery_voltage(void);
+void sd21_setup(sd21_t *obj);
+uint8_t sd21_version(sd21_t *obj);
+double sd21_battery_voltage(sd21_t *obj);
 
 /**
  * \fn void sd21_send (uint8_t servo, uint8_t speed, uint16_t position)

@@ -80,8 +80,50 @@ qdec_t encoders[] = {
 	},
 };
 
-twi_t twi = {
-	.avr = &TWIC,
+sd21_t sd21 = {
+	.twi = &TWIC,
+	.twi_speed_khz = 100,
+
+	.servos_nb = 11,
+	.servos = {
+		/* Right hatch */
+		[2] = {
+			.value_init = 800,
+		},
+		/* Left hatch */
+		[3] = {
+			.value_init = 2000,
+		},
+		/* Right arm */
+		[4] = {
+			.value_init = 2400,
+		},
+		/* Left arm */
+		[5] = {
+			.value_init = 600,
+		},
+		/* Glasses right arm */
+		[6] = {
+			.value_init = 600,
+		},
+		/* Glasses left arm */
+		[7] = {
+			.value_init = 2600,
+		},
+
+		/* Clamp */
+		[8] = {
+			.value_init = 1700,
+		},
+		/* Right door */
+		[9] = {
+			.value_init = 1350,
+		},
+		/* Left door */
+		[10] = {
+			.value_init = 875,
+		},
+	},
 };
 
 /* TCE0 ClkIn == ClkPer / 8 == 4000 KHz */
@@ -248,7 +290,7 @@ void mach_setup(void)
 	analog_sensor_setup(&ana_sensors);
 
 	/* setup TWI communication with SD21 */
-	sd21_setup(&twi);
+	sd21_setup(&sd21);
 
 	action_setup(); /* TODO: commenter pour debug */
 

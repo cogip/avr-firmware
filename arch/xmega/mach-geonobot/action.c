@@ -50,52 +50,22 @@ void reset_flag_tower_down(void)
  */
 void action_setup(void)
 {
-	sd21_control_servo(1, 0, 860);
-	sd21_control_servo(2, 0, 2040); /* TODO: gresille */
-	sd21_control_servo(3, 0, 800);
-	sd21_control_servo(4, 0, 2000);
-	sd21_control_servo(5, 0, 2400);
-	sd21_control_servo(6, 0, 600);
-	sd21_control_servo(7, 0, 600);
-	sd21_control_servo(8, 0, 2600);
-	close_door();
-
 	/* TODO: remove static variable already set to 0 (tbc) */
 	flag_opened_clamp = 0;
 	released_right_cup = 0;
 	released_left_cup = 0;
 }
 
-/**
- * charge pop-corn
- */
-void load_pop_corn(void)
-{
-	sd21_control_servo(3, 0, 1600);
-	sd21_control_servo(4, 0, 1200);
-	sd21_control_servo(5, 0, 600);
-	sd21_control_servo(6, 0, 2400);
-}
-
-/**
- * depose pop corn
- */
-void dump_pop_corn(void)
-{
-	sd21_control_servo(1, 0, 1600);
-	sd21_control_servo(2, 0, 1500);
-}
-
 void open_clap_arm(void)
 {
-	sd21_control_servo(5, 0, 1200);
-	sd21_control_servo(6, 0, 1800);
+	sd21_control_servo(4, 0, 1200);
+	sd21_control_servo(5, 0, 1800);
 }
 
 void close_clap_arm(void)
 {
-	sd21_control_servo(5, 0, 2400);
-	sd21_control_servo(6, 0, 600);
+	sd21_control_servo(4, 0, 2400);
+	sd21_control_servo(5, 0, 600);
 }
 
 /**
@@ -103,12 +73,12 @@ void close_clap_arm(void)
  */
 void close_right_cup(void)
 {
-	sd21_control_servo(7, 0, 2450);
+	sd21_control_servo(6, 0, 2450);
 }
 
 void open_right_cup(void)
 {
-	sd21_control_servo(7, 0, 600);
+	sd21_control_servo(6, 0, 600);
 }
 
 /**
@@ -116,7 +86,7 @@ void open_right_cup(void)
  */
 void close_left_cup(void)
 {
-	sd21_control_servo(8, 0, 800);
+	sd21_control_servo(7, 0, 800);
 }
 
 /**
@@ -124,18 +94,18 @@ void close_left_cup(void)
  */
 void open_left_cup(void)
 {
-	sd21_control_servo(8, 0, 2600);
+	sd21_control_servo(7, 0, 2600);
 }
 
 void close_pince(void)
 {
-	sd21_control_servo(9, 0, 1700);
+	sd21_control_servo(8, 0, 1700);
 	flag_opened_clamp = 0;
 }
 
 void open_pince(void)
 {
-	sd21_control_servo(9, 0, 2120);
+	sd21_control_servo(8, 0, 2120);
 	flag_opened_clamp = 1;
 }
 
@@ -144,8 +114,8 @@ void open_pince(void)
  */
 void close_door(void)
 {
-	sd21_control_servo(10, 0, 1350);
-	sd21_control_servo(11, 0, 875);
+	sd21_control_servo(9, 0, 1350);
+	sd21_control_servo(10, 0, 875);
 }
 
 /**
@@ -153,8 +123,8 @@ void close_door(void)
  */
 void open_door(void)
 {
-	sd21_control_servo(10, 0, 700);
-	sd21_control_servo(11, 0, 1500);
+	sd21_control_servo(9, 0, 700);
+	sd21_control_servo(10, 0, 1500);
 }
 
 /**
@@ -162,8 +132,8 @@ void open_door(void)
  */
 void open_half_door(void)
 {
-	sd21_control_servo(10, 0, 1250);
-	sd21_control_servo(11, 0, 900);
+	sd21_control_servo(9, 0, 1250);
+	sd21_control_servo(10, 0, 900);
 }
 
 void spot_up(void)

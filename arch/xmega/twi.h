@@ -10,9 +10,7 @@
 
 #include <avr/interrupt.h>
 
-typedef struct {
-	volatile TWI_t *avr;
-} twi_t;
+typedef TWI_t twi_t;
 
 void twi_master_setup(twi_t *twi, uint16_t freq);
 
