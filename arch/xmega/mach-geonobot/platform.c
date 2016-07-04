@@ -241,16 +241,6 @@ static void mach_pinmux_setup(void)
 	PORTC.DIRCLR = PIN2_bm; /*!< PC2 (RDX0) as input pin */
 	PORTC.DIRSET = PIN3_bm; /*!< PC3 (TXD0) as output pin */
 
-	/* PORTF encoder counter (PF4 and PF5) as input pin,
-	 * Set QDPH0 and QDPH1 sensing level index not used here
-	 */
-	PORTF.DIRCLR = PIN4_bm;
-	PORTF.DIRCLR = PIN5_bm;
-	/* A : QDPH0 - D0 */
-	PORTF.PIN4CTRL = PORT_ISC_LEVEL_gc | PORT_OPC_PULLUP_gc;
-	/* B : QDPH90 - D1 */
-	PORTF.PIN5CTRL = PORT_ISC_LEVEL_gc | PORT_OPC_PULLUP_gc;
-
 	/**
 	 * PORTH and PORTJ as digital input
 	 */
