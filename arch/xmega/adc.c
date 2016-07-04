@@ -41,7 +41,7 @@ void adc_setup(adc_t *adc, adc_cb_t callback)
 	/* ADC reference selection */
 #if defined(__AVR_ATxmega128A1__)
 	adc->REFCTRL = ADC_REFSEL_VCC_gc; /*  VCC /1.6 = 2.0625 */
-#elif  defined(__AVR_ATxmega256A3U__)
+#elif  defined(__AVR_ATxmega128A3U__) || defined(__AVR_ATxmega256A3U__)
 	adc->REFCTRL = ADC_REFSEL_INTVCC_gc; /*  VCC /1.6 = 2.0625 */
 #else
 #error "MCU not supported"
