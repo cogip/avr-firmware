@@ -1,0 +1,5 @@
+menu "Drivers"
+
+source drivers/sensors/Kconfig
+
+endmenu

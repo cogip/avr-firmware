@@ -11,6 +11,7 @@ choice
 
 config BIG_BOT2015
 	bool "Geonobot BR (2015)"
+	#select ANALOG_SENSORS
 	help
 	  This will build the Big bot firmware.
 
@@ -69,3 +70,5 @@ config DEFAULT_LOGLEVEL
 	  Configure loglevel. Valid loglevels are 0 for error logs to 3
 	  which activates all log for: errors(0), warning(1), info(2) and
 	  debug(3).
+
+source drivers/Kconfig

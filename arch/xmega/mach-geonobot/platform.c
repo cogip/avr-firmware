@@ -52,6 +52,7 @@
  * use TCE1, TCF0 and TCF1 timers to decode quadrature
  */
 
+#ifdef CONFIG_ANALOG_SENSORS
 analog_sensors_t ana_sensors = {
 	.adc = &ADCA,
 
@@ -91,6 +92,7 @@ analog_sensors_t ana_sensors = {
 		},
 	}
 };
+#endif /* CONFIG_ANALOG_SENSORS */
 
 qdec_t encoders[] = {
 	{
@@ -216,7 +218,9 @@ void mach_evtloop_before_game(void)
 void mach_evtloop_in_game(void)
 {
 	attraper_cup();
+#ifdef CONFIG_ANALOG_SENSORS
 	analog_sensor_read(&ana_sensors);
+#endif
 	gestion_tour();
 }
 
@@ -253,6 +257,7 @@ uint8_t mach_stop_robot(void)
 	else
 #endif
 
+#ifdef CONFIG_ANALOG_SENSORS
 	{
 		uint8_t all_irs[] = { 2, 3, 4, 5, 6, 7 };
 
@@ -260,6 +265,7 @@ uint8_t mach_stop_robot(void)
 		    get_route_index())
 			stop = 2;
 	}
+#endif
 #if 0
 	if ((stop > 1) && (get_can_retro()))
 	down_route_index();
@@ -316,8 +322,10 @@ void mach_setup(void)
 	log_init(usartc0_putchar);
 #endif
 
+#ifdef CONFIG_ANALOG_SENSORS
 	/* setup analog conversion */
 	analog_sensor_setup(&ana_sensors);
+#endif
 
 	/* setup TWI communication with SD21 */
 	sd21_setup(&sd21);

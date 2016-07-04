@@ -1,0 +1,10 @@
+
+menu "Installed sensors"
+
+config ANALOG_SENSORS
+	bool "Analog sensors"
+	default n
+	help
+	   Platform should select this switch if analog sensors are used.
+
+endmenu

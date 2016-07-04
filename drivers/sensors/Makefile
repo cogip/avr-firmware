@@ -1,1 +1,1 @@
-src-y				+= drivers/sensors/analog_sensor.c
+src-$(CONFIG_ANALOG_SENSORS)	+= drivers/sensors/analog_sensor.c
