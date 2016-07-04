@@ -28,11 +28,19 @@ void hbridge_setup(hbridge_t *b)
 {
 	uint8_t i;
 
-	/* Configure PWM pin as output */
-	for (i = 0; i < b->engine_nb; i++)
+	for (i = 0; i < b->engine_nb; i++) {
+		engine_t *e = &b->engines[i];
+
+		/* Configure PWM pin as output */
 		gpio_set_direction(b->pwm_port,
-				   b->engines[i].pwm_channel,
+				   e->pwm_channel,
 				   GPIO_DIR_OUT);
+
+		/* Configure direction pin as output */
+		gpio_set_direction(e->direction_pin_port,
+				   e->direction_pin_id,
+				   GPIO_DIR_OUT);
+	}
 
 	/* setup frequency waveform generation (PWM) */
 	timer_pwm_mode_setup(b->tc, b->period, b->prescaler);

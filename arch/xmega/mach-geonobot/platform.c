@@ -241,9 +241,6 @@ static void mach_pinmux_setup(void)
 	PORTC.DIRCLR = PIN2_bm; /*!< PC2 (RDX0) as input pin */
 	PORTC.DIRSET = PIN3_bm; /*!< PC3 (TXD0) as output pin */
 
-	/* Configure PD4, PD5 and PD6 as output pin */
-	PORTD.DIR = 0xFF;
-
 	/* Configure PE0, PE1 and PE2 as output pin */
 	PORTE.DIRSET = PIN2_bm;
 
