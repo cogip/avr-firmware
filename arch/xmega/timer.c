@@ -24,7 +24,7 @@
 #if defined(__AVR_ATxmega128A1__)
 #define IS_TIMER1(p)	((p) == &TCC1 || (p) == &TCD1 || \
 			 (p) == &TCE1 || (p) == &TCF1)
-#elif  defined(__AVR_ATxmega256A3U__)
+#elif defined(__AVR_ATxmega128A3U__) || defined(__AVR_ATxmega256A3U__)
 #define IS_TIMER1(p)	((p) == &TCC1 || (p) == &TCD1 || \
 			 (p) == &TCE1)
 #else
