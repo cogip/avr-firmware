@@ -1,7 +1,36 @@
 #
-# Geonobot configuration
+# MCU firmware configuration
 #
-mainmenu "Geonobot configuration"
+mainmenu "MCU firmware configuration"
+
+menu "Platform configuration"
+
+choice
+	prompt "Target"
+	default BIG_BOT2015
+
+config BIG_BOT2015
+	bool "Geonobot BR (2015)"
+	help
+	  This will build the Big bot firmware.
+
+#config BIG_BOT2016
+#	bool "Cortex (2016)"
+#	help
+#	  This will build the Big bot firmware.
+#
+#config SMALL_BOT2016
+#	bool "Minus (2016)"
+#	help
+#	  This will build the Small bot firmware.
+
+endchoice
+
+config PLATFORM_NAME
+	string
+	default "geonobot" if BIG_BOT2015
+	default "cortex" if BIG_BOT2016
+	default "minus" if SMALL_BOT2016
 
 config CROSS_COMPILE
         string "Cross-compiler prefix"
@@ -12,7 +41,8 @@ config CROSS_COMPILE
 
 config MCU
 	string "MCU type"
-	default "atxmega128a1"
+	default "atxmega256a3u" if BIG_BOT2016 || SMALL_BOT2016
+	default "atxmega128a1" if BIG_BOT2015
 	help
 	  This define the argument to "-mcu" option while calling the
 	  cross-compiler.
@@ -22,6 +52,8 @@ config F_CPU
 	default 32000000
 	help
 	  This define the micro-controller CPU frequency (default: 32 MHz).
+
+endmenu # "Platform configuration"
 
 config ENABLE_LOGGING
 	bool "Enable logs on UART"
@@ -37,18 +69,3 @@ config DEFAULT_LOGLEVEL
 	  Configure loglevel. Valid loglevels are 0 for error logs to 3
 	  which activates all log for: errors(0), warning(1), info(2) and
 	  debug(3).
-
-choice
-	prompt "Platform selection"
-	default BIG_BOT
-
-config BIG_BOT2015
-	bool "Geonobot 2015"
-	help
-	  This will build the Big bot firmware.
-
-endchoice
-
-config PLATFORM_NAME
-	string
-	default "geonobot" if BIG_BOT2015
