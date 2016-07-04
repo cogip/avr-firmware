@@ -241,9 +241,6 @@ static void mach_pinmux_setup(void)
 	PORTC.DIRCLR = PIN2_bm; /*!< PC2 (RDX0) as input pin */
 	PORTC.DIRSET = PIN3_bm; /*!< PC3 (TXD0) as output pin */
 
-	/* Configure PE0, PE1 and PE2 as output pin */
-	PORTE.DIRSET = PIN2_bm;
-
 	/* PORTF encoder counter (PF4 and PF5) as input pin,
 	 * Set QDPH0 and QDPH1 sensing level index not used here
 	 */
