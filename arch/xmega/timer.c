@@ -21,8 +21,15 @@
 #define IS_TIMER0(p)	((p) == &TCC0 || (p) == &TCD0 || \
 			 (p) == &TCE0 || (p) == &TCF0)
 
+#if defined(__AVR_ATxmega128A1__)
 #define IS_TIMER1(p)	((p) == &TCC1 || (p) == &TCD1 || \
 			 (p) == &TCE1 || (p) == &TCF1)
+#elif  defined(__AVR_ATxmega256A3U__)
+#define IS_TIMER1(p)	((p) == &TCC1 || (p) == &TCD1 || \
+			 (p) == &TCE1)
+#else
+#error "MCU not supported"
+#endif
 
 static func_cb_t irq_tcc0_ovf_handler;
 static func_cb_t irq_tcd0_ovf_handler;
