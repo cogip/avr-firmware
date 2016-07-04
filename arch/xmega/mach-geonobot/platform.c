@@ -7,7 +7,6 @@
 #include "log.h"
 #include "platform.h"
 #include "route.h"
-#include "sd21.h"
 #include "sensor.h"
 
 /**
@@ -86,42 +85,49 @@ sd21_t sd21 = {
 
 	.servos_nb = 11,
 	.servos = {
-		/* Right hatch */
-		[2] = {
-			.value_init = 800,
-		},
-		/* Left hatch */
-		[3] = {
-			.value_init = 2000,
-		},
+		/* [0...3] had no related action, not used then */
 		/* Right arm */
 		[4] = {
 			.value_init = 2400,
+			.value_open = 1200,
+			.value_close = 2400,
 		},
 		/* Left arm */
 		[5] = {
 			.value_init = 600,
+			.value_open = 1800,
+			.value_close = 600,
 		},
 		/* Glasses right arm */
 		[6] = {
 			.value_init = 600,
+			.value_open = 600,
+			.value_close = 2450,
 		},
 		/* Glasses left arm */
 		[7] = {
 			.value_init = 2600,
+			.value_open = 2600,
+			.value_close = 800,
 		},
 
 		/* Clamp */
 		[8] = {
 			.value_init = 1700,
+			.value_open = 2120,
+			.value_close = 1700,
 		},
 		/* Right door */
 		[9] = {
 			.value_init = 1350,
+			.value_open = 700,
+			.value_close = 1350,
 		},
 		/* Left door */
 		[10] = {
 			.value_init = 875,
+			.value_open = 1500,
+			.value_close = 875,
 		},
 	},
 };

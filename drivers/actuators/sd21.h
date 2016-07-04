@@ -11,6 +11,9 @@
 #include <stdint.h>
 #include <twi.h>
 
+#define SD21_SERVO_OPEN		0
+#define SD21_SERVO_CLOSE	1
+
 typedef struct {
 	twi_t *twi;
 	uint16_t twi_speed_khz;
@@ -18,25 +21,15 @@ typedef struct {
 	uint8_t servos_nb;
 	struct {
 		uint16_t value_init; /* pulse width in us */
+		uint16_t value_open;
+		uint16_t value_close;
 	} servos[];
 } sd21_t;
-
-#define SD21_ADDRESS	(0xC2 >> 1)
-
-#define REG_VERSION	64
-#define REG_VOLTAGE	65
 
 void sd21_setup(sd21_t *obj);
 uint8_t sd21_version(sd21_t *obj);
 double sd21_battery_voltage(sd21_t *obj);
 
-/**
- * \fn void sd21_send (uint8_t servo, uint8_t speed, uint16_t position)
- * \brief
- * \param servo : servo number (to 1 from 21)
- * \param speed : servo speed (0 is the maximum speed)
- * \param position : pulse width in us
- */
-void sd21_control_servo(uint8_t servo, uint8_t speed, uint16_t position);
+void sd21_control_servo(sd21_t * obj, uint8_t servo_id, uint8_t position);
 
 #endif /* SD21_H_ */

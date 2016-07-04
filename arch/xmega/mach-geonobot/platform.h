@@ -2,8 +2,9 @@
 #define PLATFORM_H_
 
 #include "analog_sensor.h"
-#include "qdec.h"
 #include "hbridge.h"
+#include "qdec.h"
+#include "sd21.h"
 
 /*
  * Machine parameters
@@ -24,6 +25,7 @@
 
 extern analog_sensors_t ana_sensors;
 extern qdec_t encoders[];
+extern sd21_t sd21;
 extern hbridge_t hbridges;
 
 uint8_t mach_detect_start(void);

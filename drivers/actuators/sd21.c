@@ -7,23 +7,13 @@
  * \brief sd21 library use twi library
  */
 
+#include "log.h"
 #include "sd21.h"
 
-/**
- */
-void sd21_setup(sd21_t *obj)
-{
-	uint8_t i;
+#define SD21_ADDRESS	(0xC2 >> 1)
 
-	twi_master_setup(obj->twi, obj->twi_speed_khz);
-
-	for (i = 0; i < obj->servos_nb; i++) {
-		uint16_t value_init = obj->servos[i].value_init;
-
-		if (value_init)
-			sd21_control_servo(/* obj, */i, 0, value_init);
-	}
-}
+#define REG_VERSION	64
+#define REG_VOLTAGE	65
 
 /**
  * Register 64 is the software revision number
@@ -59,21 +49,62 @@ double sd21_battery_voltage(sd21_t *obj)
  * Tower Pro : min = 600 - max = 2400
  * Emax : min = 600 - max = 2600
  */
-static sd21_t *singleton;
-void sd21_control_servo(/*sd21_t *obj, */uint8_t servo, uint8_t speed, uint16_t position)
+/**
+ * \fn void sd21_send (uint8_t servo, uint8_t speed, uint16_t position)
+ * \brief
+ * \param servo : servo number (to 1 from 21)
+ * \param speed : servo speed (0 is the maximum speed)
+ * \param position : pulse width in us
+ */
+static void sd21_send_twi_cmd(twi_t *twi, uint8_t servo, uint8_t speed, uint16_t position)
 {
 	uint8_t reg = (servo) * 3;
 	uint8_t data[2];
 
 	data[0] = reg;
 	data[1] = speed;
-	twi_write(singleton->twi, SD21_ADDRESS, data, 2);
+	twi_write(twi, SD21_ADDRESS, data, 2);
 
 	data[0] = reg + 1;
 	data[1] = (uint8_t) (position & 0x00ff);
-	twi_write(singleton->twi, SD21_ADDRESS, data, 2);
+	twi_write(twi, SD21_ADDRESS, data, 2);
 
 	data[0] = reg + 2;
 	data[1] = position >> 8;
-	twi_write(singleton->twi, SD21_ADDRESS, data, 2);
+	twi_write(twi, SD21_ADDRESS, data, 2);
+}
+
+void sd21_control_servo(sd21_t * obj, uint8_t servo_id, uint8_t position)
+{
+	uint16_t value;
+
+	switch(position) {
+	case SD21_SERVO_OPEN:
+		value = obj->servos[servo_id].value_open;
+		break;
+	case SD21_SERVO_CLOSE:
+		value = obj->servos[servo_id].value_close;
+		break;
+	default:
+		print_err("Invalid position\n");
+		return;
+	}
+
+	sd21_send_twi_cmd(obj->twi, servo_id, 0, value);
+}
+
+/**
+ */
+void sd21_setup(sd21_t *obj)
+{
+	uint8_t i;
+
+	twi_master_setup(obj->twi, obj->twi_speed_khz);
+
+	for (i = 0; i < obj->servos_nb; i++) {
+		uint16_t value_init = obj->servos[i].value_init;
+
+		if (value_init)
+			sd21_send_twi_cmd(obj->twi, i, 0, value_init);
+	}
 }

@@ -58,14 +58,14 @@ void action_setup(void)
 
 void open_clap_arm(void)
 {
-	sd21_control_servo(4, 0, 1200);
-	sd21_control_servo(5, 0, 1800);
+	sd21_control_servo(&sd21, 4, SD21_SERVO_OPEN);
+	sd21_control_servo(&sd21, 5, SD21_SERVO_OPEN);
 }
 
 void close_clap_arm(void)
 {
-	sd21_control_servo(4, 0, 2400);
-	sd21_control_servo(5, 0, 600);
+	sd21_control_servo(&sd21, 4, SD21_SERVO_CLOSE);
+	sd21_control_servo(&sd21, 5, SD21_SERVO_CLOSE);
 }
 
 /**
@@ -73,12 +73,12 @@ void close_clap_arm(void)
  */
 void close_right_cup(void)
 {
-	sd21_control_servo(6, 0, 2450);
+	sd21_control_servo(&sd21, 6, SD21_SERVO_CLOSE);
 }
 
 void open_right_cup(void)
 {
-	sd21_control_servo(6, 0, 600);
+	sd21_control_servo(&sd21, 6, SD21_SERVO_OPEN);
 }
 
 /**
@@ -86,7 +86,7 @@ void open_right_cup(void)
  */
 void close_left_cup(void)
 {
-	sd21_control_servo(7, 0, 800);
+	sd21_control_servo(&sd21, 7, SD21_SERVO_CLOSE);
 }
 
 /**
@@ -94,18 +94,18 @@ void close_left_cup(void)
  */
 void open_left_cup(void)
 {
-	sd21_control_servo(7, 0, 2600);
+	sd21_control_servo(&sd21, 7, SD21_SERVO_OPEN);
 }
 
 void close_pince(void)
 {
-	sd21_control_servo(8, 0, 1700);
+	sd21_control_servo(&sd21, 8, SD21_SERVO_CLOSE);
 	flag_opened_clamp = 0;
 }
 
 void open_pince(void)
 {
-	sd21_control_servo(8, 0, 2120);
+	sd21_control_servo(&sd21, 8, SD21_SERVO_OPEN);
 	flag_opened_clamp = 1;
 }
 
@@ -114,8 +114,8 @@ void open_pince(void)
  */
 void close_door(void)
 {
-	sd21_control_servo(9, 0, 1350);
-	sd21_control_servo(10, 0, 875);
+	sd21_control_servo(&sd21, 9, SD21_SERVO_CLOSE);
+	sd21_control_servo(&sd21, 10, SD21_SERVO_CLOSE);
 }
 
 /**
@@ -123,8 +123,8 @@ void close_door(void)
  */
 void open_door(void)
 {
-	sd21_control_servo(9, 0, 700);
-	sd21_control_servo(10, 0, 1500);
+	sd21_control_servo(&sd21, 9, SD21_SERVO_OPEN);
+	sd21_control_servo(&sd21, 10, SD21_SERVO_OPEN);
 }
 
 /**
@@ -132,8 +132,14 @@ void open_door(void)
  */
 void open_half_door(void)
 {
+#if 0
+	/* TODO */
+	sd21_control_servo(&sd21, 9, SD21_SERVO_OPEN_HALF);
+	sd21_control_servo(&sd21, 10, SD21_SERVO_OPEN_HALF);
+
 	sd21_control_servo(9, 0, 1250);
 	sd21_control_servo(10, 0, 900);
+#endif
 }
 
 void spot_up(void)
