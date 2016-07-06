@@ -42,7 +42,7 @@ config CROSS_COMPILE
 
 config MCU
 	string "MCU type"
-	default "atxmega256a3u" if BIG_BOT2016 || SMALL_BOT2016
+	default "atxmega128a3u" if BIG_BOT2016 || SMALL_BOT2016
 	default "atxmega128a1" if BIG_BOT2015
 	help
 	  This define the argument to "-mcu" option while calling the
