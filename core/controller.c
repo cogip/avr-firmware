@@ -57,7 +57,7 @@ static polar_t compute_error(const pose_t p1, const pose_t p2)
  * \param command : computed speed by position PID controller
  * \param final_speed : maximum speed
  * \param real_speed
- * \return speed_setpoint
+ * \return speed_order
  */
 static double limit_speed_command(double command,
 				  double final_speed,
@@ -85,13 +85,13 @@ static double limit_speed_command(double command,
 /**
  *
  */
-polar_t speed_controller(polar_t speed_setpoint, polar_t current_speed)
+polar_t speed_controller(polar_t speed_order, polar_t speed_current)
 {
 	polar_t speed_error;
 	polar_t command;
 
-	speed_error.distance = speed_setpoint.distance - current_speed.distance;
-	speed_error.angle = speed_setpoint.angle - current_speed.angle;
+	speed_error.distance = speed_order.distance - speed_current.distance;
+	speed_error.angle = speed_order.angle - speed_current.angle;
 
 	command.distance = pid_controller(&linear_speed_pid,
 					  speed_error.distance);
@@ -101,21 +101,21 @@ polar_t speed_controller(polar_t speed_setpoint, polar_t current_speed)
 	return command;
 }
 
-polar_t controller_update(pose_t pose_setpoint,
-			  pose_t current_pose,
-			  polar_t speed_setpoint,
-			  polar_t current_speed)
+polar_t controller_update(pose_t pose_order,
+			  pose_t pose_current,
+			  polar_t speed_order,
+			  polar_t speed_current)
 {
 	/* ******************** position pid controller ******************** */
 
 	/* compute position error */
-	polar_t position_error = compute_error(pose_setpoint, current_pose);
+	polar_t position_error = compute_error(pose_order, pose_current);
 
 	pose_reached = 0;
 
 	/* position correction */
 	if (position_error.distance > 500) {
-		position_error.angle -= current_pose.O; /* [pulse] */
+		position_error.angle -= pose_current.O; /* [pulse] */
 
 		if (fabs(position_error.angle) > (M_PI * WHEELS_DISTANCE / 2.0)) {
 			position_error.distance = -position_error.distance;
@@ -131,7 +131,7 @@ polar_t controller_update(pose_t pose_setpoint,
 		pid_reset(&linear_pose_pid);
 
 		/* unit in [pulse] */
-		position_error.angle = pose_setpoint.O - current_pose.O;
+		position_error.angle = pose_order.O - pose_current.O;
 
 		/* orientation is reached */
 		if (fabs(position_error.angle) < 100) {
@@ -153,14 +153,14 @@ polar_t controller_update(pose_t pose_setpoint,
 	polar_t speed;
 
 	speed.distance = limit_speed_command(command.distance,
-					     speed_setpoint.distance,
-					     current_speed.distance);
+					     speed_order.distance,
+					     speed_current.distance);
 	speed.angle = limit_speed_command(command.angle,
-					  speed_setpoint.angle,
-					  current_speed.angle);
+					  speed_order.angle,
+					  speed_current.angle);
 
 	/* ********************** speed pid controller ********************* */
-	return speed_controller(speed, current_speed);
+	return speed_controller(speed, speed_current);
 }
 
 inline uint8_t controller_get_pose_reached()
