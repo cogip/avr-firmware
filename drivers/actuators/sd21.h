@@ -32,4 +32,8 @@ double sd21_battery_voltage(sd21_t *obj);
 
 void sd21_control_servo(sd21_t * obj, uint8_t servo_id, uint8_t position);
 
+#if defined(CONFIG_CALIBRATION)
+void sd21_enter_calibration(sd21_t *obj);
+#endif
+
 #endif /* SD21_H_ */

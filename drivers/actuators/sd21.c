@@ -7,6 +7,7 @@
  * \brief sd21 library use twi library
  */
 
+#include <stdio.h>
 #include "log.h"
 #include "sd21.h"
 
@@ -14,6 +15,11 @@
 
 #define REG_VERSION	64
 #define REG_VOLTAGE	65
+
+/* calibration constants */
+#define CAL_RST 1600
+#define CAL_MIN 600
+#define CAL_MAX 2600
 
 /**
  * Register 64 is the software revision number
@@ -92,6 +98,127 @@ void sd21_control_servo(sd21_t * obj, uint8_t servo_id, uint8_t position)
 
 	sd21_send_twi_cmd(obj->twi, servo_id, 0, value);
 }
+
+#if defined(CONFIG_CALIBRATION)
+static void sd21_calibration_usage(sd21_t *obj)
+{
+	printf("\n>>> Entering sd21 calibration\n\n");
+
+	printf("servos_nb = %d\n\n", obj->servos_nb);
+
+	printf("\t'd' to dump all settings\n");
+	printf("\t'n' to select next servo\n");
+	printf("\t'b' to select prev servo\n");
+	printf("\t's' to switch current setting (init, open or close)\n");
+	printf("\t'r' to reset current setting to %d\n", CAL_RST);
+	printf("\t'+' to add 25\n");
+	printf("\t'-' to sub 25\n");
+	printf("\n");
+	printf("\t'h' to display this help\n");
+	printf("\t'q' to quit\n");
+	printf("\n");
+}
+
+
+static void sd21_calibration_dump(sd21_t *obj)
+{
+	uint8_t i;
+
+	printf("\n\t\tinit\topen\tclose\n");
+
+	for (i = 0; i < obj->servos_nb; i++) {
+		uint16_t value;
+
+		printf("servo #%02d\t", i);
+
+		value = obj->servos[i].value_init;
+		printf("%4d\t", value);
+		value = obj->servos[i].value_open;
+		printf("%4d\t", value);
+		value = obj->servos[i].value_close;
+		printf("%4d\n", value);
+	}
+}
+
+void sd21_enter_calibration(sd21_t *obj)
+{
+	int c;
+	uint8_t quit;
+	static uint8_t servo_id;
+	enum {SET_INIT = 0, SET_OPEN, SET_CLOSE} servo_setting = SET_INIT;
+	const char *setting_str[] = { "init", "open", "close" };
+
+	sd21_calibration_usage(obj);
+
+	while (!quit) {
+		uint16_t *cur;
+
+		switch (servo_setting) {
+		default:
+		case SET_INIT:
+			cur = &obj->servos[servo_id].value_init;
+			break;
+		case SET_OPEN:
+			cur = &obj->servos[servo_id].value_open;
+			break;
+		case SET_CLOSE:
+			cur = &obj->servos[servo_id].value_close;
+			break;
+		}
+
+		/* display prompt */
+		printf("[%02d].value_%s = %4d $ ",
+			servo_id,
+			setting_str[servo_setting],
+			*cur);
+
+		/* wait for command */
+		/*scanf("%c", &c);*/
+		c = getchar();
+
+		switch (c) {
+		case 'd':
+			sd21_calibration_dump(obj);
+			break;
+		case 'n':
+			servo_id += 1;
+			servo_id %= obj->servos_nb;
+			break;
+		case 'b':
+			if (servo_id)
+				servo_id -= 1;
+			else
+				servo_id = obj->servos_nb - 1;
+			break;
+		case 's':
+			servo_setting += 1;
+			servo_setting %= SET_CLOSE;
+			break;
+		case 'r':
+			*cur = CAL_RST;
+			sd21_send_twi_cmd(obj->twi, servo_id, 0, *cur);
+			break;
+		case '+':
+			*cur = *cur + 25 > CAL_MAX ? CAL_MAX : *cur + 25;
+			sd21_send_twi_cmd(obj->twi, servo_id, 0, *cur);
+			break;
+		case '-':
+			*cur = *cur - 25 < CAL_MIN ? CAL_MIN : *cur - 25;
+			sd21_send_twi_cmd(obj->twi, servo_id, 0, *cur);
+			break;
+		case 'h':
+			sd21_calibration_usage(obj);
+			break;
+		case 'q':
+			quit = 1;
+			break;
+		default:
+			printf("\n");
+			break;
+		}
+	}
+}
+#endif /* CONFIG_CALIBRATION */
 
 /**
  */
