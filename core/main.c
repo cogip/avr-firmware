@@ -66,6 +66,10 @@ int main(void)
 	uint8_t stop = 0;
 
 	mach_setup();
+#if defined(CONFIG_CALIBRATION)
+	mach_check_calibration_mode();
+#endif
+
 	mach_timer_setup(irq_timer_tcc0_handler);
 
 	/* controller setup */

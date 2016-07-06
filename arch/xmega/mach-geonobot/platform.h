@@ -36,6 +36,10 @@ void mach_evtloop_end_of_game(void);
 pose_t mach_trajectory_get_route_update(void);
 uint8_t mach_stop_robot(void);
 
+#if defined(CONFIG_CALIBRATION)
+void mach_check_calibration_mode(void);
+#endif
+
 void mach_timer_setup(func_cb_t handler);
 void mach_setup(void);
 

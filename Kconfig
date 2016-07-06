@@ -71,4 +71,11 @@ config DEFAULT_LOGLEVEL
 	  which activates all log for: errors(0), warning(1), info(2) and
 	  debug(3).
 
+config CALIBRATION
+	bool "Calibration mode"
+	default y
+	help
+	  Select this if you want to include calibration mode feature inside
+	  firmware.
+
 source drivers/Kconfig
