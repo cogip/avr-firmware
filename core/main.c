@@ -59,10 +59,10 @@ static void motor_drive(polar_t command)
 int main(void)
 {
 	polar_t	robot_speed;
-	polar_t	speed_setpoint		= { 60, 60 };
+	polar_t	speed_order		= { 60, 60 };
 	polar_t	motor_command;
 	pose_t	robot_pose		= { 1856.75, 0, 0 }; /* position absolue */
-	pose_t	pose_setpoint		= { 0, 0, 0 };
+	pose_t	pose_order		= { 0, 0, 0 };
 	uint8_t stop = 0;
 
 	mach_setup();
@@ -93,31 +93,31 @@ int main(void)
 			odometry_update(&robot_pose, &robot_speed, SEGMENT);
 
 			/* get next pose_t to reach */
-			pose_setpoint = mach_trajectory_get_route_update();
+			pose_order = mach_trajectory_get_route_update();
 
-			pose_setpoint.x *= PULSE_PER_MM;
-			pose_setpoint.y *= PULSE_PER_MM;
-			pose_setpoint.O *= PULSE_PER_DEGREE;
+			pose_order.x *= PULSE_PER_MM;
+			pose_order.y *= PULSE_PER_MM;
+			pose_order.O *= PULSE_PER_DEGREE;
 
 			/* collision detection */
 			stop = mach_stop_robot();
 
 			if (stop) {
-				speed_setpoint.distance = 0;
-				speed_setpoint.angle = 0;
+				speed_order.distance = 0;
+				speed_order.angle = 0;
 			} else {
-				speed_setpoint.distance = 60;
-				speed_setpoint.angle = 60;
+				speed_order.distance = 60;
+				speed_order.angle = 60;
 			}
 
 			/* PID / feedback control */
 #if 0
-			motor_command = speed_controller(speed_setpoint,
+			motor_command = speed_controller(speed_order,
 							 robot_speed);
 #endif
-			motor_command = controller_update(pose_setpoint,
+			motor_command = controller_update(pose_order,
 							  robot_pose,
-							  speed_setpoint,
+							  speed_order,
 							  robot_speed);
 
 			/* set speed to wheels */
