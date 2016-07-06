@@ -8,7 +8,5 @@ src-y		+= $(abs-path)/timer.c
 src-y		+= $(abs-path)/twi.c
 src-y		+= $(abs-path)/usart.c
 
-MACH		:= $(subst $(quote),,$(CONFIG_PLATFORM_NAME))
-
 src-dirs	+= $(abs-path)/mach-$(MACH)
 -include $(abs-path)/mach-$(MACH)/Makefile

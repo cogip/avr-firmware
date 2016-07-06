@@ -93,7 +93,9 @@ endif
 ifeq ($(build-targets),1)
 
 -include include/config/auto.conf
-binname			:= $(subst $(quote),,$(CONFIG_PLATFORM_NAME))
+
+MACH			:= $(subst $(quote),,$(CONFIG_PLATFORM_NAME))
+binname			:= $(MACH)
 
 .PHONY: all
 all: $(binname).hex $(binname).eep
