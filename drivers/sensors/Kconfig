@@ -7,4 +7,25 @@ config ANALOG_SENSORS
 	help
 	   Platform should select this switch if analog sensors are used.
 
+config GP2D120
+	bool "GP2D120"
+	depends on ANALOG_SENSORS
+	default n
+	help
+	   GP2D120 IR Sharp support.
+
+config GP2Y0A21
+	bool "GP2Y0A21"
+	depends on ANALOG_SENSORS
+	default n
+	help
+	   GP2Y0A21 IR Sharp support.
+
+config GP2Y0A41
+	bool "GP2Y0A41"
+	depends on ANALOG_SENSORS
+	default n
+	help
+	   GP2Y0A41 IR Sharp support.
+
 endmenu

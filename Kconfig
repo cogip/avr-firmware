@@ -11,17 +11,20 @@ choice
 
 config BIG_BOT2015
 	bool "Geonobot BR (2015)"
-	#select ANALOG_SENSORS
+	select ANALOG_SENSORS
+	select GP2Y0A21
 	help
 	  This will build the Big bot firmware.
 
 #config BIG_BOT2016
 #	bool "Cortex (2016)"
+#	#select ANALOG_SENSORS
 #	help
 #	  This will build the Big bot firmware.
 #
 #config SMALL_BOT2016
 #	bool "Minus (2016)"
+#	#select ANALOG_SENSORS
 #	help
 #	  This will build the Small bot firmware.
 
