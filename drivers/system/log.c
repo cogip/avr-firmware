@@ -5,10 +5,12 @@
 #include "log.h"
 
 static int uart_putchar(char c, FILE *stream);
-static FILE uart_stdout = FDEV_SETUP_STREAM(uart_putchar, NULL,
-					    _FDEV_SETUP_WRITE);
+static int uart_getchar(FILE *stream);
+static FILE uart_stdout = FDEV_SETUP_STREAM(uart_putchar, uart_getchar,
+					    _FDEV_SETUP_RW);
 
 static putchar_cb_t putchar_cb;
+static getchar_cb_t getchar_cb;
 
 #if 0
 /* #ifdef CONFIG_LOGGING_TIME */
@@ -93,8 +95,19 @@ static int uart_putchar(char c, FILE *stream)
 	return 0;
 }
 
-void log_init(putchar_cb_t callback)
+static int uart_getchar(FILE *stream)
 {
-	putchar_cb = callback;
+	if (getchar_cb) {
+		return getchar_cb();
+	}
+
+	return -1;
+}
+
+void log_init(putchar_cb_t put_cb, getchar_cb_t get_cb)
+{
+	putchar_cb = put_cb;
+	getchar_cb = get_cb;
+
 	stdout = &uart_stdout;
 }

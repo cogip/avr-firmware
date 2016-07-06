@@ -7,10 +7,11 @@
 #define LOG_LEVEL_DEBUG    3
 
 typedef void (*putchar_cb_t)(const char);
+typedef int (*getchar_cb_t)(void);
 
 #ifdef CONFIG_ENABLE_LOGGING
 void print_log(int level, const char *function, const char *format, ...);
-void log_init(putchar_cb_t);
+void log_init(putchar_cb_t, getchar_cb_t);
 #define _print_log(level, ...) print_log(level, __FUNCTION__, __VA_ARGS__)
 #else
 #define log_init(cb) do {} while(0)

@@ -300,6 +300,12 @@ static void usartc0_putchar(const char c)
 {
 	usart_send(&USARTC0, c);
 }
+
+static int usartc0_getchar()
+{
+	/* TODO */
+	return ' ';
+}
 #endif
 
 void mach_timer_setup(func_cb_t handler)
@@ -319,7 +325,7 @@ void mach_setup(void)
 #ifdef CONFIG_ENABLE_LOGGING
 	/* setup logs through usart communication */
 	usart_setup(&USARTC0);
-	log_init(usartc0_putchar);
+	log_init(usartc0_putchar, usartc0_getchar);
 #endif
 
 #ifdef CONFIG_ANALOG_SENSORS
