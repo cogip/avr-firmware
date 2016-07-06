@@ -1,1 +1,3 @@
-src-$(CONFIG_ANALOG_SENSORS)	+= drivers/sensors/analog_sensor.c
+abs-path			:= drivers/sensors
+
+src-$(CONFIG_ANALOG_SENSORS)	+= $(abs-path)/analog_sensor.c

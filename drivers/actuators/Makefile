@@ -1,2 +1,4 @@
-src-y				+= drivers/actuators/hbridge.c
-src-y				+= drivers/actuators/sd21.c
+abs-path			:= drivers/actuators
+
+src-y				+= $(abs-path)/hbridge.c
+src-y				+= $(abs-path)/sd21.c
