@@ -35,7 +35,7 @@ void usart_setup(usart_t *usart)
 	usart->CTRLC |= USART_CMODE_ASYNCHRONOUS_gc;
 
 	/* Enable both RX and TX. */
-	usart->CTRLB = USART_TXEN_bm;
+	usart->CTRLB = USART_TXEN_bm | USART_RXEN_bm;
 }
 
 /* transmit a char */
@@ -47,4 +47,14 @@ void usart_send(usart_t *usart, uint8_t data)
 
 	/* Output 1 character */
 	usart->DATA = data;
+}
+
+int usart_recv(usart_t *usart)
+{
+	/* Wait for a character */
+	while (!(usart->STATUS & USART_RXCIF_bm))
+		;
+
+	/* Output 1 character */
+	return usart->DATA;
 }

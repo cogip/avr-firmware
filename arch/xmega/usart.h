@@ -18,7 +18,7 @@ typedef USART_t usart_t;
  */
 void usart_setup(usart_t *usart);
 
-/* transmit a char */
 void usart_send(usart_t *usart, uint8_t data);
+int usart_recv(usart_t *usart);
 
 #endif /* USART_H_ */
