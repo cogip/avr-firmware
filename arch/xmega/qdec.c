@@ -1,3 +1,4 @@
+#include "irq.h"
 #include "qdec.h"
 #include "xmega/timer.h"
 
@@ -126,9 +127,10 @@ int16_t qdec_read(qdec_t *qdec)
 	int16_t value;
 	uint16_t unsigned_value;
 
-	/* TODO: both following lines should be in a critical section */
+	irq_disable();
 	unsigned_value = timer_get_cnt(qdec->tc);
 	timer_set_cnt(qdec->tc, qdec->line_count >> 1);
+	irq_enable();
 
 	value = decode(qdec, unsigned_value);
 
