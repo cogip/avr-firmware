@@ -355,8 +355,7 @@ static void usartc0_putchar(const char c)
 
 static int usartc0_getchar()
 {
-	/* TODO */
-	return ' ';
+	return usart_recv(&USARTC0);
 }
 #endif
 
