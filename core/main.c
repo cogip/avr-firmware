@@ -51,6 +51,17 @@ static void motor_drive(polar_t command)
 	hbridge_engine_update(&hbridges, HBRIDGE_MOTOR_LEFT,  left_command);
 }
 
+static void show_game_time()
+{
+	static uint8_t _secs = (4500 / 90);
+
+	if (! --_secs) {
+		_secs = (4500 / 90);
+		print_info ("Game time = %d\n",
+			    tempo / (4500 / 90));
+	}
+}
+
 /**
  * TODO 90 s
  * TODO gestion bras maintien position plus fermé
@@ -85,6 +96,8 @@ int main(void)
 		if (next_timeslot_trigged) {
 			/* we enter here every 20ms */
 			tempo++;
+
+			show_game_time();
 
 			/* catch speed */
 			robot_speed = encoder_read();
