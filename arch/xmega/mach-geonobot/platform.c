@@ -289,7 +289,7 @@ static void mach_calibration_usage(void)
 static void mach_enter_calibration_mode(void)
 {
 	int c;
-	uint8_t quit;
+	uint8_t quit = 0;
 
 	mach_calibration_usage();
 
@@ -299,8 +299,8 @@ static void mach_enter_calibration_mode(void)
 		printf("$ ");
 
 		/* wait for command */
-		/*scanf("%c", &c);*/
 		c = getchar();
+		printf("%c\n", c);
 
 		switch (c) {
 		case 's':
@@ -321,7 +321,7 @@ static void mach_enter_calibration_mode(void)
 
 void mach_check_calibration_mode(void)
 {
-	if (0 /* TODO: assign a GPIO for calibration */)
+	if (1 /* TODO: assign a GPIO for calibration */)
 		mach_enter_calibration_mode();
 }
 #endif /* CONFIG_CALIBRATION */
