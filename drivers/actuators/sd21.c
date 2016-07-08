@@ -143,8 +143,8 @@ static void sd21_calibration_dump(sd21_t *obj)
 void sd21_enter_calibration(sd21_t *obj)
 {
 	int c;
-	uint8_t quit;
-	static uint8_t servo_id;
+	uint8_t quit = 0;
+	static uint8_t servo_id = 0;
 	enum {SET_INIT = 0, SET_OPEN, SET_CLOSE} servo_setting = SET_INIT;
 	const char *setting_str[] = { "init", "open", "close" };
 
@@ -173,8 +173,8 @@ void sd21_enter_calibration(sd21_t *obj)
 			*cur);
 
 		/* wait for command */
-		/*scanf("%c", &c);*/
 		c = getchar();
+		printf("%c\n", c);
 
 		switch (c) {
 		case 'd':
