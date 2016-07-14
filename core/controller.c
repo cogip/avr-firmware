@@ -17,13 +17,16 @@ PID_t linear_speed_pid, angular_speed_pid;
 PID_t linear_pose_pid, angular_pose_pid;
 
 static uint8_t pose_reached;
+static double wheels_distance; /*!< robot wheels distance [pulse] */
 
 /**
  * TODO reglage des coeffs PID position
  * speed PI controller
  */
-void controller_setup(void)
+void controller_setup(double d)
 {
+	wheels_distance = d;
+
 	pid_setup(&linear_speed_pid, 1.5, 0.2, 0);
 	pid_setup(&angular_speed_pid, 1.5, 0.2, 0);
 	pid_setup(&linear_pose_pid, 1, 0, 20);
@@ -45,7 +48,7 @@ static polar_t compute_error(const pose_t p1, const pose_t p2)
 	double y = p1.y - p2.y;
 	double O = atan2(y, x);
 
-	error.angle = O * WHEELS_DISTANCE;
+	error.angle = O * wheels_distance;
 	error.distance = sqrt(square(x) + square(y));
 
 	return error;
@@ -117,13 +120,13 @@ polar_t controller_update(pose_t pose_order,
 	if (position_error.distance > 500) {
 		position_error.angle -= pose_current.O; /* [pulse] */
 
-		if (fabs(position_error.angle) > (M_PI * WHEELS_DISTANCE / 2.0)) {
+		if (fabs(position_error.angle) > (M_PI * wheels_distance / 2.0)) {
 			position_error.distance = -position_error.distance;
 
 			if (position_error.angle < 0)
-				position_error.angle += M_PI * WHEELS_DISTANCE;
+				position_error.angle += M_PI * wheels_distance;
 			else
-				position_error.angle -= M_PI * WHEELS_DISTANCE;
+				position_error.angle -= M_PI * wheels_distance;
 		}
 	} else {
 		/* orientation correction (position is reached) */

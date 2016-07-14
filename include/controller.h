@@ -10,7 +10,7 @@
 
 #include "odometry.h"
 
-void controller_setup(void);
+void controller_setup(double);
 
 polar_t speed_controller(polar_t speed_setpoint, polar_t real_speed);
 

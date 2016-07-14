@@ -85,7 +85,7 @@ int main(void)
 
 	/* controller setup */
 	odometry_setup(WHEELS_DISTANCE);
-	controller_setup();
+	controller_setup(WHEELS_DISTANCE);
 
 	/* active loop waiting for the game to start */
 	while (mach_detect_start())
