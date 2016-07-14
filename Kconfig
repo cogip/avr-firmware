@@ -16,12 +16,12 @@ config BIG_BOT2015
 	help
 	  This will build the Big bot firmware.
 
-#config BIG_BOT2017
-#	bool "Cortex (2017)"
-#	#select ANALOG_SENSORS
-#	help
-#	  This will build the Big bot firmware.
-#
+config BIG_BOT2017
+	bool "Cortex (2017)"
+	#select ANALOG_SENSORS
+	help
+	  This will build the Big bot firmware.
+
 #config SMALL_BOT2017
 #	bool "Minus (2017)"
 #	#select ANALOG_SENSORS
