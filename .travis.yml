@@ -12,6 +12,11 @@ before_script:
         sudo cp -f -r /tmp/avr-gcc/* /usr/local/ &&
         rm -rf /tmp/avr-gcc avr-gcc*.tar.bz2 &&
         avr-gcc --version
+script:
+      - make mrproper
+      - make geonobot_defconfig
+      - make
 
-      - make defconfig
-script: make
+      - make mrproper
+      - make cortex_defconfig
+      - make
