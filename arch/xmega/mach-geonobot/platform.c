@@ -322,6 +322,10 @@ static void mach_enter_calibration_mode(void)
 
 void mach_check_calibration_mode(void)
 {
+	/* NOTE: instead of a gpio status, use the flag to activate the
+	 * feature all the time. Also, add a autoboot feature, ask the user to
+	 * press a key & if no key start normally after 3 seconds
+	 */
 	if (1 /* TODO: assign a GPIO for calibration */)
 		mach_enter_calibration_mode();
 }
