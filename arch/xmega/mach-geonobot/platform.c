@@ -61,34 +61,42 @@ analog_sensors_t ana_sensors = {
 		[0] = {
 			.pin_id = PIN0_bp,
 			.adc2cm_cb = gp2y0a21_read,
+			/* .zone = (AS_ZONE_LEFT | AS_ZONE_RIGHT), */
 		},
 		[1] = {
 			.pin_id = PIN1_bp,
 			.adc2cm_cb = gp2y0a21_read,
+			/* .zone = (AS_ZONE_LEFT | AS_ZONE_RIGHT), */
 		},
 		[2] = {
 			.pin_id = PIN2_bp,
 			.adc2cm_cb = gp2y0a21_read,
+			.zone = AS_ZONE_REAR,
 		},
 		[3] = {
 			.pin_id = PIN3_bp,
 			.adc2cm_cb = gp2y0a21_read,
+			.zone = AS_ZONE_REAR,
 		},
 		[4] = {
 			.pin_id = PIN4_bp,
 			.adc2cm_cb = gp2y0a21_read,
+			.zone = AS_ZONE_FRONT,
 		},
 		[5] = {
 			.pin_id = PIN5_bp,
 			.adc2cm_cb = gp2y0a21_read,
+			.zone = AS_ZONE_FRONT,
 		},
 		[6] = {
 			.pin_id = PIN6_bp,
 			.adc2cm_cb = gp2y0a21_read,
+			.zone = AS_ZONE_FRONT,
 		},
 		[7] = {
 			.pin_id = PIN7_bp,
 			.adc2cm_cb = gp2y0a21_read,
+			.zone = AS_ZONE_FRONT,
 		},
 	}
 };
@@ -258,13 +266,9 @@ uint8_t mach_stop_robot(void)
 #endif
 
 #ifdef CONFIG_ANALOG_SENSORS
-	{
-		uint8_t all_irs[] = { 2, 3, 4, 5, 6, 7 };
-
-		if (analog_sensor_detect_obstacle(&ana_sensors, all_irs, 6) &&
-		    get_route_index())
-			stop = 2;
-	}
+	if (analog_sensor_detect_obstacle(&ana_sensors, AS_ZONE_ALL) &&
+	    get_route_index())
+		stop = 2;
 #endif
 #if 0
 	if ((stop > 1) && (get_can_retro()))

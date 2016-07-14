@@ -54,15 +54,15 @@ void analog_sensor_setup(analog_sensors_t *as)
  */
 
 uint8_t analog_sensor_detect_obstacle(analog_sensors_t *as,
-				      uint8_t *ir_ids,
-				      uint8_t ir_nb)
+				      analog_sensor_zone_t zone)
 {
 	uint8_t i;
 	uint8_t stop = 0;
 
-	for (i = 0; i < ir_nb; i++) {
-		if ((as->sensors[ir_ids[i]].latest_dist < 20) &&
-		    (as->sensors[ir_ids[i]].latest_dist != 0)) {
+	for (i = 0; i < as->sensors_nb; i++) {
+		if ((as->sensors[i].zone & zone) &&
+		     as->sensors[i].latest_dist &&
+		     as->sensors[i].latest_dist < AS_DIST_LIMIT) {
 			stop = 1;
 			break;
 		}

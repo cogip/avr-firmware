@@ -25,6 +25,16 @@ typedef uint8_t (* func_conv_t)(uint16_t);
 
 typedef uint8_t dist_cm_t;
 
+typedef uint16_t analog_sensor_zone_t;
+#define AS_ZONE_FRONT	0x0001
+#define AS_ZONE_REAR	0x0002
+#define AS_ZONE_LEFT	0x0004
+#define AS_ZONE_RIGHT	0x0008
+#define AS_ZONE_ALL	0x000F
+#define AS_ZONE_OTHER	0x0010
+
+#define AS_DIST_LIMIT	20 /*cm*/
+
 typedef struct {
 	adc_t *adc;
 
@@ -33,6 +43,7 @@ typedef struct {
 	struct {
 		uint8_t pin_id;
 		func_conv_t adc2cm_cb;
+		analog_sensor_zone_t zone;
 
 		/* acquisition context */
 		dist_cm_t latest_dist; /* keep acquired distances */
@@ -43,7 +54,6 @@ void analog_sensor_read(analog_sensors_t *as);
 void analog_sensor_setup(analog_sensors_t *as);
 
 uint8_t analog_sensor_detect_obstacle(analog_sensors_t *as,
-				      uint8_t *ir_ids,
-				      uint8_t ir_nb);
+				      analog_sensor_zone_t zone);
 
 #endif /* ANALOG_SENSOR_H_ */
