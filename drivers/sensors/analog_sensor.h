@@ -46,11 +46,10 @@ typedef struct {
 		analog_sensor_zone_t zone;
 
 		/* acquisition context */
-		dist_cm_t latest_dist; /* keep acquired distances */
+		uint16_t latest_raw_value; /* keep acquired distances */
 	} sensors[];
 } analog_sensors_t;
 
-void analog_sensor_read(analog_sensors_t *as);
 void analog_sensor_setup(analog_sensors_t *as);
 
 uint8_t analog_sensor_detect_obstacle(analog_sensors_t *as,

@@ -10,43 +10,28 @@
 #include "log.h"
 
 
-static uint8_t adc_flag;
-static uint16_t adc_result;
-
-static void irq_adc_handler(uint16_t value)
+static void irq_adc_handler(uint16_t value, void *data)
 {
-	adc_result = value;
-	adc_flag = 1;
-}
+	analog_sensors_t *as = (analog_sensors_t *)data;
+	uint8_t i = as->sensor_index;
 
-void analog_sensor_read(analog_sensors_t *as)
-{
-	if (adc_flag) {
-		uint8_t i = as->sensor_index;
+	/* save raw value in context */
+	as->sensors[i].latest_raw_value = value;
 
-		as->sensors[i].latest_dist = gp2y0a21_read(adc_result);
-
-		print_dbg("index = %d\tdist = %d\n",
-			   i, as->sensors[i].latest_dist);
-
-		/* round robin acquisition using 1 ADC channel */
-		as->sensor_index += 1;
-		as->sensor_index %= as->sensors_nb;
-
-		adc_async_read_start(as->adc, as->sensor_index);
-
-		adc_flag = 0;
-	}
+	/* round robin acquisition using 1 ADC channel */
+	as->sensor_index += 1;
+	as->sensor_index %= as->sensors_nb;
+	adc_async_read_start(as->adc, as->sensor_index);
 }
 
 void analog_sensor_setup(analog_sensors_t *as)
 {
-	adc_setup(as->adc, irq_adc_handler);
+	if (as->sensors_nb) {
+		adc_setup(as->adc, irq_adc_handler, as);
 
-#if 0
-	/* start first conversion */
-	adc_async_read_start(as->adc, 0);
-#endif
+		/* start first conversion */
+		adc_async_read_start(as->adc, 0);
+	}
 }
 
 /*
@@ -61,10 +46,14 @@ uint8_t analog_sensor_detect_obstacle(analog_sensors_t *as,
 
 	for (i = 0; i < as->sensors_nb; i++) {
 		if ((as->sensors[i].zone & zone) &&
-		     as->sensors[i].latest_dist &&
-		     as->sensors[i].latest_dist < AS_DIST_LIMIT) {
-			stop = 1;
-			break;
+		     as->sensors[i].adc2cm_cb) {
+			uint16_t raw = as->sensors[i].latest_raw_value;
+			dist_cm_t dist = as->sensors[i].adc2cm_cb(raw);
+
+			if (dist && dist < AS_DIST_LIMIT) {
+				stop = 1;
+				break;
+			}
 		}
 	}
 

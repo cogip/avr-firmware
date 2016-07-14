@@ -8,12 +8,13 @@
 #include "adc.h"
 
 static adc_cb_t irq_handler;
+static void * irq_handler_data;
 
 /* Interrupt Service Routine for handling the ADC conversion complete IT */
 ISR(ADCA_CH0_vect)
 {
 	if (irq_handler)
-		irq_handler(ADCA.CH0.RES);
+		irq_handler(ADCA.CH0.RES, irq_handler_data);
 
 	/* Interrupt flag is cleared upon return from ISR */
 }
@@ -25,8 +26,11 @@ ISR(ADCA_CH0_vect)
  * single ended measurement
  * TODO param CH0 and PRPA
  */
-void adc_setup(adc_t *adc, adc_cb_t callback)
+void adc_setup(adc_t *adc, adc_cb_t callback, void *data)
 {
+	irq_handler = callback;
+	irq_handler_data = data;
+
 	/* Clear ADC bit in Power Reduction Port A Register */
 	PR.PRPA &= ~0x02; /* TODO */
 

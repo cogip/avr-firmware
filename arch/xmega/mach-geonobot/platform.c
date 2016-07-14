@@ -226,9 +226,6 @@ void mach_evtloop_before_game(void)
 void mach_evtloop_in_game(void)
 {
 	attraper_cup();
-#ifdef CONFIG_ANALOG_SENSORS
-	analog_sensor_read(&ana_sensors);
-#endif
 	gestion_tour();
 }
 
