@@ -16,14 +16,14 @@ config BIG_BOT2015
 	help
 	  This will build the Big bot firmware.
 
-#config BIG_BOT2016
-#	bool "Cortex (2016)"
+#config BIG_BOT2017
+#	bool "Cortex (2017)"
 #	#select ANALOG_SENSORS
 #	help
 #	  This will build the Big bot firmware.
 #
-#config SMALL_BOT2016
-#	bool "Minus (2016)"
+#config SMALL_BOT2017
+#	bool "Minus (2017)"
 #	#select ANALOG_SENSORS
 #	help
 #	  This will build the Small bot firmware.
@@ -33,8 +33,8 @@ endchoice
 config PLATFORM_NAME
 	string
 	default "geonobot" if BIG_BOT2015
-	default "cortex" if BIG_BOT2016
-	default "minus" if SMALL_BOT2016
+	default "cortex" if BIG_BOT2017
+	default "minus" if SMALL_BOT2017
 
 config CROSS_COMPILE
         string "Cross-compiler prefix"
@@ -45,7 +45,7 @@ config CROSS_COMPILE
 
 config MCU
 	string "MCU type"
-	default "atxmega128a3u" if BIG_BOT2016 || SMALL_BOT2016
+	default "atxmega128a3u" if BIG_BOT2017 || SMALL_BOT2017
 	default "atxmega128a1" if BIG_BOT2015
 	help
 	  This define the argument to "-mcu" option while calling the
