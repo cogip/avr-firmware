@@ -66,6 +66,15 @@ defconfig:
 		--alldefconfig Kconfig
 	$(Q)$(silentoldconfig)
 
+%_defconfig:
+	$(Q)if [ ! -f configs/$@ ]; then \
+		echo "configs/$@ not founded!"; \
+		exit 1; \
+	fi
+	$(Q)$(scripts-dir)/bin-$(shell uname -i)/kconfig-conf \
+		--defconfig=configs/$@ Kconfig
+	$(Q)$(silentoldconfig)
+
 .PHONY: menuconfig
 menuconfig:
 	$(Q)$(scripts-dir)/bin-$(shell uname -i)/kconfig-mconf Kconfig
