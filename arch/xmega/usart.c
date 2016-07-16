@@ -23,8 +23,11 @@
 void usart_setup(usart_t *usart)
 {
 	/* Clock generation : BSEL = fOSC / (2^BSCALE * 16 * fBAUD) - 1 */
+	/* 32000000/(2^0 * 16 * 9600) - 1 = 207 */
+	/* 32000000/(2^0 * 16 * 115200) - 1 = 17 */
 #if F_CPU == 32000000UL
 	usart->BAUDCTRLA = 207; /* 12; //51; */
+	usart->BAUDCTRLA = 17; /* 12; //51; */
 	usart->BAUDCTRLB = 0;
 #endif
 
