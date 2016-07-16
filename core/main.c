@@ -72,7 +72,8 @@ int main(void)
 	polar_t	robot_speed;
 	polar_t	speed_order		= { 60, 60 };
 	polar_t	motor_command;
-	pose_t	robot_pose		= { 1856.75, 0, 0 }; /* position absolue */
+	/* bot position on the 'table' (absolute position): */
+	pose_t	robot_pose		= { 1856.75, 0, 0 };
 	pose_t	pose_order		= { 0, 0, 0 };
 	uint8_t stop = 0;
 
@@ -119,7 +120,9 @@ int main(void)
 				speed_order.distance = 0;
 				speed_order.angle = 0;
 			} else {
+				/* speed order in position = 60 pulses / 20ms */
 				speed_order.distance = 60;
+				/* speed order in angle? = 60 pulses / 20ms */
 				speed_order.angle = 60;
 			}
 

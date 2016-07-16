@@ -13,6 +13,10 @@
 
 #include "controller.h"
 
+/* TODO: Put 500 constant as a calibration value? (tbc) */
+/* Distance approximation to switch to angular correction */
+#define CTRL_DISTANCE_TRIGGER		500
+
 PID_t linear_speed_pid, angular_speed_pid;
 PID_t linear_pose_pid, angular_pose_pid;
 
@@ -117,7 +121,7 @@ polar_t controller_update(pose_t pose_order,
 	pose_reached = 0;
 
 	/* position correction */
-	if (position_error.distance > 500) {
+	if (position_error.distance > CTRL_DISTANCE_TRIGGER) {
 		position_error.angle -= pose_current.O; /* [pulse] */
 
 		if (fabs(position_error.angle) > (M_PI * wheels_distance / 2.0)) {
