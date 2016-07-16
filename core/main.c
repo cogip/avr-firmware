@@ -62,6 +62,59 @@ static void show_game_time()
 	}
 }
 
+/* This is called every scheduler tick (20ms) */
+static void task_controller_update()
+{
+	polar_t	robot_speed;
+	/* bot position on the 'table' (absolute position): */
+	pose_t	robot_pose		= { 1856.75, 0, 0 };
+	pose_t	pose_order		= { 0, 0, 0 };
+	polar_t	speed_order		= { 60, 60 };
+	polar_t	motor_command;
+	uint8_t stop = 0;
+
+	show_game_time();
+
+	/* catch speed */
+	robot_speed = encoder_read();
+
+	/* convert to position */
+	odometry_update(&robot_pose, &robot_speed, SEGMENT);
+
+	/* get next pose_t to reach */
+	pose_order = mach_trajectory_get_route_update();
+
+	pose_order.x *= PULSE_PER_MM;
+	pose_order.y *= PULSE_PER_MM;
+	pose_order.O *= PULSE_PER_DEGREE;
+
+	/* collision detection */
+	stop = mach_stop_robot();
+
+	if (stop) {
+		speed_order.distance = 0;
+		speed_order.angle = 0;
+	} else {
+		/* speed order in position = 60 pulses / 20ms */
+		speed_order.distance = 60;
+		/* speed order in angle? = 60 pulses / 20ms */
+		speed_order.angle = 60;
+	}
+
+	/* PID / feedback control */
+#if 0
+	motor_command = speed_controller(speed_order,
+					 robot_speed);
+#endif
+	motor_command = controller_update(pose_order,
+					  robot_pose,
+					  speed_order,
+					  robot_speed);
+
+	/* set speed to wheels */
+	motor_drive(motor_command);
+}
+
 /**
  * TODO 90 s
  * TODO gestion bras maintien position plus fermé
@@ -69,14 +122,6 @@ static void show_game_time()
  */
 int main(void)
 {
-	polar_t	robot_speed;
-	polar_t	speed_order		= { 60, 60 };
-	polar_t	motor_command;
-	/* bot position on the 'table' (absolute position): */
-	pose_t	robot_pose		= { 1856.75, 0, 0 };
-	pose_t	pose_order		= { 0, 0, 0 };
-	uint8_t stop = 0;
-
 	mach_setup();
 #if defined(CONFIG_CALIBRATION)
 	mach_check_calibration_mode();
@@ -98,46 +143,7 @@ int main(void)
 			/* we enter here every 20ms */
 			tempo++;
 
-			show_game_time();
-
-			/* catch speed */
-			robot_speed = encoder_read();
-
-			/* convert to position */
-			odometry_update(&robot_pose, &robot_speed, SEGMENT);
-
-			/* get next pose_t to reach */
-			pose_order = mach_trajectory_get_route_update();
-
-			pose_order.x *= PULSE_PER_MM;
-			pose_order.y *= PULSE_PER_MM;
-			pose_order.O *= PULSE_PER_DEGREE;
-
-			/* collision detection */
-			stop = mach_stop_robot();
-
-			if (stop) {
-				speed_order.distance = 0;
-				speed_order.angle = 0;
-			} else {
-				/* speed order in position = 60 pulses / 20ms */
-				speed_order.distance = 60;
-				/* speed order in angle? = 60 pulses / 20ms */
-				speed_order.angle = 60;
-			}
-
-			/* PID / feedback control */
-#if 0
-			motor_command = speed_controller(speed_order,
-							 robot_speed);
-#endif
-			motor_command = controller_update(pose_order,
-							  robot_pose,
-							  speed_order,
-							  robot_speed);
-
-			/* set speed to wheels */
-			motor_drive(motor_command);
+			task_controller_update();
 
 			next_timeslot_trigged = 0;
 		}
@@ -147,6 +153,8 @@ int main(void)
 
 	/* final position */
 	for (;;) {
+		polar_t	motor_command;
+
 		mach_evtloop_end_of_game();
 
 		motor_command.distance = 0;
