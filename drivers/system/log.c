@@ -47,7 +47,7 @@ static void print_log_v(int level, const char *function, const char *format,
 	const char *prefix;
 	const int dbg = CONFIG_DEFAULT_LOGLEVEL;
 
-	if (dbg <= level)
+	if (level > dbg)
 		return;
 
 	switch (level) {
