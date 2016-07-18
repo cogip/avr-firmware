@@ -4,10 +4,12 @@
 #include <xmega/usart.h>
 
 #include "action.h"
+#include "controller.h"
 #include "log.h"
 #include "platform.h"
+#include "platform_task.h"
 #include "route.h"
-#include "sensor.h"
+#include "sched.h"
 
 /**
  * PORTA : ANA input
@@ -213,29 +215,6 @@ hbridge_t hbridges = {
 	},
 };
 
-uint8_t mach_detect_start(void)
-{
-	return detect_start();
-}
-
-void mach_evtloop_before_game(void)
-{
-	gestion_tour();
-}
-
-void mach_evtloop_in_game(void)
-{
-	attraper_cup();
-	gestion_tour();
-}
-
-void mach_evtloop_end_of_game(void)
-{
-	open_pince();
-	open_door();
-	set_release_right_cup();
-	set_release_left_cup();
-}
 
 pose_t mach_trajectory_get_route_update(void)
 {
@@ -364,11 +343,14 @@ static int usartc0_getchar()
 }
 #endif
 
-void mach_timer_setup(func_cb_t handler)
+void mach_tick_timer_setup()
 {
-	/* TCC0 ClkIn == ClkPer / 1024 == 31.25 KHz */
-	/* Counter set to 625 for 50Hz output (20ms) */
-	timer_normal_mode_setup(&TCC0, 625, TC_CLKSEL_DIV1024_gc, handler);
+	sched_set_tasks(tasks_list, tasks_nb);
+}
+
+void mach_sched_init()
+{
+	sched_init(20 /*ms*/, &TCC0);
 }
 
 void mach_setup(void)
@@ -399,6 +381,10 @@ void mach_setup(void)
 	/* setup qdec */
 	qdec_setup(&encoders[0]);
 	qdec_setup(&encoders[1]);
+
+	/* controller setup */
+	odometry_setup(WHEELS_DISTANCE);
+	controller_setup(WHEELS_DISTANCE);
 
 	/* Programmable Multilevel Interrupt Controller */
 	PMIC.CTRL |= PMIC_LOLVLEN_bm; /* Low-level Interrupt Enable */

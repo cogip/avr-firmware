@@ -3,6 +3,7 @@
 
 #include "analog_sensor.h"
 #include "hbridge.h"
+#include "odometry.h"
 #include "qdec.h"
 #include "sd21.h"
 
@@ -28,11 +29,6 @@ extern qdec_t encoders[];
 extern sd21_t sd21;
 extern hbridge_t hbridges;
 
-uint8_t mach_detect_start(void);
-void mach_evtloop_before_game(void);
-void mach_evtloop_in_game(void);
-void mach_evtloop_end_of_game(void);
-
 pose_t mach_trajectory_get_route_update(void);
 uint8_t mach_stop_robot(void);
 
@@ -40,7 +36,8 @@ uint8_t mach_stop_robot(void);
 void mach_check_calibration_mode(void);
 #endif
 
-void mach_timer_setup(func_cb_t handler);
+void mach_tick_timer_setup();
+void mach_sched_init();
 void mach_setup(void);
 
 #endif /* PLATFORM_H_ */
