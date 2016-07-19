@@ -66,20 +66,20 @@ void sched_enter_mainloop()
 		{
 			task_t *current = &tasks[i];
 
-			if (current->state == TASK_RUNNING &&
+			if ((current->state == TASK_READY ||
+			     current->state == TASK_RUNNING) &&
 			    current->entry_point)
 			{
-				uint8_t stay_active;
+				task_state_t next_state;
 
 				irq_enable();
-				stay_active = current->entry_point();
+				next_state = current->entry_point();
 				irq_disable();
 
-				if (stay_active)
+				if (next_state == TASK_RUNNING)
 					tasks_all_sleep = FALSE;
-				else {
-					current->state = TASK_SLEEP;
-				}
+
+				current->state = next_state;
 			}
 		}
 		irq_enable();

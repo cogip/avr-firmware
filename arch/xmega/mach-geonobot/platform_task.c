@@ -18,7 +18,7 @@ static void mach_evtloop_end_of_game(void)
 }
 
 
-uint8_t task_active_event_loop()
+task_state_t task_active_event_loop()
 {
 	if (detect_start()) {
 		gestion_tour();
@@ -28,7 +28,7 @@ uint8_t task_active_event_loop()
 	}
 
 	/* keep this task active */
-	return TRUE;
+	return TASK_RUNNING;
 }
 
 
@@ -72,7 +72,7 @@ static void motor_drive(polar_t command)
 	hbridge_engine_update(&hbridges, HBRIDGE_MOTOR_LEFT,  left_command);
 }
 
-uint8_t task_controller_update()
+task_state_t task_controller_update()
 {
 	polar_t	robot_speed;
 	/* bot position on the 'table' (absolute position): */
@@ -90,7 +90,7 @@ uint8_t task_controller_update()
 		motor_command.angle = 0;
 		motor_drive(motor_command);
 
-		return TRUE;
+		return TASK_RUNNING;
 	}
 
 	tempo++;
@@ -137,7 +137,7 @@ uint8_t task_controller_update()
 	motor_drive(motor_command);
 
 	/* this task is called every scheduler tick (20ms) */
-	return FALSE;
+	return TASK_READY;
 }
 
 /*
@@ -146,11 +146,11 @@ uint8_t task_controller_update()
 uint8_t tasks_nb = 2;
 task_t tasks_list[] = {
 	[0] = {
-		.state = TASK_SLEEP,
+		.state = TASK_READY,
 		.entry_point = task_active_event_loop,
 	},
 	[1] = {
-		.state = TASK_SLEEP,
+		.state = TASK_READY,
 		.entry_point = task_controller_update,
 	},
 };

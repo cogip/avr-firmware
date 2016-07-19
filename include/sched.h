@@ -6,15 +6,16 @@
 #include "timer.h"
 
 typedef enum {
-	TASK_SLEEP,
-	TASK_RUNNING,
+	TASK_SLEEP,	/* Deep sleep task */
+	TASK_READY,	/* Sleep until next tick */
+	TASK_RUNNING,	/* Active task */
 } task_state_t;
 
 typedef struct {
 	task_state_t state;
 
-	/** @retval: TRUE if task require to continue */
-	uint8_t (*entry_point)(void);
+	/** @retval: updated state of the task */
+	task_state_t (*entry_point)(void);
 } task_t;
 
 
