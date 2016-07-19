@@ -52,17 +52,17 @@ endif
 # Config targets
 ifeq ($(config-targets),1)
 
-LD_LIBRARY_PATH		:= $(scripts-dir)/bin-$(shell uname -i)
+LD_LIBRARY_PATH		:= $(scripts-dir)/bin-$(shell uname -m)
 export LD_LIBRARY_PATH
 
 define silentoldconfig
         mkdir -p include/config include/generated; \
-        $(scripts-dir)/bin-$(shell uname -i)/kconfig-conf --silentoldconfig Kconfig
+        $(scripts-dir)/bin-$(shell uname -m)/kconfig-conf --silentoldconfig Kconfig
 endef
 
 .PHONY: defconfig
 defconfig:
-	$(Q)$(scripts-dir)/bin-$(shell uname -i)/kconfig-conf \
+	$(Q)$(scripts-dir)/bin-$(shell uname -m)/kconfig-conf \
 		--alldefconfig Kconfig
 	$(Q)$(silentoldconfig)
 
@@ -71,13 +71,13 @@ defconfig:
 		echo "configs/$@ not founded!"; \
 		exit 1; \
 	fi
-	$(Q)$(scripts-dir)/bin-$(shell uname -i)/kconfig-conf \
+	$(Q)$(scripts-dir)/bin-$(shell uname -m)/kconfig-conf \
 		--defconfig=configs/$@ Kconfig
 	$(Q)$(silentoldconfig)
 
 .PHONY: menuconfig
 menuconfig:
-	$(Q)$(scripts-dir)/bin-$(shell uname -i)/kconfig-mconf Kconfig
+	$(Q)$(scripts-dir)/bin-$(shell uname -m)/kconfig-mconf Kconfig
 	$(Q)$(silentoldconfig)
 endif
 
