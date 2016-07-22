@@ -132,7 +132,7 @@ F_CPU		:= $(CONFIG_F_CPU)
 CFLAGS 		+= $(patsubst %,-I%,$(src-dirs))
 
 CFLAGS		+= -Iinclude/ -Iarch/
-CFLAGS		+= -mmcu=$(MCU) -DF_CPU=$(CONFIG_F_CPU)
+CFLAGS		+= -mmcu=$(MCU) -DF_CPU=$(CONFIG_F_CPU) -std=c99
 CFLAGS		+= -Wall -Os -fpack-struct -fshort-enums -ffunction-sections \
 			-fdata-sections -funsigned-char -funsigned-bitfields \
 			-include include/generated/autoconf.h

@@ -4,6 +4,6 @@
 #define irq_enable() sei()
 #define irq_disable() cli()
 
-#define barrier()	asm volatile("": : :"memory")
+#define barrier()	__asm__ volatile("": : :"memory")
 
 #endif /* IRQ_H_ */
