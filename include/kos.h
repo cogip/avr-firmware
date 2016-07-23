@@ -10,11 +10,18 @@
 
 typedef enum { TASK_READY, TASK_SEMAPHORE, TASK_QUEUE } KOS_TaskStatus;
 
+#define TASK_NAME_MAXLEN		8
+
 typedef struct KOS_Task {
     void *sp;
+
+    char name[TASK_NAME_MAXLEN];
     KOS_TaskStatus status;
     struct KOS_Task *next;
     void *status_pointer;
+
+    uint8_t *stack_bottom;
+    uint8_t *stack_top;
 } KOS_Task;
 
 typedef void (*KOS_TaskFn)(void);
@@ -30,7 +37,7 @@ void kos_init(void);
  * Creates a new task
  * Note: Not safe
  */
-void kos_new_task(KOS_TaskFn task, void *sp);
+void kos_new_task(KOS_TaskFn task, const char *name, void *sp, uint16_t size);
 
 /**
  * Puts KOS in ISR mode

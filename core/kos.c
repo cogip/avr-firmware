@@ -3,16 +3,27 @@
  */
 
 #include <avr/interrupt.h>
+#include <stdio.h>
+#include <string.h>
 #include <util/atomic.h>
 
 #include "kos.h"
 #include "kos_settings.h"
 
+/* Start & end of stack markers for overflow detection */
+#define STACK_MAGIC1	0x11
+#define STACK_MAGIC2	0x22
+#define STACK_MAGIC3	0x33
+
 /**
  * Context frame format:
  *
+ * MAGIC1
+ * MAGIC2
+ * MAGIC3
  * PC_LOW
  * PC_HIGH
+ * 3-byte PC (0x00)
  * r0-31
  * SREG
  */
@@ -22,35 +33,42 @@ static uint8_t next_task = 0;
 static KOS_Task *task_head;
 KOS_Task *kos_current_task;
 
-static uint8_t kos_idle_task_stack[KOS_IDLE_TASK_STACK];
-static void kos_idle_task(void)
-{
-    while (1) { }
-}
+//static uint8_t kos_idle_task_stack[KOS_IDLE_TASK_STACK];
+//static void kos_idle_task(void)
+//{
+//    while (1) { }
+//}
 
 void kos_init(void)
 {
-    kos_new_task(&kos_idle_task, &kos_idle_task_stack[KOS_IDLE_TASK_STACK - 1]);
+    //kos_new_task(&kos_idle_task, &kos_idle_task_stack[KOS_IDLE_TASK_STACK - 1]);
+    //kos_new_task(&kos_idle_task, "IDLEOS", &kos_idle_task_stack[KOS_IDLE_TASK_STACK - 1], KOS_IDLE_TASK_STACK);
 }
 
-void kos_new_task(KOS_TaskFn task, void *sp)
+void kos_new_task(KOS_TaskFn task, const char *name, void *sp, uint16_t size)
 {
     int8_t i;
-    uint8_t *stack = sp;
+    uint8_t *stack = (uint8_t *)sp;
     KOS_Task *tcb;
 
+    stack = &stack[size-1];
+
     //make space for pc, sreg, and 32 register
-    stack[0] = (uint16_t)task & 0xFF;
-    stack[-1] = (uint16_t)task >> 8;
-    for (i = -2; i > -34; i--)
+    stack[0]  = STACK_MAGIC1;
+    stack[-1] = STACK_MAGIC2;
+    stack[-2] = STACK_MAGIC3;
+    stack[-3] = (uint16_t)task & 0xFF;
+    stack[-4] = (uint16_t)task >> 8;
+    stack[-5] = 0x00;
+    for (i = -6; i > -38; i--)
     {
         stack[i] = 0;
     }
-    stack[-34] = 0x80; //sreg, interrupts enabled
+    stack[-38] = 0x80; //sreg, interrupts enabled
     
     //create the task structure
     tcb = &tasks[next_task++];
-    tcb->sp = stack - 35;
+    tcb->sp = stack - 39;
     tcb->status = TASK_READY;
 
     //insert into the task list as the new highest priority task
@@ -63,6 +81,15 @@ void kos_new_task(KOS_TaskFn task, void *sp)
     {
         task_head = tcb;
     }
+
+    tcb->stack_bottom = stack - (int16_t)size + 1;
+    tcb->stack_top = stack;
+
+    tcb->stack_bottom[0] = STACK_MAGIC1;
+    tcb->stack_bottom[1] = STACK_MAGIC2;
+    tcb->stack_bottom[2] = STACK_MAGIC3;
+
+    strncpy(tcb->name, name, TASK_NAME_MAXLEN);
 }
 
 static uint8_t kos_isr_level = 0;
@@ -188,6 +215,76 @@ void *kos_queue_pend(KOS_Queue *queue)
 
 #endif //KOS_QUEUE
 
+#ifdef KOS_CHECK_STACKS
+#define WAIT_FOREVER() do { cli(); for(;;) ; } while(0)
+
+static void dump_all_stack()
+{
+	uint8_t i;
+	KOS_Task *task;
+
+	printf("\n\n*** STACK OVERFLOW ***\n\n");
+	for (i = 0; i < next_task; i++) {
+		task = &tasks[i];
+
+		printf("%s:\tsize = %4d\t[0x%04x ... 0x%04x]\n",
+			task->name,
+			task->stack_top - task->stack_bottom + 1,
+			(unsigned int)task->stack_bottom,
+			(unsigned int)task->stack_top);
+	}
+}
+
+static void stack_check_consistency()
+{
+	if (kos_current_task) {
+
+		uint16_t current_sp;
+		uint8_t lsb;
+		uint8_t msb;
+
+		__asm__ volatile (
+			"in %[_LSB_], %[_SPL_] \n\t"
+			"in %[_MSB_], %[_SPH_] \n\t"
+			:
+			[_LSB_] "=r" (lsb),
+			[_MSB_] "=r" (msb)
+			:
+			[_SPL_] "i" _SFR_IO_ADDR(SPL),
+			[_SPH_] "i" _SFR_IO_ADDR(SPH)
+		);
+
+		current_sp = (uint16_t)msb << 8;
+		current_sp |= lsb & 0x00ff;
+
+		/* check if we have enough space for context switch */
+		if (current_sp - 39 < (int)kos_current_task->stack_bottom) {
+			dump_all_stack();
+			printf("\ntask '%s' stack is too small!\n",
+				kos_current_task->name);
+			printf("current SP - 39 = 0x%04x\n", current_sp - 39);
+			printf("requires %d more bytes at least\n",
+				(int)kos_current_task->stack_bottom
+				- (current_sp - 39));
+
+			WAIT_FOREVER();
+		}
+
+		/* check if current stack did not have already overflowed */
+		if (kos_current_task->stack_bottom[0] != STACK_MAGIC1 ||
+		    kos_current_task->stack_bottom[1] != STACK_MAGIC2 ||
+		    kos_current_task->stack_bottom[2] != STACK_MAGIC3) {
+
+			dump_all_stack();
+			printf("\ntask '%s' stack had overflowed.\n",
+				kos_current_task->name);
+
+			WAIT_FOREVER();
+		}
+	}
+}
+#endif
+
 void kos_run(void)
 {
     kos_schedule();
@@ -198,9 +295,23 @@ void kos_schedule(void)
     if (kos_isr_level)
         return;
 
-    KOS_Task *task = task_head;
-    while (task->status != TASK_READY)
-        task = task->next;
+    //KOS_Task *task = task_head;
+    //while (task->status != TASK_READY)
+
+    KOS_Task *task;
+
+    static uint8_t current_task_index = 0;
+    current_task_index += 1;
+    current_task_index %= next_task;
+
+    task = &tasks[current_task_index];
+
+#ifdef KOS_CHECK_STACKS
+	ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+	{
+		stack_check_consistency();
+	}
+#endif
 
     if (task != kos_current_task)
     {
@@ -271,9 +382,6 @@ void kos_dispatch(KOS_Task *task)
             "ld   r0, X+ \n\t"
             "out  %[_SPH_], r0 \n\t"
             "pop  r31 \n\t" //status into r31: andi requires register above 15
-            "bst  r31, %[_I_] \n\t" //we don't want to enable interrupts just yet, so store the interrupt status in T
-            "bld  r31, %[_T_] \n\t" //T flag is on the call clobber list and tasks are only blocked as a result of a function call
-            "andi r31, %[_nI_MASK_] \n\t" //I is now stored in T, so clear I
             "out  %[_SREG_], r31 \n\t"
             "pop  r0 \n\t"
             "pop  r1 \n\t"
@@ -307,10 +415,7 @@ void kos_dispatch(KOS_Task *task)
             "pop  r29 \n\t"
             "pop  r30 \n\t"
             "pop  r31 \n\t"
-            "brtc 2f \n\t" //if the T flag is clear, do the non-interrupt enable return
             "reti \n\t"
-            "2: \n\t"
-            "ret \n\t"
             "" ::
             [_SREG_] "i" _SFR_IO_ADDR(SREG),
             [_I_] "i" SREG_I,
