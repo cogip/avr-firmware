@@ -3,6 +3,7 @@
 #include <xmega/clksys.h>
 #include <xmega/usart.h>
 
+#include "kos.h"
 #include "log.h"
 #include "platform.h"
 #include "platform_task.h"
@@ -212,10 +213,6 @@ hbridge_t hbridges = {
 	},
 };
 
-uint8_t mach_detect_start(void)
-{
-	return TRUE;
-}
 
 pose_t mach_trajectory_get_route_update(void)
 {
@@ -229,57 +226,6 @@ uint8_t mach_stop_robot(void)
 	return stop;
 }
 
-#if defined(CONFIG_CALIBRATION)
-static void mach_calibration_usage(void)
-{
-	printf("\n>>> Entering calibration mode\n\n");
-
-	printf("\t's' to calibrate servos (sd21 card)\n");
-	printf("\n");
-	printf("\t'h' to display this help\n");
-	printf("\t'e' to exit calibration mode\n");
-	printf("\n");
-}
-
-static void mach_enter_calibration_mode(void)
-{
-	int c;
-	uint8_t quit = 0;
-
-	mach_calibration_usage();
-
-	while (!quit) {
-
-		/* display prompt */
-		printf("$ ");
-
-		/* wait for command */
-		c = getchar();
-		printf("%c\n", c);
-
-		switch (c) {
-		case 's':
-			sd21_enter_calibration(&sd21);
-			break;
-		case 'h':
-			mach_calibration_usage();
-			break;
-		case 'e':
-			quit = 1;
-			break;
-		default:
-			printf("\n");
-			break;
-		}
-	}
-}
-
-void mach_check_calibration_mode(void)
-{
-	if (1 /* TODO: assign a GPIO for calibration */)
-		mach_enter_calibration_mode();
-}
-#endif /* CONFIG_CALIBRATION */
 
 static void mach_pinmux_setup(void)
 {
@@ -314,14 +260,14 @@ static int usartc0_getchar()
 }
 #endif
 
-void mach_tick_timer_setup()
-{
-	sched_set_tasks(tasks_list, tasks_nb);
-}
-
 void mach_sched_init()
 {
 	sched_init(20 /*ms*/, &TCC0);
+}
+
+void mach_sched_run()
+{
+	kos_run();
 }
 
 void mach_setup(void)

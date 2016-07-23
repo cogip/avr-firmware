@@ -36,8 +36,10 @@ uint8_t mach_stop_robot(void);
 void mach_check_calibration_mode(void);
 #endif
 
-void mach_tick_timer_setup();
-void mach_sched_init();
 void mach_setup(void);
+
+void mach_tasks_init();
+void mach_sched_init();
+void mach_sched_run();
 
 #endif /* PLATFORM_H_ */
