@@ -61,3 +61,8 @@ int usart_recv(usart_t *usart)
 	/* Output 1 character */
 	return usart->DATA;
 }
+
+inline int usart_is_data_arrived(usart_t *usart)
+{
+	return (usart->STATUS & USART_RXCIF_bm);
+}

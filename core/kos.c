@@ -2,13 +2,16 @@
  * Main code for KOS
  */
 
+#include <avr/sleep.h>
 #include <avr/interrupt.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <util/atomic.h>
 
 #include "kos.h"
 #include "kos_settings.h"
+#include "sched.h"
 
 /* Start & end of stack markers for overflow detection */
 #define STACK_MAGIC1	0x11
@@ -29,20 +32,28 @@
  */
 
 static KOS_Task tasks[KOS_MAX_TASKS + 1];
-static uint8_t next_task = 0;
+static uint8_t tasks_count = 0;
 static KOS_Task *task_head;
+static KOS_Task *task_tail;
 KOS_Task *kos_current_task;
 
-//static uint8_t kos_idle_task_stack[KOS_IDLE_TASK_STACK];
-//static void kos_idle_task(void)
-//{
-//    while (1) { }
-//}
+static void task_idle(void)
+{
+	set_sleep_mode(SLEEP_MODE_IDLE);
+
+	for(;;) {
+		sleep_enable();
+		sleep_cpu();
+		sleep_disable();
+	}
+}
+
+#define TASK_IDLE_STACK		128
 
 void kos_init(void)
 {
-    //kos_new_task(&kos_idle_task, &kos_idle_task_stack[KOS_IDLE_TASK_STACK - 1]);
-    //kos_new_task(&kos_idle_task, "IDLEOS", &kos_idle_task_stack[KOS_IDLE_TASK_STACK - 1], KOS_IDLE_TASK_STACK);
+	uint8_t *stack_idle = malloc(TASK_IDLE_STACK);
+	kos_new_task(task_idle, "IDLE", stack_idle, TASK_IDLE_STACK);
 }
 
 void kos_new_task(KOS_TaskFn task, const char *name, void *sp, uint16_t size)
@@ -65,9 +76,10 @@ void kos_new_task(KOS_TaskFn task, const char *name, void *sp, uint16_t size)
         stack[i] = 0;
     }
     stack[-38] = 0x80; //sreg, interrupts enabled
-    
+
+    /* TODO: check task_count != KOS_MAX_TASKS */
     //create the task structure
-    tcb = &tasks[next_task++];
+    tcb = &tasks[tasks_count++];
     tcb->sp = stack - 39;
     tcb->status = TASK_READY;
 
@@ -76,10 +88,12 @@ void kos_new_task(KOS_TaskFn task, const char *name, void *sp, uint16_t size)
     {
         tcb->next = task_head;
         task_head = tcb;
+        task_tail->next = tcb;
     }
     else
     {
         task_head = tcb;
+        task_tail = tcb;
     }
 
     tcb->stack_bottom = stack - (int16_t)size + 1;
@@ -224,7 +238,7 @@ static void dump_all_stack()
 	KOS_Task *task;
 
 	printf("\n\n*** STACK OVERFLOW ***\n\n");
-	for (i = 0; i < next_task; i++) {
+	for (i = 0; i < tasks_count; i++) {
 		task = &tasks[i];
 
 		printf("%s:\tsize = %4d\t[0x%04x ... 0x%04x]\n",
@@ -285,41 +299,110 @@ static void stack_check_consistency()
 }
 #endif
 
+KOS_Task * kos_get_next_task(void)
+{
+	KOS_Task *t;
+	KOS_Task *next_task = NULL;
+
+	/* first scheduler call */
+	if (!kos_current_task)
+		return task_head;
+
+	/* round-robin scheduling */
+	for (t = kos_current_task->next; t != kos_current_task; t = t->next) {
+
+		if (t->status == TASK_READY && !t->nb_tick_to_wait) {
+
+			/* idle task is handled afterward */
+			if (t == &tasks[0])
+				continue;
+
+			next_task = t;
+			break;
+		}
+	}
+
+	return next_task; // ? next_task : kos_current_task;
+}
+
 void kos_run(void)
 {
-    kos_schedule();
+	kos_schedule();
+}
+
+void kos_yield(void)
+{
+	/* at least, a task will sleep one tick */
+	if(!kos_current_task->nb_tick_to_wait)
+		kos_current_task->nb_tick_to_wait++;
+	kos_schedule();
+}
+
+void kos_delay_ms(uint16_t delay)
+{
+	kos_current_task->nb_tick_to_wait = delay / sched_get_tickms();
+	kos_schedule();
+}
+
+void kos_set_next_schedule_delay_ms(uint16_t delay)
+{
+	kos_current_task->nb_tick_to_wait = delay / sched_get_tickms();
+}
+
+void kos_task_exit()
+{
+	kos_current_task->status = TASK_ZOMBIE;
+	kos_schedule();
+
+	/* should never go there */
+	for(;;) ;
 }
 
 void kos_schedule(void)
 {
-    if (kos_isr_level)
-        return;
+	KOS_Task *task;
 
-    //KOS_Task *task = task_head;
-    //while (task->status != TASK_READY)
-
-    KOS_Task *task;
-
-    static uint8_t current_task_index = 0;
-    current_task_index += 1;
-    current_task_index %= next_task;
-
-    task = &tasks[current_task_index];
+	if (kos_isr_level)
+		return;
 
 #ifdef KOS_CHECK_STACKS
-	ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
-	{
-		stack_check_consistency();
-	}
+	stack_check_consistency();
 #endif
 
-    if (task != kos_current_task)
-    {
-        ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
-        {
-            kos_dispatch(task);
-        }
-    }
+	task = kos_get_next_task();
+
+	if (!task) {
+		/* no active task: let's enter sleep mode with idle task */
+		task = &tasks[0];
+	}
+
+	if (task != kos_current_task)
+	{
+		ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+		{
+			kos_dispatch(task);
+		}
+	}
+}
+
+void kos_tick_schedule(void)
+{
+	uint8_t i;
+	KOS_Task *t;
+
+	/* Note: not required, we are in ISR context */
+	/*ATOMIC_BLOCK(ATOMIC_RESTORESTATE)*/
+	{
+		/* update waiting tasks */
+		for (i = tasks_count; i; i--) {
+			t = &tasks[i - 1];
+
+			if (t->status == TASK_READY && t->nb_tick_to_wait)
+				t->nb_tick_to_wait--;
+		}
+	}
+
+	kos_schedule();
 }
 
 void kos_dispatch(KOS_Task *task)

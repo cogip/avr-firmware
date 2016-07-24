@@ -3,6 +3,7 @@
 #include <xmega/clksys.h>
 #include <xmega/usart.h>
 
+#include "controller.h"
 #include "kos.h"
 #include "log.h"
 #include "platform.h"
@@ -260,9 +261,20 @@ static int usartc0_getchar()
 }
 #endif
 
+int mach_getchar_or_yield()
+{
+#ifdef CONFIG_ENABLE_LOGGING
+	while (!usart_is_data_arrived(&USARTC0))
+		kos_yield();
+	return getchar();
+#else
+	kos_yield();
+#endif
+}
+
 void mach_sched_init()
 {
-	sched_init(20 /*ms*/, &TCC0);
+	sched_init(10/*ms*/, &TCC0);
 }
 
 void mach_sched_run()
@@ -298,6 +310,10 @@ void mach_setup(void)
 	/* setup qdec */
 	qdec_setup(&encoders[0]);
 	qdec_setup(&encoders[1]);
+
+	/* controller setup */
+	odometry_setup(WHEELS_DISTANCE);
+	controller_setup(WHEELS_DISTANCE);
 
 	/* Programmable Multilevel Interrupt Controller */
 	PMIC.CTRL |= PMIC_LOLVLEN_bm; /* Low-level Interrupt Enable */

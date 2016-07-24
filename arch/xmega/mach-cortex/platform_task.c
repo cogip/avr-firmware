@@ -62,12 +62,15 @@ void task_controller_update()
 	uint8_t stop = 0;
 
 	for (;;) {
+		kos_set_next_schedule_delay_ms(20);
+
 		if (tempo >= 4500) {
 			/* final position */
 			motor_command.distance = 0;
 			motor_command.angle = 0;
 			motor_drive(motor_command);
 
+			kos_yield();
 			continue;
 		}
 
@@ -115,7 +118,7 @@ void task_controller_update()
 		motor_drive(motor_command);
 
 		/* this task is called every scheduler tick (20ms) */
-		//kos_schedule();
+		kos_yield();
 	}
 }
 
@@ -148,7 +151,7 @@ static void mach_enter_calibration_mode(void)
 		printf("$ ");
 
 		/* wait for command */
-		c = getchar();
+		c = mach_getchar_or_yield();
 		printf("%c\n", c);
 
 		switch (c) {
@@ -167,20 +170,14 @@ static void mach_enter_calibration_mode(void)
 		}
 	}
 
-	for(;;) ;
+	kos_task_exit();
 }
 #endif /* CONFIG_CALIBRATION */
-
-void task_idle()
-{
-	for(;;);
-}
 
 /*
  * Tasks registration
  */
 
-#define TASK_IDLE_STACK		96
 #define TASK_CALIB_STACK	184
 #define TASK_CTRL_STACK		256
 
@@ -188,13 +185,11 @@ void mach_tasks_init()
 {
 	kos_init();
 
-	uint8_t *stack_idle = malloc(TASK_IDLE_STACK);
 #if defined(CONFIG_CALIBRATION)
 	uint8_t *stack_calibration = malloc(TASK_CALIB_STACK);
 #endif
 	uint8_t *stack_controller_update = malloc(TASK_CTRL_STACK);
 
-	kos_new_task(task_idle, "IDLE", stack_idle, TASK_IDLE_STACK);
 #if defined(CONFIG_CALIBRATION)
 	kos_new_task(mach_enter_calibration_mode, "CALIB", stack_calibration, TASK_CALIB_STACK);
 #endif

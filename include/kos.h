@@ -8,7 +8,12 @@
 
 #include "kos_settings.h"
 
-typedef enum { TASK_READY, TASK_SEMAPHORE, TASK_QUEUE } KOS_TaskStatus;
+typedef enum {
+	TASK_READY,		/* sleep until at least next_tick */
+	TASK_SEMAPHORE,		/* wait on semaphore */
+	TASK_QUEUE,		/* wait on queue */
+	TASK_ZOMBIE,		/* killed task */
+} KOS_TaskStatus;
 
 #define TASK_NAME_MAXLEN		8
 
@@ -16,6 +21,7 @@ typedef struct KOS_Task {
     void *sp;
 
     char name[TASK_NAME_MAXLEN];
+    uint8_t nb_tick_to_wait;
     KOS_TaskStatus status;
     struct KOS_Task *next;
     void *status_pointer;
@@ -106,9 +112,38 @@ void *kos_queue_pend(KOS_Queue *queue);
 void kos_run(void);
 
 /**
+ * Cooperative scheduling from task.
+ */
+void kos_yield(void);
+
+/**
+ * Cooperative scheduling from task, asking to sleep for at least 'delay' ms.
+ */
+void kos_delay_ms(uint16_t delay);
+
+/**
+ * When task will be schedule, it will wait for at least this delay.
+ * Calling this function does not schedule the task, but it refers it's awake
+ * time delay from the current tick timer value. This is intended to avoid shift
+ * while the task treatment took some time.
+ */
+void kos_set_next_schedule_delay_ms(uint16_t delay);
+
+/**
+ * Intended to be the last call from a task
+ */
+void kos_task_exit();
+
+/**
  * Runs the scheduler
  */
 void kos_schedule(void);
+
+/**
+ * Increment tick and runs the scheduler
+ * (called from timer ISR)
+ */
+void kos_tick_schedule(void);
 
 /**
  * Dispatches the passed task, saving the context of the current task

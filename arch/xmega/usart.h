@@ -21,4 +21,6 @@ void usart_setup(usart_t *usart);
 void usart_send(usart_t *usart, uint8_t data);
 int usart_recv(usart_t *usart);
 
+int usart_is_data_arrived(usart_t *usart);
+
 #endif /* USART_H_ */
