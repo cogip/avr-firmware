@@ -9,6 +9,7 @@
 
 #include <stdio.h>
 #include "log.h"
+#include "platform.h"
 #include "sd21.h"
 
 #define SD21_ADDRESS	(0xC2 >> 1)
@@ -173,7 +174,7 @@ void sd21_enter_calibration(sd21_t *obj)
 			*cur);
 
 		/* wait for command */
-		c = getchar();
+		c = mach_getchar_or_yield();
 		printf("%c\n", c);
 
 		switch (c) {
