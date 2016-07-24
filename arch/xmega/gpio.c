@@ -11,7 +11,7 @@ inline void gpio_set_direction(gpio_port_t *p, uint8_t pin_id, uint8_t output)
 inline void gpio_set_output(gpio_port_t *p, uint8_t pin_id, int8_t value)
 {
 	if (value)
-		p->OUTSET = pin_id;
+		p->OUT |= (1 << pin_id);
 	else
-		p->OUTCLR = pin_id;
+		p->OUT &= ~(1 << pin_id);
 }
