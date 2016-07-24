@@ -291,7 +291,7 @@ void mach_setup(void)
 
 #ifdef CONFIG_ENABLE_LOGGING
 	/* setup logs through usart communication */
-	usart_setup(&USARTC0, 115200);
+	usart_setup(&USART_CONSOLE, 115200);
 	log_init(usartc0_putchar, usartc0_getchar);
 #endif
 

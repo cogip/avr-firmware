@@ -24,6 +24,8 @@
 #define HBRIDGE_MOTOR_RIGHT		1
 #define HBRIDGE_MOTOR_TOWER		2
 
+#define USART_CONSOLE			USARTC0
+
 extern analog_sensors_t ana_sensors;
 extern qdec_t encoders[];
 extern sd21_t sd21;

@@ -7,8 +7,10 @@
 #include "log.h"
 #include "platform.h"
 #include "platform_task.h"
+#include "usart.h"
 #include "qdec.h"
 
+static uint8_t game_started;
 static uint16_t tempo;
 
 static void show_game_time()
@@ -60,6 +62,9 @@ void task_controller_update()
 	polar_t	speed_order		= { 60, 60 };
 	polar_t	motor_command;
 	uint8_t stop = 0;
+
+	while (!game_started)
+		kos_yield();
 
 	for (;;) {
 		kos_set_next_schedule_delay_ms(20);
@@ -136,14 +141,30 @@ static void mach_calibration_usage(void)
 
 static void mach_enter_calibration_mode(void)
 {
+	int16_t autoboot_ms = 3000;
 	int c;
 	uint8_t quit = 0;
 
+	/* wait for keypress, or schedule */
+	while (!usart_is_data_arrived(&USART_CONSOLE)) {
+
+		printf("Press a key to enter calibration... %ds remaining\r",
+			autoboot_ms / 1000);
+
+		kos_set_next_schedule_delay_ms(250);
+		autoboot_ms -= 250;
+
+		if (autoboot_ms > 0)
+			kos_yield();
+		else
+			/* time elapsed, we bypass calibration
+			 * and continue to game mode. */
+			goto exit_point;
+	}
+	printf("\n\n");
+	getchar();
+
 	mach_calibration_usage();
-	/* NOTE: instead of a gpio status, use the flag to activate the
-	 * feature all the time. Also, add a autoboot feature, ask the user to
-	 * press a key & if no key start normally after 3 seconds
-	 */
 
 	while (!quit) {
 
@@ -170,6 +191,9 @@ static void mach_enter_calibration_mode(void)
 		}
 	}
 
+exit_point:
+	game_started = TRUE;
+	printf("calibration ended\n");
 	kos_task_exit();
 }
 #endif /* CONFIG_CALIBRATION */
@@ -189,6 +213,8 @@ void mach_tasks_init()
 	uint8_t *stack_calibration = malloc(TASK_CALIB_STACK);
 #endif
 	uint8_t *stack_controller_update = malloc(TASK_CTRL_STACK);
+
+	game_started = FALSE;
 
 #if defined(CONFIG_CALIBRATION)
 	kos_new_task(mach_enter_calibration_mode, "CALIB", stack_calibration, TASK_CALIB_STACK);
