@@ -20,15 +20,25 @@
  * Notation USARTC0, USARTC1, USARTD0, USARTD1, USARTE0, USARTE1, USARTF0 and
  * USARTF1.
  */
-void usart_setup(usart_t *usart)
+void usart_setup(usart_t *usart, uint32_t baudrate)
 {
-	/* Clock generation : BSEL = fOSC / (2^BSCALE * 16 * fBAUD) - 1 */
-	/* 32000000/(2^0 * 16 * 9600) - 1 = 207 */
-	/* 32000000/(2^0 * 16 * 115200) - 1 = 17 */
 #if F_CPU == 32000000UL
-	usart->BAUDCTRLA = 207; /* 12; //51; */
-	usart->BAUDCTRLA = 17; /* 12; //51; */
-	usart->BAUDCTRLB = 0;
+	/* Clock generation : BSEL = fOSC / (2^BSCALE * 16 * fBAUD) - 1 */
+	switch (baudrate) {
+	case 9600:
+		/* 32000000/(2^0 * 16 * 9600) - 1 = 207 */
+		usart->BAUDCTRLA = 207;
+		usart->BAUDCTRLB = 0;
+	case 115200:
+		/* 32000000/(2^0 * 16 * 115200) - 1 = 17 */
+		usart->BAUDCTRLA = 17;
+		usart->BAUDCTRLB = 0;
+		break;
+	default:
+		return;
+	}
+#else
+#error "MCU frequency not supported"
 #endif
 
 	/* Frame format : 8-data bits, no parity, 1 stop bit. */

@@ -14,9 +14,9 @@ typedef USART_t usart_t;
 
 /**
  * \fn
- * \brief setup usart 9600 baud, 8-data bits, no parity, 1 stop bit
+ * \brief setup usart. tunable baudrate, 8-data bits, no parity, 1 stop bit
  */
-void usart_setup(usart_t *usart);
+void usart_setup(usart_t *usart, uint32_t baudrate);
 
 void usart_send(usart_t *usart, uint8_t data);
 int usart_recv(usart_t *usart);
