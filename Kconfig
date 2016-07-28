@@ -81,4 +81,14 @@ config CALIBRATION
 	  Select this if you want to include calibration mode feature inside
 	  firmware.
 
+config KOS_CHECK_STACKS
+	bool "Task stacks integrity checks"
+	default y
+	help
+	  Select this if you want the OS to include markers on top and bottom
+	  positions of task stacks. This add a some runtime overhead while
+	  scheduler is called to switch tasks context. Anyway, this is important
+	  to detect stack overflow & dimension tasks stack accordingly.
+	  If unsure, say Y.
+
 source drivers/Kconfig

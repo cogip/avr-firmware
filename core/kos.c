@@ -229,7 +229,7 @@ void *kos_queue_pend(KOS_Queue *queue)
 
 #endif //KOS_QUEUE
 
-#ifdef KOS_CHECK_STACKS
+#ifdef CONFIG_KOS_CHECK_STACKS
 #define WAIT_FOREVER() do { cli(); for(;;) ; } while(0)
 
 static void dump_all_stack()
@@ -297,7 +297,7 @@ static void stack_check_consistency()
 		}
 	}
 }
-#endif
+#endif /* CONFIG_KOS_CHECK_STACKS */
 
 KOS_Task * kos_get_next_task(void)
 {
@@ -365,7 +365,7 @@ void kos_schedule(void)
 	if (kos_isr_level)
 		return;
 
-#ifdef KOS_CHECK_STACKS
+#ifdef CONFIG_KOS_CHECK_STACKS
 	stack_check_consistency();
 #endif
 

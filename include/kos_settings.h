@@ -14,7 +14,5 @@
 //#define KOS_QUEUE
 //#define KOS_MAX_QUEUES 4
 
-#define KOS_CHECK_STACKS
-
 #endif //_KOS_SETTINGS_H_
 
