@@ -1,4 +1,4 @@
-# Geonobot AVR firmware repackaged
+# Cogip AVR firmwares
 
 ## Build status
 [![Build Status](https://travis-ci.org/cogip/avr-firmware.svg?branch=master)](https://travis-ci.org/cogip/avr-firmware)
@@ -8,12 +8,41 @@
 To install AVR toolchain on debian/ubuntu:
 
 ```bash
-sudo apt-get install avrdude gcc-avr binutils-avr avr-libc
+$ sudo apt-get install avrdude gcc-avr binutils-avr avr-libc
+```
+
+To install AVR toolchain on Arch Linux:
+
+```bash
+$ pacman -Sy avr-binutils avr-gcc avr-libc avrdude
 ```
 
 ## Build
 
-Thats obvious.
+```bash
+$ make defconfig
+$ make
+```
+
+## Alternative targets
+
+Other default configuration are archived, users can configure or select a pre-defined firmware flavor:
+
+```bash
+$ make menuconfig # to launch ncurses interface and select platform & build configuration
+$ make geonobot_defconfig # to set configuration for Geonobot (2015) firwmare generation
+$ make cortex_defconfig # to set configuration for Cortex (2017) firmware generation
+```
+
+Then, simply run `make` to build the firmware.
+
+## Install firmware in Flash memory
+
+Assuming you dispose of an AVR Isp mkII programmer, you can use following to program the flash memory:
+
+```bash
+$ sudo avrdude -v -v -p atxmega128a1 -c avrispmkII -U flash:w:geonobot.hex:i
+```
 
 # External references
 
