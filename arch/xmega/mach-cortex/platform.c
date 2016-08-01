@@ -191,7 +191,7 @@ hbridge_t hbridges = {
 
 	.pwm_port = &PORTE, /* TODO: can be 'guessed' from timer ref above */
 
-	.engine_nb = 3,
+	.engine_nb = 2,
 	.engines = {
 		[HBRIDGE_MOTOR_LEFT] = {
 			/* left motor */
@@ -204,12 +204,6 @@ hbridge_t hbridges = {
 			.direction_pin_port = &PORTD,
 			.direction_pin_id = PIN5_bp,
 			.pwm_channel = PIN1_bp,
-		},
-		[HBRIDGE_MOTOR_TOWER] = {
-			/* tower motor */
-			.direction_pin_port = &PORTD,
-			.direction_pin_id = PIN6_bp,
-			.pwm_channel = PIN2_bp,
 		},
 	},
 };
