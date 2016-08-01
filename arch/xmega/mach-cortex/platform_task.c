@@ -132,6 +132,7 @@ static void mach_calibration_usage(void)
 {
 	printf("\n>>> Entering calibration mode\n\n");
 
+	printf("\t'p' to calibrate hbridge & PWM ctrl\n");
 	printf("\t's' to calibrate servos (sd21 card)\n");
 	printf("\n");
 	printf("\t'h' to display this help\n");
@@ -176,6 +177,9 @@ static void mach_enter_calibration_mode(void)
 		printf("%c\n", c);
 
 		switch (c) {
+		case 'p':
+			hbridge_enter_calibration(&hbridges);
+			break;
 		case 's':
 			sd21_enter_calibration(&sd21);
 			break;

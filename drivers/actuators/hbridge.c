@@ -1,4 +1,9 @@
+#include <stdio.h>
 #include "hbridge.h"
+#include "platform.h"
+
+#define CAL_MIN (-1000)
+#define CAL_MAX (+1000)
 
 /** limits speed command
  * @param value from -16535 to 16535
@@ -23,6 +28,80 @@ void hbridge_engine_update(hbridge_t *b, uint8_t engine_idx, int16_t pwm)
 	/* generate PWM */
 	timer_pwm_duty_cycle(b->tc, e->pwm_channel, pwm_period);
 }
+
+#if defined(CONFIG_CALIBRATION)
+static void hbridge_calibration_usage(hbridge_t *obj)
+{
+	printf("\n>>> Entering hbridge calibration\n\n");
+
+	printf("hbridge_nb = %d\n\n", obj->engine_nb);
+
+	printf("\t'n' to select next engine\n");
+	printf("\t'b' to select prev engine\n");
+	printf("\t'r' to reset current setting to 0\n");
+	printf("\t'+' to add 25\n");
+	printf("\t'-' to sub 25\n");
+	printf("\n");
+	printf("\t'h' to display this help\n");
+	printf("\t'q' to quit\n");
+	printf("\n");
+}
+
+
+void hbridge_enter_calibration(hbridge_t *obj)
+{
+	int c;
+	uint8_t quit = 0;
+	static uint8_t engine_id = 0;
+	int16_t cur = 0;
+
+	hbridge_calibration_usage(obj);
+
+	while (!quit) {
+		/* display prompt */
+		printf("[%02d].pwm = %4d $ ",
+			engine_id, cur);
+
+		/* wait for command */
+		c = mach_getchar_or_yield();
+		printf("%c\n", c);
+
+		switch (c) {
+		case 'n':
+			engine_id += 1;
+			engine_id %= obj->engine_nb;
+			break;
+		case 'b':
+			if (engine_id)
+				engine_id -= 1;
+			else
+				engine_id = obj->engine_nb - 1;
+			break;
+		case 'r':
+			cur = 0;
+			hbridge_engine_update(obj, engine_id, cur);
+			break;
+		case '+':
+			cur = cur + 25 > CAL_MAX ? CAL_MAX : cur + 25;
+			hbridge_engine_update(obj, engine_id, cur);
+			break;
+		case '-':
+			cur = cur - 25 < CAL_MIN ? CAL_MIN : cur - 25;
+			hbridge_engine_update(obj, engine_id, cur);
+			break;
+		case 'h':
+			hbridge_calibration_usage(obj);
+			break;
+		case 'q':
+			quit = 1;
+			break;
+		default:
+			printf("\n");
+			break;
+		}
+	}
+}
+#endif /* CONFIG_CALIBRATION */
 
 void hbridge_setup(hbridge_t *b)
 {

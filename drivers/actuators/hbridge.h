@@ -22,6 +22,10 @@ typedef struct {
 } hbridge_t;
 
 void hbridge_engine_update(hbridge_t *b, uint8_t engine_idx, int16_t pwm);
+#if defined(CONFIG_CALIBRATION)
+void hbridge_enter_calibration(hbridge_t *obj);
+#endif
+
 void hbridge_setup(hbridge_t *b);
 
 #endif /* HBRIDGE_H_ */
