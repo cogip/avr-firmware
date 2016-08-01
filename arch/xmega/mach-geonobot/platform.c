@@ -198,19 +198,19 @@ hbridge_t hbridges = {
 		[HBRIDGE_MOTOR_LEFT] = {
 			/* left motor */
 			.direction_pin_port = &PORTD,
-			.direction_pin_id = PIN4_bm,
+			.direction_pin_id = PIN4_bp,
 			.pwm_channel = PIN0_bp,
 		},
 		[HBRIDGE_MOTOR_RIGHT] = {
 			/* right motor */
 			.direction_pin_port = &PORTD,
-			.direction_pin_id = PIN5_bm,
+			.direction_pin_id = PIN5_bp,
 			.pwm_channel = PIN1_bp,
 		},
 		[HBRIDGE_MOTOR_TOWER] = {
 			/* tower motor */
 			.direction_pin_port = &PORTD,
-			.direction_pin_id = PIN6_bm,
+			.direction_pin_id = PIN6_bp,
 			.pwm_channel = PIN2_bp,
 		},
 	},
