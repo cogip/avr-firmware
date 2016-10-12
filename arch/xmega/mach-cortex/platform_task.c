@@ -45,8 +45,13 @@ void task_controller_update()
 	polar_t	motor_command;
 	uint8_t stop = 0;
 
-	while (!game_started)
+	while (!game_started) {
+		kos_set_next_schedule_delay_ms(20);
+
+		robot_speed = encoder_read();
+
 		kos_yield();
+	}
 
 	for (;;) {
 		kos_set_next_schedule_delay_ms(20);
@@ -114,6 +119,7 @@ static void mach_calibration_usage(void)
 {
 	printf("\n>>> Entering calibration mode\n\n");
 
+	printf("\t'o' to calibrate odometry\n");
 	printf("\t'p' to calibrate hbridge & PWM ctrl\n");
 	printf("\t's' to calibrate servos (sd21 card)\n");
 	printf("\n");
@@ -159,6 +165,10 @@ static void mach_enter_calibration_mode(void)
 		printf("%c\n", c);
 
 		switch (c) {
+		case 'o':
+			encoder_enter_calibration();
+			/* TODO; odometry_enter_calibration */
+			break;
 		case 'p':
 			hbridge_enter_calibration(&hbridges);
 			break;
