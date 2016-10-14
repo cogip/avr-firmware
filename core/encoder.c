@@ -10,11 +10,14 @@
  */
 int8_t display_dbg = FALSE;
 
-#define print_dbg(...) \
+#define print_eventually(...) \
 do { \
 	if (display_dbg) \
 		printf(__VA_ARGS__); \
 } while(0)
+
+int16_t sum_left_speed;
+int16_t sum_right_speed;
 
 polar_t encoder_read(void)
 {
@@ -23,13 +26,20 @@ polar_t encoder_read(void)
 	int16_t left_speed = qdec_read(&encoders[0]);
 	int16_t right_speed = qdec_read(&encoders[1]);
 
-	print_dbg("[%4d, %4d]\r", left_speed, right_speed);
+	if (display_dbg) {
+		sum_left_speed += left_speed;
+		sum_right_speed += right_speed;
+	}
+
+	print_eventually("\ri:[%4d, %4d] c:[%4d, %4d]         \r",
+			  left_speed, right_speed,
+			  sum_left_speed, sum_right_speed);
 
 	/* update speed */
 	robot_speed.distance = (right_speed + left_speed) / 2.0;
 	robot_speed.angle = right_speed - left_speed;
 
-	//print_dbg("(dist, angle) = (%d, %d)\n",
+	//print_eventually("(dist, angle) = (%d, %d)\n",
 	//	  robot_speed.distance, robot_speed.angle);
 
 	return robot_speed;
@@ -74,6 +84,10 @@ void encoder_enter_calibration(void)
 		switch (c) {
 		case 'S':
 			display_dbg = !display_dbg;
+			if (display_dbg) {
+				sum_left_speed = 0;
+				sum_right_speed = 0;
+			}
 			printf("display_dbg = %s\n", display_dbg ? "True" : "False");
 			break;
 		case 'h':
