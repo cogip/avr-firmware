@@ -23,6 +23,8 @@ void hbridge_engine_update(hbridge_t *b, uint8_t engine_idx, int16_t pwm)
 	engine_t *e = &b->engines[engine_idx];
 
 	/* signed of pwm value is applied on direction gpio */
+	if (e->direction_inverse_polarity)
+		pwm *= -1;
 	gpio_set_output(e->direction_pin_port, e->direction_pin_id, pwm > 0);
 
 	/* generate PWM */

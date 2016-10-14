@@ -7,6 +7,7 @@
 typedef struct {
 	gpio_port_t *direction_pin_port;
 	uint8_t direction_pin_id;
+	uint8_t direction_inverse_polarity;
 	uint8_t pwm_channel;
 } engine_t;
 
