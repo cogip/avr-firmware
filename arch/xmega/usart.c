@@ -26,9 +26,15 @@ void usart_setup(usart_t *usart, uint32_t baudrate)
 	/* Clock generation : BSEL = fOSC / (2^BSCALE * 16 * fBAUD) - 1 */
 	switch (baudrate) {
 	case 9600:
-		/* 32000000/(2^0 * 16 * 9600) - 1 = 207 */
-		usart->BAUDCTRLA = 207;
-		usart->BAUDCTRLB = 0;
+		/* 32000000/(2^2 * 16 * 9600) - 1 = 12 */
+		usart->BAUDCTRLA = 12;
+		usart->BAUDCTRLB = 4 << 4;
+		break;
+	case 38400:
+		/* 32000000/(2^2 * 16 * 38400) - 1 = 12 */
+		usart->BAUDCTRLA = 12;
+		usart->BAUDCTRLB = 2 << 4;
+		break;
 	case 115200:
 		/* 32000000/(2^0 * 16 * 115200) - 1 = 17 */
 		usart->BAUDCTRLA = 17;
