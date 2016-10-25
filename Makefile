@@ -1,8 +1,4 @@
-ARCH		:= xmega
-
-# list of sources dirs which contains a Makefile included from the current one:
 scripts-dir	:= scripts
-src-dirs 	:= arch/$(ARCH) core drivers machines
 
 # -----------------------------------------------------------------------------
 # Pretty display of command display or verbose: make V=1
@@ -103,6 +99,10 @@ ifeq ($(build-targets),1)
 
 -include include/config/auto.conf
 
+ARCH			:= $(subst $(quote),,$(CONFIG_ARCH))
+# list of sources dirs which contains a Makefile included from the current one:
+src-dirs 		:= arch/$(ARCH) core drivers machines
+
 MACH			:= $(subst $(quote),,$(CONFIG_PLATFORM_NAME))
 binname			:= $(MACH)
 
@@ -125,23 +125,31 @@ OBJCOPY		:= $(CROSS_COMPILE)objcopy
 SIZE		:= $(CROSS_COMPILE)size
 export CC
 
-MCU		:= $(CONFIG_MCU)
+MCU		:= $(subst $(quote),,$(CONFIG_MCU))
 F_CPU		:= $(CONFIG_F_CPU)
 
 # look for include files in each of the modules
 CFLAGS 		+= $(patsubst %,-I%,$(src-dirs))
 
 CFLAGS		+= -Iinclude/ -Iarch/
-CFLAGS		+= -mmcu=$(MCU) -DF_CPU=$(CONFIG_F_CPU) -std=c99
-CFLAGS		+= -Wall -Os -fpack-struct -fshort-enums -ffunction-sections \
+ifneq ($(MCU),)
+MCUCCFLAGS	:= -mmcu=$(MCU)
+else
+MCUCCFLAGS	:=
+endif
+CFLAGS		+= $(MCUCCFLAGS) -DF_CPU=$(CONFIG_F_CPU) -std=c99
+CFLAGS		+= -Wall -fpack-struct -fshort-enums -ffunction-sections \
 			-fdata-sections -funsigned-char -funsigned-bitfields \
 			-include include/generated/autoconf.h
 
-# extra libraries if required
-LIBS		:= -lm
-ifeq ($(ARCH),xmega)
+ifeq ($(ARCH),unix)
+CFLAGS		+= -O0 -g -D_BSD_SOURCE
+LDFLAGS		:= -lrt -lm
+else
+CFLAGS		+= -Os
+LDFLAGS		:= -lm
 ifneq ($(CONFIG_ENABLE_LOGGING),)
-LIBS		+= -Wl,-u,vfprintf -lprintf_flt
+LDFLAGS		+= -Wl,-u,vfprintf -lprintf_flt
 endif
 endif
 
@@ -175,7 +183,7 @@ $(binname).eep: $(binname).elf
 
 # link the program
 quiet_cmd_linker = LD      $@
-      cmd_linker = $(CC) -Wl,-Map,$@.map -mmcu=$(MCU) -o $@ $(objs) $(LIBS)
+      cmd_linker = $(CC) -Wl,-Map,$@.map $(MCUCCFLAGS) -o $@ $(objs) $(LDFLAGS)
 
 # statistics
 quiet_cmd_size_elf = SIZE    $@
@@ -183,7 +191,9 @@ quiet_cmd_size_elf = SIZE    $@
 
 $(binname).elf: $(deps-y) $(objs)
 	$(call cmd,linker)
+ifeq ($(ARCH),xmega)
 	$(call cmd,size_elf)
+endif
 
 # include the C include dependencies
 -include $(deps-y)

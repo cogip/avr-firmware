@@ -5,6 +5,12 @@ mainmenu "MCU firmware configuration"
 
 menu "Platform configuration"
 
+config ARCH
+	string "Architecture"
+	default "xmega"
+	help
+	  This can be xmega or unix.
+
 choice
 	prompt "Target"
 	default BIG_BOT2015

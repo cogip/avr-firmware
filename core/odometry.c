@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "odometry.h"
+#include "utils.h"
 
 static double wheels_distance; /*!< robot wheels distance [pulse] */
 
