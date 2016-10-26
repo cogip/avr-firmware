@@ -1,6 +1,7 @@
 #include "irq.h"
 #include "qdec.h"
-#include "xmega/timer.h"
+
+#include <avr/io.h>
 
 static int8_t qdec_setup_pinsense(qdec_t *qdec, uint8_t pin)
 {
