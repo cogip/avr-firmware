@@ -20,3 +20,7 @@ script:
       - make mrproper
       - make cortex_defconfig
       - make
+      
+      - make mrproper
+      - make minus_defconfig
+      - make
