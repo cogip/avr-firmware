@@ -3,9 +3,9 @@
 #include <xmega/clksys.h>
 #include <xmega/usart.h>
 
+#include "console.h"
 #include "controller.h"
 #include "kos.h"
-#include "log.h"
 #include "platform.h"
 #include "platform_task.h"
 #include "sched.h"
@@ -289,7 +289,7 @@ void mach_setup(void)
 #ifdef CONFIG_ENABLE_LOGGING
 	/* setup logs through usart communication */
 	usart_setup(&USART_CONSOLE, 115200);
-	log_init(usartc0_putchar, usartc0_getchar);
+	console_init(usartc0_putchar, usartc0_getchar);
 #endif
 
 #ifdef CONFIG_ANALOG_SENSORS
