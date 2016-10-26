@@ -22,11 +22,11 @@ config BIG_BOT2017
 	help
 	  This will build the Big bot firmware.
 
-#config SMALL_BOT2017
-#	bool "Minus (2017)"
-#	#select ANALOG_SENSORS
-#	help
-#	  This will build the Small bot firmware.
+config SMALL_BOT2017
+	bool "Minus (2017)"
+	#select ANALOG_SENSORS
+	help
+	  This will build the Small bot firmware.
 
 endchoice
 
