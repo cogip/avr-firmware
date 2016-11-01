@@ -4,7 +4,6 @@
 #include <xmega/usart.h>
 
 #include "console.h"
-#include "controller.h"
 #include "kos.h"
 #include "platform.h"
 #include "platform_task.h"
@@ -210,6 +209,33 @@ hbridge_t hbridges = {
 	},
 };
 
+controller_t controller = {
+	.wheels_distance = WHEELS_DISTANCE,
+
+	.linear_speed_pid = {
+		.kp = 1.5,
+		.ki = 0.2,
+		.kd = 0,
+	},
+	.angular_speed_pid = {
+		.kp = 1.5,
+		.ki = 0.2,
+		.kd = 0,
+	},
+	.linear_pose_pid = {
+		.kp = 1,
+		.ki = 0,
+		.kd = 20,
+	},
+	.angular_pose_pid = {
+		.kp = 1,
+		.ki = 0,
+		.kd = 20,
+	},
+
+	.min_distance_for_angular_switch = 500,
+};
+
 
 pose_t mach_trajectory_get_route_update(void)
 {
@@ -310,7 +336,6 @@ void mach_setup(void)
 
 	/* controller setup */
 	odometry_setup(WHEELS_DISTANCE);
-	controller_setup(WHEELS_DISTANCE);
 
 	/* Programmable Multilevel Interrupt Controller */
 	PMIC.CTRL |= PMIC_LOLVLEN_bm; /* Low-level Interrupt Enable */

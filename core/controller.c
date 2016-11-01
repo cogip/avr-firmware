@@ -8,34 +8,9 @@
 #include <math.h>
 
 #include "odometry.h"
-#include "pid.h"
 #include "platform.h"
 
 #include "controller.h"
-
-/* TODO: Put 500 constant as a calibration value? (tbc) */
-/* Distance approximation to switch to angular correction */
-#define CTRL_DISTANCE_TRIGGER		500
-
-PID_t linear_speed_pid, angular_speed_pid;
-PID_t linear_pose_pid, angular_pose_pid;
-
-static uint8_t pose_reached;
-static double wheels_distance; /*!< robot wheels distance [pulse] */
-
-/**
- * TODO reglage des coeffs PID position
- * speed PI controller
- */
-void controller_setup(double d)
-{
-	wheels_distance = d;
-
-	pid_setup(&linear_speed_pid, 1.5, 0.2, 0);
-	pid_setup(&angular_speed_pid, 1.5, 0.2, 0);
-	pid_setup(&linear_pose_pid, 1, 0, 20);
-	pid_setup(&angular_pose_pid, 1, 0, 20);
-}
 
 /**
  * \fn polar_t compute_error(const pose_t p1, const pose_t p2)
@@ -44,7 +19,8 @@ void controller_setup(double d)
  * \param p2 : measure pose
  * \return distance and angle errors between 2 poses
  */
-static polar_t compute_error(const pose_t p1, const pose_t p2)
+static polar_t compute_error(controller_t *ctrl,
+			     const pose_t p1, const pose_t p2)
 {
 	polar_t error;
 
@@ -52,7 +28,7 @@ static polar_t compute_error(const pose_t p1, const pose_t p2)
 	double y = p1.y - p2.y;
 	double O = atan2(y, x);
 
-	error.angle = O * wheels_distance;
+	error.angle = O * ctrl->wheels_distance;
 	error.distance = sqrt(square(x) + square(y));
 
 	return error;
@@ -92,7 +68,8 @@ static double limit_speed_command(double command,
 /**
  *
  */
-polar_t speed_controller(polar_t speed_order, polar_t speed_current)
+polar_t speed_controller(controller_t *ctrl,
+			 polar_t speed_order, polar_t speed_current)
 {
 	polar_t speed_error;
 	polar_t command;
@@ -100,15 +77,16 @@ polar_t speed_controller(polar_t speed_order, polar_t speed_current)
 	speed_error.distance = speed_order.distance - speed_current.distance;
 	speed_error.angle = speed_order.angle - speed_current.angle;
 
-	command.distance = pid_controller(&linear_speed_pid,
+	command.distance = pid_controller(&ctrl->linear_speed_pid,
 					  speed_error.distance);
-	command.angle = pid_controller(&angular_speed_pid,
+	command.angle = pid_controller(&ctrl->angular_speed_pid,
 				       speed_error.angle);
 
 	return command;
 }
 
-polar_t controller_update(pose_t pose_order,
+polar_t controller_update(controller_t *ctrl,
+			  pose_t pose_order,
 			  pose_t pose_current,
 			  polar_t speed_order,
 			  polar_t speed_current)
@@ -116,26 +94,26 @@ polar_t controller_update(pose_t pose_order,
 	/* ******************** position pid controller ******************** */
 
 	/* compute position error */
-	polar_t position_error = compute_error(pose_order, pose_current);
+	polar_t position_error = compute_error(ctrl, pose_order, pose_current);
 
-	pose_reached = 0;
+	ctrl->pose_reached = 0;
 
 	/* position correction */
-	if (position_error.distance > CTRL_DISTANCE_TRIGGER) {
+	if (position_error.distance > ctrl->min_distance_for_angular_switch) {
 		position_error.angle -= pose_current.O; /* [pulse] */
 
-		if (fabs(position_error.angle) > (M_PI * wheels_distance / 2.0)) {
+		if (fabs(position_error.angle) > (M_PI * ctrl->wheels_distance / 2.0)) {
 			position_error.distance = -position_error.distance;
 
 			if (position_error.angle < 0)
-				position_error.angle += M_PI * wheels_distance;
+				position_error.angle += M_PI * ctrl->wheels_distance;
 			else
-				position_error.angle -= M_PI * wheels_distance;
+				position_error.angle -= M_PI * ctrl->wheels_distance;
 		}
 	} else {
 		/* orientation correction (position is reached) */
 		position_error.distance = 0;
-		pid_reset(&linear_pose_pid);
+		pid_reset(&ctrl->linear_pose_pid);
 
 		/* unit in [pulse] */
 		position_error.angle = pose_order.O - pose_current.O;
@@ -143,17 +121,17 @@ polar_t controller_update(pose_t pose_order,
 		/* orientation is reached */
 		if (fabs(position_error.angle) < 100) {
 			position_error.angle = 0;
-			pid_reset(&angular_pose_pid);
-			pose_reached = 1;
+			pid_reset(&ctrl->angular_pose_pid);
+			ctrl->pose_reached = 1;
 		}
 	}
 
 	/* compute speed command with position pid controller */
 	polar_t command;
 
-	command.distance = pid_controller(&linear_pose_pid,
+	command.distance = pid_controller(&ctrl->linear_pose_pid,
 					  position_error.distance);
-	command.angle = pid_controller(&angular_pose_pid,
+	command.angle = pid_controller(&ctrl->angular_pose_pid,
 				       position_error.angle);
 
 	/* limit speed command */
@@ -167,10 +145,10 @@ polar_t controller_update(pose_t pose_order,
 					  speed_current.angle);
 
 	/* ********************** speed pid controller ********************* */
-	return speed_controller(speed, speed_current);
+	return speed_controller(ctrl, speed, speed_current);
 }
 
-inline uint8_t controller_get_pose_reached()
+inline uint8_t controller_get_pose_reached(controller_t *ctrl)
 {
-	return pose_reached;
+	return ctrl->pose_reached;
 }

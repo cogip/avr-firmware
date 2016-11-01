@@ -2,6 +2,7 @@
 #define PLATFORM_H_
 
 #include "analog_sensor.h"
+#include "controller.h"
 #include "hbridge.h"
 #include "odometry.h"
 #include "qdec.h"
@@ -30,6 +31,7 @@ extern qdec_t encoders[];
 extern sd21_t sd21;
 extern hbridge_t hbridges;
 
+extern controller_t controller;
 
 pose_t mach_trajectory_get_route_update(void);
 uint8_t mach_stop_robot(void);

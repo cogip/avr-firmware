@@ -101,7 +101,8 @@ void task_controller_update()
 		motor_command = speed_controller(speed_order,
 						 robot_speed);
 #endif
-		motor_command = controller_update(pose_order,
+		motor_command = controller_update(&controller,
+						  pose_order,
 						  robot_pose,
 						  speed_order,
 						  robot_speed);
