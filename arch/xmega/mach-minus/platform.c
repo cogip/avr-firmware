@@ -239,8 +239,23 @@ controller_t controller = {
 
 pose_t mach_trajectory_get_route_update(void)
 {
-	pose_t empty = {0,};
-	return empty;
+	static uint8_t latest_pos_idx = 0;
+	pose_t pos_list[2];
+
+	pos_list[0].x = 4000.0; /*!< x-position [pulse] */
+	pos_list[0].y = 0.0; /*!< y-position [pulse] */
+	pos_list[0].O = 0.0; /*!< 0-orientation [pulse] */
+
+	pos_list[1].x = 0.0; /*!< x-position [pulse] */
+	pos_list[1].y = 0.0; /*!< y-position [pulse] */
+	pos_list[1].O = 0.0; /*!< 0-orientation [pulse] */
+
+	if (controller_get_pose_reached(&controller)) {
+		latest_pos_idx ++;
+		latest_pos_idx %= 2;
+	}
+
+	return pos_list[latest_pos_idx];
 }
 
 uint8_t mach_stop_robot(void)
