@@ -39,7 +39,7 @@ void task_controller_update()
 {
 	polar_t	robot_speed;
 	/* bot position on the 'table' (absolute position): */
-	pose_t	robot_pose		= { 1856.75, 0, 0 };
+	pose_t	robot_pose		= { 0, 0, 0 };
 	pose_t	pose_order		= { 0, 0, 0 };
 	polar_t	speed_order		= { 60, 60 };
 	polar_t	motor_command;
