@@ -138,7 +138,12 @@ CFLAGS		+= -Wall -Os -fpack-struct -fshort-enums -ffunction-sections \
 			-include include/generated/autoconf.h
 
 # extra libraries if required
-LIBS :=
+LIBS		:= -lm
+ifeq ($(ARCH),xmega)
+ifneq ($(CONFIG_ENABLE_LOGGING),)
+LIBS		+= -Wl,-u,vfprintf -lprintf_flt
+endif
+endif
 
 # each module will add to this
 src-y :=
