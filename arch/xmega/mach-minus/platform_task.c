@@ -79,9 +79,9 @@ void task_controller_update()
 		/* get next pose_t to reach */
 		pose_order = mach_trajectory_get_route_update();
 
-		pose_order.x *= PULSE_PER_MM;
-		pose_order.y *= PULSE_PER_MM;
-		pose_order.O *= PULSE_PER_DEGREE;
+		//pose_order.x *= PULSE_PER_MM;
+		//pose_order.y *= PULSE_PER_MM;
+		//pose_order.O *= PULSE_PER_DEGREE;
 
 		/* collision detection */
 		stop = mach_stop_robot();
@@ -91,9 +91,10 @@ void task_controller_update()
 			speed_order.angle = 0;
 		} else {
 			/* speed order in position = 60 pulses / 20ms */
-			speed_order.distance = 60;
+			speed_order.distance = 200;//60;
 			/* speed order in angle? = 60 pulses / 20ms */
-			speed_order.angle = 60;
+			//speed_order.angle = 60;
+			speed_order.angle = 0;
 		}
 
 		/* PID / feedback control */
