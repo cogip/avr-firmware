@@ -5,7 +5,7 @@
  *      Author: ldo
  */
 
-#include <avr/io.h>
+#include "gpio.h"
 
 /**
  * 10 : bas droit (PJ1)

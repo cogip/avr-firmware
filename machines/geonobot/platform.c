@@ -1,7 +1,8 @@
-#include <avr/io.h>
 #include <stdio.h>
-#include <xmega/clksys.h>
-#include <xmega/usart.h>
+
+#include "clksys.h"
+#include "gpio.h"
+#include "usart.h"
 
 #include "action.h"
 #include "console.h"

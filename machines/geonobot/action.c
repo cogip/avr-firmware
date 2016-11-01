@@ -4,13 +4,12 @@
  *  Created on: 4 mai 2015
  *      Author: ldo
  */
-#include <xmega/timer.h>
-
 #include "action.h"
 #include "analog_sensor.h"
 #include "platform.h"
 #include "sd21.h"
 #include "sensor.h"
+#include "timer.h"
 
 /**
  * servo map
