@@ -9,6 +9,3 @@ src-y		+= $(abs-path)/qdec.c
 src-y		+= $(abs-path)/timer.c
 src-y		+= $(abs-path)/twi.c
 src-y		+= $(abs-path)/usart.c
-
-src-dirs	+= $(abs-path)/mach-$(MACH)
--include $(abs-path)/mach-$(MACH)/Makefile

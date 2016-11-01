@@ -2,7 +2,7 @@ ARCH		:= xmega
 
 # list of sources dirs which contains a Makefile included from the current one:
 scripts-dir	:= scripts
-src-dirs 	:= arch/$(ARCH) core drivers
+src-dirs 	:= arch/$(ARCH) core drivers machines
 
 # -----------------------------------------------------------------------------
 # Pretty display of command display or verbose: make V=1

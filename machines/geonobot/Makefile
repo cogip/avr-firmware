@@ -1,4 +1,4 @@
-abs-path		:= arch/xmega/mach-geonobot
+abs-path		:= machines/geonobot
 
 src-y			+= $(abs-path)/action.c
 src-y			+= $(abs-path)/platform.c
