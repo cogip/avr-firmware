@@ -6,9 +6,9 @@
 
 #include "console.h"
 #include "kos.h"
+#include "msched.h"
 #include "platform.h"
 #include "platform_task.h"
-#include "sched.h"
 
 /**
  * PORTA : ANA input
@@ -297,7 +297,7 @@ int mach_getchar_or_yield()
 
 void mach_sched_init()
 {
-	sched_init(10/*ms*/, &TCC0);
+	msched_init(10/*ms*/, &TCC0);
 }
 
 void mach_sched_run()

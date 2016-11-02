@@ -1,7 +1,7 @@
 #include "irq.h"
 #include "kos.h"
 #include "log.h"
-#include "sched.h"
+#include "msched.h"
 
 static uint16_t sched_ms;
 static hwtimer_t *sched_timer;
@@ -16,7 +16,7 @@ static void irq_timer_tick_handler(void)
 	kos_tick_schedule();
 }
 
-void sched_init(uint16_t period_ms, hwtimer_t *clksrc)
+void msched_init(uint16_t period_ms, hwtimer_t *clksrc)
 {
 	/* TCC0 ClkIn == ClkPer / 1024 == 31.25 KHz */
 	switch (period_ms) {
@@ -47,7 +47,7 @@ void sched_init(uint16_t period_ms, hwtimer_t *clksrc)
 	sched_ms = period_ms;
 }
 
-inline uint16_t sched_get_tickms(void)
+inline uint16_t msched_get_tickms(void)
 {
 	return sched_ms;
 }

@@ -1,6 +1,4 @@
-#include "irq.h"
 #include "platform.h"
-#include "sched.h"
 
 int main(void)
 {

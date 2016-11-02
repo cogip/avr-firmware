@@ -11,7 +11,7 @@
 
 #include "kos.h"
 #include "kos_settings.h"
-#include "sched.h"
+#include "msched.h"
 
 /* Start & end of stack markers for overflow detection */
 #define STACK_MAGIC1	0x11
@@ -340,13 +340,13 @@ void kos_yield(void)
 
 void kos_delay_ms(uint16_t delay)
 {
-	kos_current_task->nb_tick_to_wait = delay / sched_get_tickms();
+	kos_current_task->nb_tick_to_wait = delay / msched_get_tickms();
 	kos_schedule();
 }
 
 void kos_set_next_schedule_delay_ms(uint16_t delay)
 {
-	kos_current_task->nb_tick_to_wait = delay / sched_get_tickms();
+	kos_current_task->nb_tick_to_wait = delay / msched_get_tickms();
 }
 
 void kos_task_exit()
