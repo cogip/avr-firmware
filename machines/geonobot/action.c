@@ -9,7 +9,6 @@
 #include "platform.h"
 #include "sd21.h"
 #include "sensor.h"
-#include "timer.h"
 
 /**
  * servo map

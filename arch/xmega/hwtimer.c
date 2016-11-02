@@ -16,7 +16,7 @@
  */
 
 #include <avr/io.h>
-#include "timer.h"
+#include "hwtimer.h"
 
 #define IS_TIMER0(p)	((p) == &TCC0 || (p) == &TCD0 || \
 			 (p) == &TCE0 || (p) == &TCF0)
@@ -74,7 +74,7 @@ ISR(TCF0_OVF_vect)
  * Notation TCC0, TCC1, TCD0, TCD1, TCE0, TCE1, TCF0 and TCF1
  *
  */
-void timer_normal_mode_setup(volatile timer_t *tc, uint16_t period,
+void timer_normal_mode_setup(volatile hwtimer_t *tc, uint16_t period,
 			     tc_clksel_t clock_source, func_cb_t handler)
 {
 	volatile TC0_t *tc0;
@@ -121,7 +121,7 @@ void timer_normal_mode_setup(volatile timer_t *tc, uint16_t period,
 /**
  *  Configure TC as a quadrature counter
  */
-void timer_qdec_mode_setup(volatile timer_t *tc,
+void timer_qdec_mode_setup(volatile hwtimer_t *tc,
 			   tc_evsel_t event_channel,
 			   const uint16_t line_count)
 {
@@ -158,7 +158,7 @@ void timer_qdec_mode_setup(volatile timer_t *tc,
  * The waveform generation (WG) output is toggled on each compare match between
  * the CNT and CCx registers
  */
-void timer_pwm_mode_setup(volatile timer_t *tc, const uint8_t period,
+void timer_pwm_mode_setup(volatile hwtimer_t *tc, const uint8_t period,
 			  tc_clksel_t prescaler)
 {
 	volatile TC0_t *tc0;
@@ -190,7 +190,7 @@ void timer_pwm_mode_setup(volatile timer_t *tc, const uint8_t period,
 /**
  *
  */
-void timer_pwm_enable(volatile timer_t *tc, const uint8_t channel)
+void timer_pwm_enable(volatile hwtimer_t *tc, const uint8_t channel)
 {
 	volatile TC0_t *tc0;
 	/*volatile TC0_t *tc1;*/
@@ -226,7 +226,7 @@ void timer_pwm_enable(volatile timer_t *tc, const uint8_t channel)
 /**
  *
  */
-void timer_pwm_duty_cycle(volatile timer_t *tc, const uint8_t channel,
+void timer_pwm_duty_cycle(volatile hwtimer_t *tc, const uint8_t channel,
 			  uint8_t duty_cycle)
 {
 	volatile TC0_t *tc0;
@@ -260,7 +260,7 @@ void timer_pwm_duty_cycle(volatile timer_t *tc, const uint8_t channel,
 	}
 }
 
-inline uint16_t timer_get_cnt(volatile timer_t *tc)
+inline uint16_t timer_get_cnt(volatile hwtimer_t *tc)
 {
 	if (IS_TIMER0(tc))
 		return ((TC0_t *)tc)->CNT;
@@ -270,7 +270,7 @@ inline uint16_t timer_get_cnt(volatile timer_t *tc)
 		return 0;
 }
 
-inline void timer_set_cnt(volatile timer_t *tc, const uint16_t val)
+inline void timer_set_cnt(volatile hwtimer_t *tc, const uint16_t val)
 {
 	if (IS_TIMER0(tc))
 		((TC0_t *)tc)->CNT = val;

@@ -2,7 +2,7 @@
 #define HBRIDGE_H_
 
 #include <gpio.h>
-#include <timer.h>
+#include <hwtimer.h>
 
 typedef struct {
 	gpio_port_t *direction_pin_port;
@@ -12,7 +12,7 @@ typedef struct {
 } engine_t;
 
 typedef struct {
-	timer_t *tc;
+	hwtimer_t *tc;
 	uint8_t period;
 	tc_clksel_t prescaler;
 

@@ -3,9 +3,9 @@
 
 #include <stdint.h>
 
-#include "timer.h"
+#include "hwtimer.h"
 
-void sched_init(uint16_t period_ms, timer_t *clksrc);
+void sched_init(uint16_t period_ms, hwtimer_t *clksrc);
 uint16_t sched_get_tickms(void);
 
 #endif /* SCHED_H_ */

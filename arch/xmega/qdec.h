@@ -3,14 +3,14 @@
 
 #include <stdint.h>
 #include "gpio.h"
-#include "timer.h"
+#include "hwtimer.h"
 
 typedef struct {
 	gpio_port_t *pin_port;
 	uint8_t pin_qdph0;
 	uint8_t pin_qdph90;
 	tc_evsel_t event_channel;
-	timer_t *tc;
+	hwtimer_t *tc;
 	uint16_t line_count;
 	int8_t polarity; /* -1 to negate, 1 otherwise */
 } qdec_t;

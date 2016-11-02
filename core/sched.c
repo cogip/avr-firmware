@@ -4,7 +4,7 @@
 #include "sched.h"
 
 static uint16_t sched_ms;
-static timer_t *sched_timer;
+static hwtimer_t *sched_timer;
 
 static uint32_t ticks = 0;
 
@@ -16,7 +16,7 @@ static void irq_timer_tick_handler(void)
 	kos_tick_schedule();
 }
 
-void sched_init(uint16_t period_ms, timer_t *clksrc)
+void sched_init(uint16_t period_ms, hwtimer_t *clksrc)
 {
 	/* TCC0 ClkIn == ClkPer / 1024 == 31.25 KHz */
 	switch (period_ms) {
