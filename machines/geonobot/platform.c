@@ -287,6 +287,7 @@ uint8_t mach_stop_robot(void)
 
 static void mach_pinmux_setup(void)
 {
+#if defined(__AVR__)
 	/* analog to digital conversion */
 	PORTA.DIR = 0x00; /*!< PORTA as input pin */
 	PORTA.OUT = 0x00;
@@ -304,6 +305,7 @@ static void mach_pinmux_setup(void)
 	PORTH.DIR = 0x00;
 	PORTJ.DIRCLR = PIN0_bm;
 	PORTJ.DIRCLR = PIN1_bm;
+#endif
 }
 
 #ifdef CONFIG_ENABLE_LOGGING
@@ -371,9 +373,11 @@ void mach_setup(void)
 	/* controller setup */
 	odometry_setup(WHEELS_DISTANCE);
 
+#if defined(__AVR__)
 	/* Programmable Multilevel Interrupt Controller */
 	PMIC.CTRL |= PMIC_LOLVLEN_bm; /* Low-level Interrupt Enable */
 
 	/* global interrupt enable */
 	sei();
+#endif
 }
