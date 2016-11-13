@@ -3,7 +3,7 @@ language: c
 before_install:
       - sudo apt-get update -qq
 install:
-      - sudo apt-get install -qq avrdude binutils-avr avr-libc
+      - sudo apt-get install -qq avrdude binutils-avr avr-libc gcc
 before_script: 
 ## Install avr toolchain
       - WGET="travis_retry wget --continue --tries=20 --waitretry=10 --retry-connrefused --no-dns-cache --timeout 300"
@@ -20,7 +20,15 @@ script:
       - make mrproper
       - make cortex_defconfig
       - make
-      
+
       - make mrproper
       - make minus_defconfig
+      - make
+
+      - make mrproper
+      - make cortex_simu_defconfig
+      - make
+
+      - make mrproper
+      - make minus_simu_defconfig
       - make
