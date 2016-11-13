@@ -1,12 +1,3 @@
-/**
- * \file sd21.c
- *
- * \date 10 fevr. 2015
- * \author ldo
- *
- * \brief sd21 library use twi library
- */
-
 #include <stdio.h>
 #include "log.h"
 #include "platform.h"

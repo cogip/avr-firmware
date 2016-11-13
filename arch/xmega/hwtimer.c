@@ -1,11 +1,4 @@
 /**
- * \file timer.c
- *
- * \date 26 nov. 2014
- * \author ldo
- *
- * \brief XMEGA timer library
- *
  * The TC has six different modes of operation :
  * Normal mode
  * Frequency Generation mode

@@ -1,10 +1,3 @@
-/*
- * utils.h
- *
- *  Created on: 24 avr. 2015
- *      Author: ldo
- */
-
 #ifndef UTILS_H_
 #define UTILS_H_
 

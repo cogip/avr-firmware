@@ -1,10 +1,3 @@
-/*
- * twi.c
- *
- *  Created on: 28 janv. 2015
- *      Author: ldo
- */
-
 #include <avr/io.h>
 #include <util/delay.h>
 

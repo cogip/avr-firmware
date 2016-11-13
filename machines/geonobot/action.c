@@ -1,9 +1,3 @@
-/*
- * action.c
- *
- *  Created on: 4 mai 2015
- *      Author: ldo
- */
 #include "action.h"
 #include "analog_sensor.h"
 #include "platform.h"

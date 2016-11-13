@@ -1,10 +1,3 @@
-/*
- * twi.h
- *
- *  Created on: 29 janv. 2015
- *      Author: ldo
- */
-
 #ifndef TWI_H_
 #define TWI_H_
 

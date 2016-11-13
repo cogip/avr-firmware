@@ -1,11 +1,3 @@
-/*
- * analog_sensor.c
- *
- *  Created on: 10 avr. 2015
- *      Author: ldo
- */
-
-
 #include "analog_sensor.h"
 #include "log.h"
 

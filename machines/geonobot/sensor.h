@@ -1,10 +1,3 @@
-/*
- * sensor.h
- *
- *  Created on: 6 mai 2015
- *      Author: ldo
- */
-
 #ifndef SENSOR_H_
 #define SENSOR_H_
 

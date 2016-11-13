@@ -1,10 +1,3 @@
-/*
- * adc.h
- *
- *  Created on: 29 nov. 2014
- *      Author: ldo
- */
-
 #ifndef ADC_H_
 #define ADC_H_
 

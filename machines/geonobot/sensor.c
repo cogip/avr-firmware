@@ -1,10 +1,3 @@
-/*
- * sensor.c
- *
- *  Created on: 4 mai 2015
- *      Author: ldo
- */
-
 #include "gpio.h"
 
 /**

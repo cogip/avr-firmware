@@ -1,10 +1,3 @@
-/*
- * analog_sensor.h
- *
- *  Created on: 10 avr. 2015
- *      Author: ldo
- */
-
 #ifndef ANALOG_SENSOR_H_
 #define ANALOG_SENSOR_H_
 

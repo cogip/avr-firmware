@@ -1,10 +1,3 @@
-/**
- * \file sd21.h
- *
- * \date 10 fevr. 2015
- * \author ldo
- */
-
 #ifndef SD21_H_
 #define SD21_H_
 

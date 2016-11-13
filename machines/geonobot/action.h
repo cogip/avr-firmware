@@ -1,10 +1,3 @@
-/*
- * action.h
- *
- *  Created on: 4 mai 2015
- *      Author: ldo
- */
-
 #ifndef ACTION_H_
 #define ACTION_H_
 

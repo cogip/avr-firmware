@@ -1,10 +1,3 @@
-/**
- * \file odometry.h
- *
- * \date 2 avr. 2014
- * \author ldo
- */
-
 #ifndef ODOMETRY_H_
 #define ODOMETRY_H_
 

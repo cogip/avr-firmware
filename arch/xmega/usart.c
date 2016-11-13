@@ -1,10 +1,3 @@
-/**
- * \file usart.c
- *
- * \date 22 nov. 2014
- * \author ldo
- */
-
 #include "usart.h"
 
 /**

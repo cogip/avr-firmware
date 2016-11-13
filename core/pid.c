@@ -1,10 +1,3 @@
-/*
- * pid.c
- *
- *  Created on: 24 avr. 2015
- *      Author: ldo
- */
-
 #include "pid.h"
 
 void pid_setup(PID_t *pid, const double kp, const double ki, const double kd)

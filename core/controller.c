@@ -1,10 +1,3 @@
-/*
- * controller.c
- *
- *  Created on: 24 avr. 2015
- *      Author: ldo
- */
-
 #include <math.h>
 
 #include "odometry.h"

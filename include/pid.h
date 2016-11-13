@@ -1,10 +1,3 @@
-/*
- * pid.h
- *
- *  Created on: 24 avr. 2015
- *      Author: ldo
- */
-
 #ifndef PID_H_
 #define PID_H_
 

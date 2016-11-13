@@ -1,10 +1,3 @@
-/**
- * \file odometry.c
- *
- * \date 2 avr. 2014
- * \author ldo
- */
-
 #include <math.h>
 #include <stdlib.h>
 

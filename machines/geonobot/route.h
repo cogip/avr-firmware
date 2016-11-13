@@ -1,10 +1,3 @@
-/*
- * route.h
- *
- *  Created on: 2 mai 2015
- *      Author: ldo
- */
-
 #ifndef ROUTE_H_
 #define ROUTE_H_
 

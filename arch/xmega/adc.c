@@ -1,10 +1,3 @@
-/*
- * adc.c
- *
- *  Created on: 8 avr. 2015
- *      Author: ldo
- */
-
 #include "adc.h"
 
 static adc_cb_t irq_handler;

@@ -1,10 +1,3 @@
-/*
- * timer.h
- *
- *  Created on: 26 nov. 2014
- *      Author: ldo
- */
-
 #ifndef TIMER_H_
 #define TIMER_H_
 

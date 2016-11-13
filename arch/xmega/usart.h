@@ -1,10 +1,3 @@
-/**
- * \file usart.h
- *
- * \date 23 nov. 2014
- *  \author ldo
- */
-
 #ifndef USART_H_
 #define USART_H_
 

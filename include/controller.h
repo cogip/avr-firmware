@@ -1,10 +1,3 @@
-/*
- * controller.h
- *
- *  Created on: 26 avr. 2015
- *      Author: ldo
- */
-
 #ifndef CONTROLLER_H_
 #define CONTROLLER_H_
 

@@ -1,10 +1,3 @@
-/*
- * route.c
- *
- *  Created on: 2 mai 2015
- *      Author: ldo
- */
-
 #include <stdio.h>
 
 #include "action.h"
