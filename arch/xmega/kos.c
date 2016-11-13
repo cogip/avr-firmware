@@ -52,14 +52,13 @@ static void task_idle(void)
 
 void kos_init(void)
 {
-	uint8_t *stack_idle = malloc(TASK_IDLE_STACK);
-	kos_new_task(task_idle, "IDLE", stack_idle, TASK_IDLE_STACK);
+	kos_new_task(task_idle, "IDLE", TASK_IDLE_STACK);
 }
 
-void kos_new_task(KOS_TaskFn task, const char *name, void *sp, uint16_t size)
+void kos_new_task(KOS_TaskFn task, const char *name, uint16_t size)
 {
     int8_t i;
-    uint8_t *stack = (uint8_t *)sp;
+    uint8_t *stack = (uint8_t *) malloc(size);
     KOS_Task *tcb;
 
     stack = &stack[size-1];

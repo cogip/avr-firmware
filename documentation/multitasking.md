@@ -74,11 +74,9 @@ To register this task to the OS, the following code is required before the sched
 ```C
 void main(void)
 {
-    uint8_t * stack_A = malloc(256);
-    
     kos_init();
     
-    kos_new_task(task_A, "TSK_A", stack_A, 256);
+    kos_new_task(task_A, "TSK_A", 256);
 }
 ```
 

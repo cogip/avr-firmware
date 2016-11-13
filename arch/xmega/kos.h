@@ -43,7 +43,7 @@ void kos_init(void);
  * Creates a new task
  * Note: Not safe
  */
-void kos_new_task(KOS_TaskFn task, const char *name, void *sp, uint16_t size);
+void kos_new_task(KOS_TaskFn task, const char *name, uint16_t size);
 
 /**
  * Puts KOS in ISR mode

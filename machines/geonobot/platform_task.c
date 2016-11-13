@@ -231,17 +231,11 @@ void mach_tasks_init()
 {
 	kos_init();
 
-#if defined(CONFIG_CALIBRATION)
-	uint8_t *stack_calibration = malloc(TASK_CALIB_STACK);
-#endif
-	uint8_t *stack_active_event_loop = malloc(TASK_EVENT_STACK);
-	uint8_t *stack_controller_update = malloc(TASK_CTRL_STACK);
-
 	game_started = FALSE;
 
 #if defined(CONFIG_CALIBRATION)
-	kos_new_task(mach_enter_calibration_mode, "CALIB", stack_calibration, TASK_CALIB_STACK);
+	kos_new_task(mach_enter_calibration_mode, "CALIB", TASK_CALIB_STACK);
 #endif
-	kos_new_task(task_active_event_loop, "EVNT", stack_active_event_loop, TASK_EVENT_STACK);
-	kos_new_task(task_controller_update, "CTRL", stack_controller_update, TASK_CTRL_STACK);
+	kos_new_task(task_active_event_loop, "EVNT", TASK_EVENT_STACK);
+	kos_new_task(task_controller_update, "CTRL", TASK_CTRL_STACK);
 }
