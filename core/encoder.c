@@ -2,6 +2,7 @@
 
 #include "encoder.h"
 #include "log.h"
+#include "mcurses.h"
 #include "platform.h"
 #include "qdec.h"
 
@@ -22,6 +23,7 @@ int16_t sum_right_speed;
 polar_t encoder_read(void)
 {
 	polar_t robot_speed;
+	static uint8_t _cpt = (25);
 
 	int16_t left_speed = qdec_read(&encoders[0]);
 	int16_t right_speed = qdec_read(&encoders[1]);
@@ -31,9 +33,13 @@ polar_t encoder_read(void)
 		sum_right_speed += right_speed;
 	}
 
-	print_eventually("\ri:[%4d, %4d] c:[%4d, %4d]         \r",
-			  left_speed, right_speed,
-			  sum_left_speed, sum_right_speed);
+	if (display_dbg && ! --_cpt) {
+		_cpt = 6;//(25);
+
+		mcurses_monitor_printf(0, "i:[%+4d, %+4d] c:[%+4d, %+4d]    ",
+				  left_speed, right_speed,
+				  sum_left_speed, sum_right_speed);
+	}
 
 	/* update speed */
 	robot_speed.distance = (right_speed + left_speed) / 2.0;
