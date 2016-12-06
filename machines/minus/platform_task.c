@@ -6,6 +6,7 @@
 #include "hbridge.h"
 #include "kos.h"
 #include "log.h"
+#include "mcurses.h"
 #include "platform.h"
 #include "platform_task.h"
 #include "usart.h"
@@ -155,6 +156,7 @@ static void mach_enter_calibration_mode(void)
 	printf("\n\n");
 	getchar();
 
+	mcurses_init();
 	mach_calibration_usage();
 
 	while (!quit) {
