@@ -31,9 +31,8 @@
  *	PE0 (OC0A) : PWM1 left motor
  *	PE1 (OC0B) : PWM2 right motor
  *	PE2 (OC0C) : PWM3
- *	PE3 (OC0D) : -
- *	PE4 : encoder A1 left wheel
- *	PE5 : encoder B1
+ *	PE3 : encoder A1 left wheel
+ *	PE4 : encoder B1
  * PORTF : Timer decoder quadrature
  *	PF0 : encoder A2 right wheel
  *	PF1 : encoder B2
@@ -107,8 +106,8 @@ qdec_t encoders[] = {
 	{
 		/* left motor */
 		.pin_port = &PORTE,
-		.pin_qdph0 = PIN4_bp,
-		.pin_qdph90 = PIN5_bp,
+		.pin_qdph0 = PIN3_bp,
+		.pin_qdph90 = PIN4_bp,
 		.event_channel = TC_EVSEL_CH0_gc,
 		.tc = &TCE1,
 		.line_count = WHEELS_ENCODER_RESOLUTION / 4,
