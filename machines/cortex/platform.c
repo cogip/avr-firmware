@@ -235,6 +235,7 @@ controller_t controller = {
 	},
 
 	.min_distance_for_angular_switch = 500,
+	.min_angle_for_pose_reached = 100,
 };
 
 

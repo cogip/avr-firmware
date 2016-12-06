@@ -112,7 +112,7 @@ polar_t controller_update(controller_t *ctrl,
 		position_error.angle = pose_order.O - pose_current.O;
 
 		/* orientation is reached */
-		if (fabs(position_error.angle) < 100) {
+		if (fabs(position_error.angle) < ctrl->min_angle_for_pose_reached) {
 			position_error.angle = 0;
 			pid_reset(&ctrl->angular_pose_pid);
 			ctrl->pose_reached = 1;

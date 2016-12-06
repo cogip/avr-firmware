@@ -17,6 +17,9 @@ typedef struct {
 	/* Distance approximation to switch to angular correction */
 	uint16_t min_distance_for_angular_switch;
 
+	/* Angle approximation to switch to position reached state */
+	uint16_t min_angle_for_pose_reached;
+
 	uint8_t pose_reached;
 } controller_t;
 
