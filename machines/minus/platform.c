@@ -196,14 +196,16 @@ hbridge_t hbridges = {
 			/* left motor */
 			.direction_pin_port = &PORTD,
 			.direction_pin_id = PIN4_bp,
-			.direction_inverse_polarity = FALSE,
+			//.direction_inverse_polarity = FALSE,
+			.direction_inverse_polarity = TRUE,
 			.pwm_channel = PIN0_bp,
 		},
 		[HBRIDGE_MOTOR_RIGHT] = {
 			/* right motor */
 			.direction_pin_port = &PORTD,
 			.direction_pin_id = PIN5_bp,
-			.direction_inverse_polarity = TRUE,
+			//.direction_inverse_polarity = TRUE,
+			.direction_inverse_polarity = FALSE,
 			.pwm_channel = PIN1_bp,
 		},
 	},
