@@ -111,7 +111,7 @@ static void mcurses_monitor_printf_v(uint8_t idx, const char *format, va_list ar
 
 	/* write title on top right */
 	mcurses_gotoyx(idx % NB_FIXED_LINES,
-		       FIELDS_WIDTH * idx / NB_FIXED_LINES);
+		       FIELDS_WIDTH * (idx / NB_FIXED_LINES));
 
 	vsnprintf(buf, FIELDS_WIDTH, format, args);
 	printf("%s", buf);
