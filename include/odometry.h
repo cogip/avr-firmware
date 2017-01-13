@@ -16,8 +16,8 @@ typedef struct {
 } pose_t;
 
 typedef struct {
-	int16_t distance;
-	int16_t angle;
+	double distance;
+	double angle;
 } polar_t;
 
 /**
