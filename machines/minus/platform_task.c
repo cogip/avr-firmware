@@ -42,17 +42,9 @@ void task_controller_update()
 	/* bot position on the 'table' (absolute position): */
 	pose_t	robot_pose		= { 0, 0, 0 };
 	pose_t	pose_order		= { 0, 0, 0 };
-	polar_t	speed_order		= { 60, 60 };
+	polar_t	speed_order		= { 0, 0 };
 	polar_t	motor_command;
 	uint8_t stop = 0;
-
-	while (!game_started) {
-		kos_set_next_schedule_delay_ms(20);
-
-		robot_speed = encoder_read();
-
-		kos_yield();
-	}
 
 	for (;;) {
 		kos_set_next_schedule_delay_ms(20);
@@ -67,9 +59,10 @@ void task_controller_update()
 			continue;
 		}
 
-		tempo++;
-
-		show_game_time();
+		if (game_started) {
+			tempo++;
+			show_game_time();
+		}
 
 		/* catch speed */
 		robot_speed = encoder_read();
@@ -90,12 +83,11 @@ void task_controller_update()
 		if (stop) {
 			speed_order.distance = 0;
 			speed_order.angle = 0;
-		} else {
+		} else if (game_started) {
 			/* speed order in position = 60 pulses / 20ms */
-			speed_order.distance = 200;//60;
+			speed_order.distance = 60;
 			/* speed order in angle? = 60 pulses / 20ms */
-			//speed_order.angle = 60;
-			speed_order.angle = 0;
+			speed_order.angle = 60;
 		}
 
 		/* PID / feedback control */
