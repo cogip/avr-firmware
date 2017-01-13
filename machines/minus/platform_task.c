@@ -92,14 +92,16 @@ void task_controller_update()
 
 		/* PID / feedback control */
 #if 0
-		motor_command = speed_controller(speed_order,
+		motor_command = speed_controller(&controller,
+						 speed_order,
 						 robot_speed);
-#endif
+#else
 		motor_command = controller_update(&controller,
 						  pose_order,
 						  robot_pose,
 						  speed_order,
 						  robot_speed);
+#endif
 
 #if defined(CONFIG_CALIBRATION)
 		static uint8_t _cpt = 25;
