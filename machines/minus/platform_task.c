@@ -14,6 +14,7 @@
 
 static uint8_t game_started;
 static uint16_t tempo;
+polar_t	speed_order		= { 0, 0 };
 
 static void show_game_time()
 {
@@ -42,7 +43,6 @@ void task_controller_update()
 	/* bot position on the 'table' (absolute position): */
 	pose_t	robot_pose		= { 0, 0, 0 };
 	pose_t	pose_order		= { 0, 0, 0 };
-	polar_t	speed_order		= { 0, 0 };
 	polar_t	motor_command;
 	uint8_t stop = 0;
 
@@ -101,6 +101,25 @@ void task_controller_update()
 						  speed_order,
 						  robot_speed);
 
+#if defined(CONFIG_CALIBRATION)
+		static uint8_t _cpt = 25;
+
+		if (! --_cpt) {
+			_cpt = (25);
+			mcurses_monitor_printf(0, "robot_speed: [dist:%+.2f, ang:%+.2f]  ",
+					robot_speed.distance, robot_speed.angle);
+			mcurses_monitor_printf(1, "robot_pose: [x:%+.2f, y:%+.2f, O:%+.2f]  ",
+					robot_pose.x, robot_pose.y, robot_pose.O);
+			mcurses_monitor_printf(2, "speed_order: [dist:%+.2f, ang:%+.2f]  ",
+					speed_order.distance, speed_order.angle);
+			mcurses_monitor_printf(3, "pose_order: [x:%+.2f, y:%+.2f, O:%+.2f]  ",
+					pose_order.x, pose_order.y, pose_order.O);
+
+			mcurses_monitor_printf(4, "motor: [dist:%+.2f, ang:%+.2f]  ",
+					motor_command.distance, motor_command.angle);
+		}
+#endif /* CONFIG_CALIBRATION */
+
 		/* set speed to wheels */
 		motor_drive(motor_command);
 
@@ -117,6 +136,7 @@ static void mach_calibration_usage(void)
 	printf("\t'o' to calibrate odometry\n");
 	printf("\t'p' to calibrate hbridge & PWM ctrl\n");
 	printf("\t's' to calibrate servos (sd21 card)\n");
+	printf("\t'r' to calibrate speed_controller\n");
 	printf("\n");
 	printf("\t'h' to display this help\n");
 	printf("\t'e' to exit calibration mode\n");
@@ -170,6 +190,9 @@ static void mach_enter_calibration_mode(void)
 			break;
 		case 's':
 			sd21_enter_calibration(&sd21);
+			break;
+		case 'r':
+			speed_controller_enter_calibration(&speed_order);
 			break;
 		case 'h':
 			mach_calibration_usage();
