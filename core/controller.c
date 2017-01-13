@@ -145,3 +145,81 @@ inline uint8_t controller_get_pose_reached(controller_t *ctrl)
 {
 	return ctrl->pose_reached;
 }
+
+#if defined(CONFIG_CALIBRATION)
+#include <stdio.h>
+static void speed_controller_calibration_usage(void)
+{
+	printf("\n>>> Entering encoder calibration mode\n\n");
+
+	printf("\t'n' to switch dist/angle.\n");
+	printf("\t'r' to reset current setting to 0\n");
+	printf("\t'+' to add 25\n");
+	printf("\t'-' to sub 25\n");
+	printf("\n");
+	printf("\t'h' to display this help\n");
+	printf("\t'q' to quit\n");
+	printf("\n");
+}
+
+void speed_controller_enter_calibration(polar_t *speed_order)
+{
+	int c;
+	int16_t cur = 0;
+	uint8_t quit = 0;
+	static uint8_t param_id = 0;
+
+	speed_controller_calibration_usage();
+
+	while (!quit) {
+
+		/* display prompt */
+		printf("$ ");
+
+		/* wait for command */
+		c = mach_getchar_or_yield();
+		printf("%c\n", c);
+
+		switch (c) {
+		case 'n':
+			param_id += 1;
+			param_id %= 2;
+			break;
+		//case 'b':
+		//	if (engine_id)
+		//		engine_id -= 1;
+		//	else
+		//		engine_id = obj->engine_nb - 1;
+		//	break;
+		case 'r':
+			cur = 0;
+			speed_order->distance = cur;
+			speed_order->angle = cur;
+			break;
+		case '+':
+			cur += 25;
+			if (!param_id)
+				speed_order->distance = cur;
+			else
+				speed_order->angle = cur;
+			break;
+		case '-':
+			cur -= 25;
+			if (!param_id)
+				speed_order->distance = cur;
+			else
+				speed_order->angle = cur;
+			break;
+		case 'h':
+			speed_controller_calibration_usage();
+			break;
+		case 'q':
+			quit = 1;
+			break;
+		default:
+			printf("\n");
+			break;
+		}
+	}
+}
+#endif /* CONFIG_CALIBRATION */

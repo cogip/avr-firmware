@@ -33,4 +33,8 @@ polar_t controller_update(controller_t *ctrl,
 
 uint8_t controller_get_pose_reached(controller_t *ctrl);
 
+#if defined(CONFIG_CALIBRATION)
+void speed_controller_enter_calibration(polar_t *speed_order);
+#endif
+
 #endif /* CONTROLLER_H_ */
