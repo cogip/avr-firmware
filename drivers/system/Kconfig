@@ -1,0 +1,11 @@
+
+menu "System features"
+
+config MCURSES
+	bool "Mcurses"
+	default n
+	help
+	   This add support of VT102 escape code and relevant API to display
+	   bot variables in a split area of the console.
+
+endmenu
