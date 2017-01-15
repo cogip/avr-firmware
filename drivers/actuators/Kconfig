@@ -1,0 +1,10 @@
+
+menu "Installed actuators"
+
+config SD21
+	bool "SD-21 Extension board"
+	default n
+	help
+	   This add support of SD21 for servo control.
+
+endmenu

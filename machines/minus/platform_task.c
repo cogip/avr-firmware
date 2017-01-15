@@ -137,7 +137,9 @@ static void mach_calibration_usage(void)
 
 	printf("\t'o' to calibrate odometry\n");
 	printf("\t'p' to calibrate hbridge & PWM ctrl\n");
+#if defined(CONFIG_SD21)
 	printf("\t's' to calibrate servos (sd21 card)\n");
+#endif
 	printf("\t'r' to calibrate speed_controller\n");
 	printf("\n");
 	printf("\t'h' to display this help\n");
@@ -190,9 +192,11 @@ static void mach_enter_calibration_mode(void)
 		case 'p':
 			hbridge_enter_calibration(&hbridges);
 			break;
+#if defined(CONFIG_SD21)
 		case 's':
 			sd21_enter_calibration(&sd21);
 			break;
+#endif
 		case 'r':
 			speed_controller_enter_calibration(&speed_order);
 			break;

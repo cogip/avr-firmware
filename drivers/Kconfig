@@ -1,5 +1,6 @@
 menu "Drivers"
 
+source drivers/actuators/Kconfig
 source drivers/sensors/Kconfig
 source drivers/system/Kconfig
 

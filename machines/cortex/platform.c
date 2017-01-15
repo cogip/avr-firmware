@@ -126,6 +126,7 @@ qdec_t encoders[] = {
 	},
 };
 
+#if defined(CONFIG_SD21)
 sd21_t sd21 = {
 	.twi = &TWIC,
 	.twi_speed_khz = 100,
@@ -178,6 +179,7 @@ sd21_t sd21 = {
 		},
 	},
 };
+#endif /* CONFIG_SD21 */
 
 /* TCE0 ClkIn == ClkPer / 8 == 4000 KHz */
 /* Counter set to 200 for 20KHz output */
@@ -328,8 +330,10 @@ void mach_setup(void)
 	analog_sensor_setup(&ana_sensors);
 #endif
 
+#if defined(CONFIG_SD21)
 	/* setup TWI communication with SD21 */
 	sd21_setup(&sd21);
+#endif /* CONFIG_SD21 */
 
 	//action_setup(); /* TODO: commenter pour debug */
 
