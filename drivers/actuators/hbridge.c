@@ -9,18 +9,21 @@
  * @param value from -16535 to 16535
  * @return pwm value from 0 to max
  */
-static uint8_t pwm_limitation(int16_t value, uint8_t max)
+static uint8_t pwm_limitation(int16_t value, uint8_t offset, uint8_t max)
 {
-	int16_t	out = value > 0 ? value : -value;
+	int16_t	out = value >= 0 ? value : -value;
+
+	if (out)
+		out += offset;
 
 	return out > max ? max : (uint8_t) out;
 }
 
 void hbridge_engine_update(hbridge_t *b, uint8_t engine_idx, int16_t pwm)
 {
-	/* limits speed command */
-	uint8_t pwm_period = pwm_limitation(pwm, b->period);
 	engine_t *e = &b->engines[engine_idx];
+	/* limits speed command */
+	uint8_t pwm_period = pwm_limitation(pwm, e->offset, b->period);
 
 	/* signed of pwm value is applied on direction gpio */
 	if (e->direction_inverse_polarity)

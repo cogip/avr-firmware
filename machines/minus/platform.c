@@ -199,6 +199,7 @@ hbridge_t hbridges = {
 			//.direction_inverse_polarity = FALSE,
 			.direction_inverse_polarity = TRUE,
 			.pwm_channel = PIN0_bp,
+			.offset = 100,
 		},
 		[HBRIDGE_MOTOR_RIGHT] = {
 			/* right motor */
@@ -207,6 +208,7 @@ hbridge_t hbridges = {
 			//.direction_inverse_polarity = TRUE,
 			.direction_inverse_polarity = FALSE,
 			.pwm_channel = PIN1_bp,
+			.offset = 100,
 		},
 	},
 };

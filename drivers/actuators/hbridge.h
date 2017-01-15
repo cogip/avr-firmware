@@ -9,6 +9,8 @@ typedef struct {
 	uint8_t direction_pin_id;
 	uint8_t direction_inverse_polarity;
 	uint8_t pwm_channel;
+
+	uint8_t offset;
 } engine_t;
 
 typedef struct {
