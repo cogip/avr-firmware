@@ -271,6 +271,103 @@ void task_controller_update()
 		}
 		break;
 
+#if defined(CONFIG_CALIBRATION)
+		case CTRL_STATE_CALIB_MODE1:
+		{
+			/*
+			 * First calibration test:
+			 * Perform two PWM sweeps to characterize encoders.
+			 */
+
+			/*
+			 * Two ramps :
+			 * 1. [-pwm ... +pwm] for 400 cycles (0.02 = 8s)
+			 * 2. [+pwm ... -pwm] for 400 cycles
+			 */
+			motor_command.angle = 0;
+			if (tempo < 50)
+				motor_command.distance = -200;
+			else if (tempo >= 50 && tempo < 400 - 50)
+				motor_command.distance = (int16_t)((double)(tempo - 50) * 4./3.) - 200;
+			else if (tempo >= 400 - 50 && tempo < 400 + 50)
+				motor_command.distance = 200;
+			else if (tempo >= 450 && tempo < 800 - 50)
+				motor_command.distance = -((int16_t)((double)(tempo - 450) * 4./3.) - 200);
+			else if (tempo >= 800 - 50)
+				motor_command.distance = -200;
+
+			motor_drive(motor_command);
+
+			/* catch speed */
+			robot_speed = encoder_read();
+
+			/* TODO: store the line */
+
+			tempo ++;
+			if (tempo == 400) {
+				//motor_command.distance = 0;
+				//motor_command.angle = 0;
+				//motor_drive(motor_command);
+
+				/* TODO: extract data */
+			} else if (tempo == 800) {
+				motor_command.distance = 0;
+				motor_command.angle = 0;
+				motor_drive(motor_command);
+
+				/* TODO: extract data */
+
+				controller.mode = CTRL_STATE_STOP;
+				tempo = 0;
+			}
+		}
+		break;
+
+		case CTRL_STATE_CALIB_MODE2:
+		{
+			/*
+			 * Second calibration test:
+			 * Perform a speed command to tune Kp, Ki (& Kd).
+			 * t[0s..1s] : speed is set to 0
+			 * t[1s..7s] : speed is set to full
+			 * t[7s..8s] : speed is set to 0
+			 */
+			if (tempo < 50)
+				speed_order.distance = 0;
+			else if (tempo >= 50 && tempo < 400 - 50)
+				speed_order.distance = 15;
+			else if (tempo >= 400 - 50)
+				speed_order.distance = 0;
+
+			speed_order.angle = 0;
+
+			/* TODO: store a data */
+
+			/* catch speed */
+			robot_speed = encoder_read();
+			motor_command = speed_controller(&controller,
+							 speed_order,
+							 robot_speed);
+
+			motor_drive(motor_command);
+
+			/* TODO: store the line */
+
+			tempo ++;
+			if (tempo == 400) {
+				motor_command.distance = 0;
+				motor_command.angle = 0;
+				motor_drive(motor_command);
+
+				/* TODO: extract data */
+
+				controller.mode = CTRL_STATE_STOP;
+				tempo = 0;
+			}
+		}
+		break;
+#endif /* defined(CONFIG_CALIBRATION) */
+
 		} /* switch(controller.mode) */
 
 		/* this task is called every scheduler tick (20ms) */

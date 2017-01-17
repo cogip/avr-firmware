@@ -9,6 +9,10 @@
 typedef enum {
 	CTRL_STATE_STOP = 0,
 	CTRL_STATE_INGAME,
+#if defined(CONFIG_CALIBRATION)
+	CTRL_STATE_CALIB_MODE1,
+	CTRL_STATE_CALIB_MODE2,
+#endif
 } controller_mode_t;
 
 typedef struct {
