@@ -13,7 +13,6 @@
 #include "qdec.h"
 
 static uint16_t tempo;
-polar_t	speed_order		= { 0, 0 };
 
 static void show_game_time()
 {
@@ -42,6 +41,7 @@ void task_controller_update()
 	/* bot position on the 'table' (absolute position): */
 	pose_t	robot_pose		= { 0, 0, 0 };
 	pose_t	pose_order		= { 0, 0, 0 };
+	polar_t	speed_order		= { 0, 0 };
 	polar_t	motor_command;
 	uint8_t stop = 0;
 
@@ -152,7 +152,6 @@ static void mach_calibration_usage(void)
 #if defined(CONFIG_SD21)
 	printf("\t's' to calibrate servos (sd21 card)\n");
 #endif
-	printf("\t'r' to calibrate speed_controller\n");
 	printf("\n");
 	printf("\t'h' to display this help\n");
 	printf("\t'e' to exit calibration mode\n");
@@ -209,9 +208,6 @@ static void mach_enter_calibration_mode(void)
 			sd21_enter_calibration(&sd21);
 			break;
 #endif
-		case 'r':
-			speed_controller_enter_calibration(&speed_order);
-			break;
 		case 'h':
 			mach_calibration_usage();
 			break;
