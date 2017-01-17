@@ -353,3 +353,57 @@ void task_controller_update()
 		kos_yield();
 	}
 }
+
+#if defined(CONFIG_CALIBRATION)
+static void controller_calibration_usage(void)
+{
+	printf("\n>>> Entering controller calibration mode\n\n");
+
+	printf("\t'1' to launch motor sweep [-pwm..+pwm] (out: cal1*.csv)\n");
+	printf("\t       this will calibrate : encoders & pwm ranges\n");
+	printf("\t'2' to launch speed control loop only (out: cal2.csv)\n");
+	printf("\t       this will calibrate : Kp, Ki & (Kd) for speed PID\n");
+	printf("\n");
+	printf("\t'h' to display this help\n");
+	printf("\t'q' to quit\n");
+	printf("\n");
+}
+
+void controller_enter_calibration()
+{
+	int c;
+	uint8_t quit = 0;
+
+	controller_calibration_usage();
+
+	while (!quit) {
+
+		/* display prompt */
+		printf("$ ");
+
+		/* wait for command */
+		c = mach_getchar_or_yield();
+		printf("%c\n", c);
+
+		switch (c) {
+		case '1':
+			controller.mode = CTRL_STATE_CALIB_MODE1;
+			printf("CAL1 launched\n");
+			break;
+		case '2':
+			controller.mode = CTRL_STATE_CALIB_MODE2;
+			printf("CAL2 launched\n");
+			break;
+		case 'h':
+			controller_calibration_usage();
+			break;
+		case 'q':
+			quit = 1;
+			break;
+		default:
+			printf("\n");
+			break;
+		}
+	}
+}
+#endif /* CONFIG_CALIBRATION */

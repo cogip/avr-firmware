@@ -47,4 +47,8 @@ uint8_t controller_get_pose_reached(controller_t *ctrl);
 
 void task_controller_update();
 
+#if defined(CONFIG_CALIBRATION)
+void controller_enter_calibration();
+#endif
+
 #endif /* CONTROLLER_H_ */
