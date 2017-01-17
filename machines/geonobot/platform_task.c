@@ -16,15 +16,13 @@
 
 static uint16_t tempo;
 
-static void mach_evtloop_end_of_game(void)
+void mach_evtloop_end_of_game(void)
 {
 	open_pince();
 	open_door();
 	set_release_right_cup();
 	set_release_left_cup();
 }
-static func_cb_t pfn_evtloop_end_of_game = mach_evtloop_end_of_game;
-
 
 void task_active_event_loop()
 {
@@ -76,6 +74,7 @@ void task_controller_update()
 	pose_t	pose_order		= { 0, 0, 0 };
 	polar_t	speed_order		= { 0, 0 };
 	polar_t	motor_command;
+	func_cb_t pfn_evtloop_end_of_game = mach_get_end_of_game_pfn();
 	uint8_t stop = 0;
 
 	for (;;) {

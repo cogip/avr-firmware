@@ -13,7 +13,6 @@
 #include "qdec.h"
 
 static uint16_t tempo;
-static func_cb_t pfn_evtloop_end_of_game = NULL;
 
 static void show_game_time()
 {
@@ -44,6 +43,7 @@ void task_controller_update()
 	pose_t	pose_order		= { 0, 0, 0 };
 	polar_t	speed_order		= { 0, 0 };
 	polar_t	motor_command;
+	func_cb_t pfn_evtloop_end_of_game = mach_get_end_of_game_pfn();
 	uint8_t stop = 0;
 
 	for (;;) {
