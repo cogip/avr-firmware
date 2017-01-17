@@ -6,6 +6,11 @@
 #include "odometry.h"
 #include "pid.h"
 
+typedef enum {
+	CTRL_STATE_STOP = 0,
+	CTRL_STATE_INGAME,
+} controller_mode_t;
+
 typedef struct {
 	double wheels_distance;
 
@@ -20,6 +25,9 @@ typedef struct {
 	/* Angle approximation to switch to position reached state */
 	uint16_t min_angle_for_pose_reached;
 
+
+	/* Dynamics variables */
+	controller_mode_t mode;
 	uint8_t pose_reached;
 } controller_t;
 

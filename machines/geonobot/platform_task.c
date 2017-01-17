@@ -74,17 +74,17 @@ void task_controller_update()
 	/* bot position on the 'table' (absolute position): */
 	pose_t	robot_pose		= { 1856.75, 0, 0 };
 	pose_t	pose_order		= { 0, 0, 0 };
-	polar_t	speed_order		= { 60, 60 };
+	polar_t	speed_order		= { 0, 0 };
 	polar_t	motor_command;
 	uint8_t stop = 0;
-
-	while (!game_started)
-		kos_yield();
 
 	for (;;) {
 		kos_set_next_schedule_delay_ms(20);
 
-		if (tempo >= 4500) {
+		switch(controller.mode) {
+		default:
+		case CTRL_STATE_STOP:
+		{
 			/* final position */
 			mach_evtloop_end_of_game();
 
@@ -93,52 +93,66 @@ void task_controller_update()
 			motor_drive(motor_command);
 
 			kos_yield();
-			continue;
 		}
+		break;
 
-		tempo++;
+		case CTRL_STATE_INGAME:
+		{
+			if (tempo >= 4500) {
+				controller.mode = CTRL_STATE_STOP;
+				break;
+			}
 
-		show_game_time();
+			if (game_started) {
+				tempo++;
+				show_game_time();
+			}
 
-		/* catch speed */
-		robot_speed = encoder_read();
+			/* catch speed */
+			robot_speed = encoder_read();
 
-		/* convert to position */
-		odometry_update(&robot_pose, &robot_speed, SEGMENT);
+			/* convert to position */
+			odometry_update(&robot_pose, &robot_speed, SEGMENT);
 
-		/* get next pose_t to reach */
-		pose_order = mach_trajectory_get_route_update();
+			/* get next pose_t to reach */
+			pose_order = mach_trajectory_get_route_update();
 
-		pose_order.x *= PULSE_PER_MM;
-		pose_order.y *= PULSE_PER_MM;
-		pose_order.O *= PULSE_PER_DEGREE;
+			pose_order.x *= PULSE_PER_MM;
+			pose_order.y *= PULSE_PER_MM;
+			pose_order.O *= PULSE_PER_DEGREE;
 
-		/* collision detection */
-		stop = mach_stop_robot();
+			/* collision detection */
+			stop = mach_stop_robot();
 
-		if (stop) {
-			speed_order.distance = 0;
-			speed_order.angle = 0;
-		} else {
-			/* speed order in position = 60 pulses / 20ms */
-			speed_order.distance = 60;
-			/* speed order in angle? = 60 pulses / 20ms */
-			speed_order.angle = 60;
-		}
+			if (stop) {
+				speed_order.distance = 0;
+				speed_order.angle = 0;
+			} else if (game_started) {
+				/* speed order in position = 60 pulses / 20ms */
+				speed_order.distance = 60;
+				/* speed order in angle? = 60 pulses / 20ms */
+				speed_order.angle = 60;
+			}
 
-		/* PID / feedback control */
+			/* PID / feedback control */
 #if 0
-		motor_command = speed_controller(speed_order,
-						 robot_speed);
+			motor_command = speed_controller(&controller,
+							 speed_order,
+							 robot_speed);
+#else
+			motor_command = controller_update(&controller,
+							  pose_order,
+							  robot_pose,
+							  speed_order,
+							  robot_speed);
 #endif
-		motor_command = controller_update(&controller,
-						  pose_order,
-						  robot_pose,
-						  speed_order,
-						  robot_speed);
 
-		/* set speed to wheels */
-		motor_drive(motor_command);
+			/* set speed to wheels */
+			motor_drive(motor_command);
+		}
+		break;
+
+		} /* switch(controller.mode) */
 
 		/* this task is called every scheduler tick (20ms) */
 		kos_yield();

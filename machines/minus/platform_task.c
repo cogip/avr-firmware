@@ -49,81 +49,96 @@ void task_controller_update()
 	for (;;) {
 		kos_set_next_schedule_delay_ms(20);
 
-		if (tempo >= 4500) {
+		switch(controller.mode) {
+		default:
+		case CTRL_STATE_STOP:
+		{
 			/* final position */
 			motor_command.distance = 0;
 			motor_command.angle = 0;
 			motor_drive(motor_command);
 
 			kos_yield();
-			continue;
 		}
+		break;
 
-		if (game_started) {
-			tempo++;
-			show_game_time();
-		}
+		case CTRL_STATE_INGAME:
+		{
+			if (tempo >= 4500) {
+				controller.mode = CTRL_STATE_STOP;
+				break;
+			}
 
-		/* catch speed */
-		robot_speed = encoder_read();
+			if (game_started) {
+				tempo++;
+				show_game_time();
+			}
 
-		/* convert to position */
-		odometry_update(&robot_pose, &robot_speed, SEGMENT);
+			/* catch speed */
+			robot_speed = encoder_read();
 
-		/* get next pose_t to reach */
-		pose_order = mach_trajectory_get_route_update();
+			/* convert to position */
+			odometry_update(&robot_pose, &robot_speed, SEGMENT);
 
-		//pose_order.x *= PULSE_PER_MM;
-		//pose_order.y *= PULSE_PER_MM;
-		//pose_order.O *= PULSE_PER_DEGREE;
+			/* get next pose_t to reach */
+			pose_order = mach_trajectory_get_route_update();
 
-		/* collision detection */
-		stop = mach_stop_robot();
+			//pose_order.x *= PULSE_PER_MM;
+			//pose_order.y *= PULSE_PER_MM;
+			//pose_order.O *= PULSE_PER_DEGREE;
 
-		if (stop) {
-			speed_order.distance = 0;
-			speed_order.angle = 0;
-		} else if (game_started) {
-			/* speed order in position = 60 pulses / 20ms */
-			speed_order.distance = 60;
-			/* speed order in angle? = 60 pulses / 20ms */
-			speed_order.angle = 60;
-		}
+			/* collision detection */
+			stop = mach_stop_robot();
 
-		/* PID / feedback control */
+			if (stop) {
+				speed_order.distance = 0;
+				speed_order.angle = 0;
+			} else if (game_started) {
+				/* speed order in position = 60 pulses / 20ms */
+				speed_order.distance = 60;
+				/* speed order in angle? = 60 pulses / 20ms */
+				speed_order.angle = 60;
+			}
+
+			/* PID / feedback control */
 #if 0
-		motor_command = speed_controller(&controller,
-						 speed_order,
-						 robot_speed);
+			motor_command = speed_controller(&controller,
+							 speed_order,
+							 robot_speed);
 #else
-		motor_command = controller_update(&controller,
-						  pose_order,
-						  robot_pose,
-						  speed_order,
-						  robot_speed);
+			motor_command = controller_update(&controller,
+							  pose_order,
+							  robot_pose,
+							  speed_order,
+							  robot_speed);
 #endif
 
 #if defined(CONFIG_CALIBRATION)
-		static uint8_t _cpt = 25;
+			static uint8_t _cpt = 25;
 
-		if (! --_cpt) {
-			_cpt = (25);
-			mcurses_monitor_printf(0, "robot_speed: [dist:%+.2f, ang:%+.2f]  ",
-					robot_speed.distance, robot_speed.angle);
-			mcurses_monitor_printf(1, "robot_pose: [x:%+.2f, y:%+.2f, O:%+.2f]  ",
-					robot_pose.x, robot_pose.y, robot_pose.O);
-			mcurses_monitor_printf(2, "speed_order: [dist:%+.2f, ang:%+.2f]  ",
-					speed_order.distance, speed_order.angle);
-			mcurses_monitor_printf(3, "pose_order: [x:%+.2f, y:%+.2f, O:%+.2f]  ",
-					pose_order.x, pose_order.y, pose_order.O);
+			if (! --_cpt) {
+				_cpt = (25);
+				mcurses_monitor_printf(0, "robot_speed: [dist:%+.2f, ang:%+.2f]  ",
+						robot_speed.distance, robot_speed.angle);
+				mcurses_monitor_printf(1, "robot_pose: [x:%+.2f, y:%+.2f, O:%+.2f]  ",
+						robot_pose.x, robot_pose.y, robot_pose.O);
+				mcurses_monitor_printf(2, "speed_order: [dist:%+.2f, ang:%+.2f]  ",
+						speed_order.distance,
+						speed_order.angle);
+				mcurses_monitor_printf(3, "pose_order: [x:%+.2f, y:%+.2f, O:%+.2f]  ",
+						pose_order.x, pose_order.y, pose_order.O);
 
-			mcurses_monitor_printf(4, "motor: [dist:%+.2f, ang:%+.2f]  ",
-					motor_command.distance, motor_command.angle);
-		}
+				mcurses_monitor_printf(4, "motor: [dist:%+.2f, ang:%+.2f]  ",
+						motor_command.distance, motor_command.angle);
+			}
 #endif /* CONFIG_CALIBRATION */
 
-		/* set speed to wheels */
-		motor_drive(motor_command);
+			/* set speed to wheels */
+			motor_drive(motor_command);
+		}
+		break;
+
+		} /* switch(controller.mode) */
 
 		/* this task is called every scheduler tick (20ms) */
 		kos_yield();
