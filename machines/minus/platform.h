@@ -16,8 +16,8 @@
 #define WHEELS_ENCODER_RESOLUTION	2000 /* 500*4 pulse per rotate - 10.61 pulse/mm */
 
 /* 2960*pi/2 = 4650 pulses pour 90° soit 51.66 pulses/° */
-#define PULSE_PER_DEGREE		51.66
-#define PULSE_PER_MM			10.61
+#define PULSE_PER_DEGREE		1.0
+#define PULSE_PER_MM			1.0
 
 #define POSE_INITIAL			{ 0, 0, 0 }
 #define MAX_ACC				200

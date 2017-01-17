@@ -84,9 +84,9 @@ void task_controller_update()
 			/* get next pose_t to reach */
 			pose_order = mach_trajectory_get_route_update();
 
-			//pose_order.x *= PULSE_PER_MM;
-			//pose_order.y *= PULSE_PER_MM;
-			//pose_order.O *= PULSE_PER_DEGREE;
+			pose_order.x *= PULSE_PER_MM;
+			pose_order.y *= PULSE_PER_MM;
+			pose_order.O *= PULSE_PER_DEGREE;
 
 			/* collision detection */
 			stop = mach_stop_robot();
