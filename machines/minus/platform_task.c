@@ -13,6 +13,7 @@
 #include "qdec.h"
 
 static uint16_t tempo;
+static func_cb_t pfn_evtloop_end_of_game = NULL;
 
 static void show_game_time()
 {
@@ -52,6 +53,9 @@ void task_controller_update()
 		default:
 		case CTRL_STATE_STOP:
 		{
+			if (pfn_evtloop_end_of_game && tempo >= 4500)
+				(*pfn_evtloop_end_of_game)();
+
 			/* final position */
 			motor_command.distance = 0;
 			motor_command.angle = 0;

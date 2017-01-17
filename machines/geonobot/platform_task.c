@@ -23,6 +23,7 @@ static void mach_evtloop_end_of_game(void)
 	set_release_right_cup();
 	set_release_left_cup();
 }
+static func_cb_t pfn_evtloop_end_of_game = mach_evtloop_end_of_game;
 
 
 void task_active_event_loop()
@@ -84,8 +85,8 @@ void task_controller_update()
 		default:
 		case CTRL_STATE_STOP:
 		{
-			if (tempo >= 4500)
-				mach_evtloop_end_of_game();
+			if (pfn_evtloop_end_of_game && tempo >= 4500)
+				(*pfn_evtloop_end_of_game)();
 
 			/* final position */
 			motor_command.distance = 0;
