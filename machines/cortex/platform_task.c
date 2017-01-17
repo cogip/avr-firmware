@@ -12,7 +12,6 @@
 #include "usart.h"
 #include "qdec.h"
 
-static uint8_t game_started;
 static uint16_t tempo;
 
 static void show_game_time()
@@ -69,10 +68,8 @@ void task_controller_update()
 				break;
 			}
 
-			if (game_started) {
-				tempo++;
-				show_game_time();
-			}
+			tempo++;
+			show_game_time();
 
 			/* catch speed */
 			robot_speed = encoder_read();
@@ -93,7 +90,7 @@ void task_controller_update()
 			if (stop) {
 				speed_order.distance = 0;
 				speed_order.angle = 0;
-			} else if (game_started) {
+			} else {
 				/* speed order in position = 60 pulses / 20ms */
 				speed_order.distance = 60;
 				/* speed order in angle? = 60 pulses / 20ms */
@@ -204,7 +201,7 @@ static void mach_enter_calibration_mode(void)
 	}
 
 exit_point:
-	game_started = TRUE;
+	controller.mode = CTRL_STATE_INGAME;
 	printf("calibration ended\n");
 	kos_task_exit();
 }
@@ -220,8 +217,6 @@ exit_point:
 void mach_tasks_init()
 {
 	kos_init();
-
-	game_started = FALSE;
 
 #if defined(CONFIG_CALIBRATION)
 	kos_new_task(mach_enter_calibration_mode, "CALIB", TASK_CALIB_STACK);

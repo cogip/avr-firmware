@@ -14,7 +14,6 @@
 #include "qdec.h"
 #include "sensor.h"
 
-static uint8_t game_started;
 static uint16_t tempo;
 
 static void mach_evtloop_end_of_game(void)
@@ -28,7 +27,7 @@ static void mach_evtloop_end_of_game(void)
 
 void task_active_event_loop()
 {
-	while (!game_started)
+	while (controller.mode != CTRL_STATE_INGAME)
 		kos_yield();
 
 	printf("task_active_event_loop()\n");
@@ -85,9 +84,10 @@ void task_controller_update()
 		default:
 		case CTRL_STATE_STOP:
 		{
-			/* final position */
-			mach_evtloop_end_of_game();
+			if (tempo >= 4500)
+				mach_evtloop_end_of_game();
 
+			/* final position */
 			motor_command.distance = 0;
 			motor_command.angle = 0;
 			motor_drive(motor_command);
@@ -103,10 +103,8 @@ void task_controller_update()
 				break;
 			}
 
-			if (game_started) {
-				tempo++;
-				show_game_time();
-			}
+			tempo++;
+			show_game_time();
 
 			/* catch speed */
 			robot_speed = encoder_read();
@@ -127,7 +125,7 @@ void task_controller_update()
 			if (stop) {
 				speed_order.distance = 0;
 				speed_order.angle = 0;
-			} else if (game_started) {
+			} else {
 				/* speed order in position = 60 pulses / 20ms */
 				speed_order.distance = 60;
 				/* speed order in angle? = 60 pulses / 20ms */
@@ -233,7 +231,7 @@ static void mach_enter_calibration_mode(void)
 	}
 
 exit_point:
-	game_started = TRUE;
+	controller.mode = CTRL_STATE_INGAME;
 	printf("calibration ended\n");
 	kos_task_exit();
 }
@@ -250,8 +248,6 @@ exit_point:
 void mach_tasks_init()
 {
 	kos_init();
-
-	game_started = FALSE;
 
 #if defined(CONFIG_CALIBRATION)
 	kos_new_task(mach_enter_calibration_mode, "CALIB", TASK_CALIB_STACK);
