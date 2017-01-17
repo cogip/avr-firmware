@@ -41,4 +41,6 @@ polar_t controller_update(controller_t *ctrl,
 
 uint8_t controller_get_pose_reached(controller_t *ctrl);
 
+void task_controller_update();
+
 #endif /* CONTROLLER_H_ */
