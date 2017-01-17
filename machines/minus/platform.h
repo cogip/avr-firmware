@@ -19,6 +19,7 @@
 #define PULSE_PER_DEGREE		51.66
 #define PULSE_PER_MM			10.61
 
+#define POSE_INITIAL			{ 0, 0, 0 }
 #define MAX_ACC				200
 
 #define HBRIDGE_MOTOR_LEFT		0
