@@ -22,6 +22,7 @@ static void mach_calibration_usage(void)
 #if defined(CONFIG_SD21)
 	printf("\t's' to calibrate servos (sd21 card)\n");
 #endif
+	printf("\t'r' to calibrate controller\n");
 	printf("\n");
 	printf("\t'h' to display this help\n");
 	printf("\t'e' to exit calibration mode\n");
@@ -78,6 +79,9 @@ static void mach_enter_calibration_mode(void)
 			sd21_enter_calibration(&sd21);
 			break;
 #endif
+		case 'r':
+			controller_enter_calibration();
+			break;
 		case 'h':
 			mach_calibration_usage();
 			break;
