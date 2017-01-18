@@ -44,6 +44,7 @@ typedef struct {
 	struct {
 		datalog_col_t	type;
 		const char *	name;
+		uint8_t		visible;
 	} columns[COL_MAX];
 
 	/* datas are the active row */
@@ -64,8 +65,9 @@ typedef struct {
  */
 void log_vect_init(datalog_t *d, const char *log_name, ...);
 
-/* Reset current logs data indexes to 0 */
-void log_vect_reset(datalog_t *d, const char *log_name);
+/* Reset current logs data indexes to 0, and configure CSV filename and visibles
+ * columns. Last args should match valid column index, ending with -1 */
+void log_vect_reset(datalog_t *d, const char *log_name, ...);
 
 /* Set value for a cell (ie. using column id) for the current line */
 void log_vect_setvalue(datalog_t *d, uint8_t idx, void * value);

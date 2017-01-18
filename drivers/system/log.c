@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "log.h"
+#include "utils.h"
 
 #if 0
 /* #ifdef CONFIG_LOGGING_TIME */
@@ -95,6 +96,8 @@ void log_vect_init(datalog_t *d, const char *log_name, ...)
 	     t != COL_END;
 	     d->col_nb++, t = va_arg(args, int))
 	{
+		d->columns[d->col_nb].visible = FALSE;
+
 		/* 1st var arg is column type */
 		d->columns[d->col_nb].type = t;
 
@@ -107,11 +110,29 @@ void log_vect_init(datalog_t *d, const char *log_name, ...)
 	return;
 }
 
-inline void log_vect_reset(datalog_t *d, const char *log_name)
+void log_vect_reset(datalog_t *d, const char *log_name, ...)
 {
+	int c;
+	va_list args;
+
 	d->line_cur = 0;
 	if (log_name)
 		strncpy (d->log_name, log_name, LOGNAME_MAX);
+
+	/* By default, no columns are displayed */
+	for (c = 0; c < d->col_nb; c++)
+		d->columns[c].visible = FALSE;
+
+	va_start (args, log_name);
+
+	/* Each refered column index in arg list will be displayed */
+	for (c = va_arg(args, int);
+	     c != -1;
+	     c = va_arg(args, int))
+	{
+		d->columns[c].visible = TRUE;
+	}
+	va_end (args);
 }
 
 void log_vect_setvalue(datalog_t *d, uint8_t idx, void * value)
@@ -138,7 +159,8 @@ static void _log_vect_print_header(datalog_t *d)
 	printf("\n<<<< %s.csv\n", d->log_name);
 	printf("time,");
 	for (c = 0; c < d->col_nb; c++) {
-		printf("%s,", d->columns[c].name);
+		if (d->columns[c].visible)
+			printf("%s,", d->columns[c].name);
 	}
 	printf("\n");
 }
@@ -152,15 +174,17 @@ void log_vect_display_line(datalog_t *d)
 
 	printf("%d,", d->line_cur);
 	for (c = 0; c < d->col_nb; c++) {
-		switch(d->columns[c].type) {
-		case COL_INT16:
-			printf("%d,", d->datas[c].as_int16);
-			break;
-		case COL_DOUBLE:
-			printf("%+.2f,", d->datas[c].as_double);
-			break;
-		case COL_END:
-			break;
+		if (d->columns[c].visible) {
+			switch(d->columns[c].type) {
+			case COL_INT16:
+				printf("%d,", d->datas[c].as_int16);
+				break;
+			case COL_DOUBLE:
+				printf("%+.2f,", d->datas[c].as_double);
+				break;
+			case COL_END:
+				break;
+			}
 		}
 	}
 	printf("\n");
