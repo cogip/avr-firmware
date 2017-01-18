@@ -26,11 +26,19 @@ typedef enum {
 	COL_END = -1,
 } datalog_col_t;
 
+/* The logs are consuming time when sent on UART
+ * - http://superuser.com/questions/515554/what-is-the-minimum-delay-between-two-consecutive-rs232-frames
+ *
+ * In 115200 8N1 configuration, a char tooks 86.8us to be sent
+ * thus not too much columns here below:
+ */
 #define COL_MAX 10
+#define LOGNAME_MAX 20
 
 typedef struct {
-	uint16_t line_cur;	/* current line index to write data to */
-	uint16_t line_max;	/* number of line (i.e. vectors size) */
+	uint16_t line_cur;		/* current line "timestamp" */
+
+	char log_name[LOGNAME_MAX];	/* to store CSV basename */
 
 	uint8_t col_nb;
 	struct {
@@ -38,30 +46,35 @@ typedef struct {
 		const char *	name;
 	} columns[COL_MAX];
 
-	void * datas[COL_MAX];
+	/* datas are the active row */
+	union {
+		int16_t as_int16;
+		double as_double;
+	} datas[COL_MAX];
 } datalog_t;
 
 /*
- * Initialize a dynamic table of 'len' lines. Columns are created at runtime.
+ * Initialize a table for storing vectors. Columns are created at runtime.
  * The variable argument list should finished by a COL_END entry.
  * For each column to register, at least 2 arguments are required:
  * 1. the column data type, and 2. the columns header string.
  *
- * Example to create a one column array of 100 lines:
- *   log_vect_init(&d, 100, COL_INT16, "Col1Header", COL_END);
+ * Example to create a one column array of integers:
+ *   log_vect_init(&d, NULL, COL_INT16, "Col1Header", COL_END);
  */
-void log_vect_init(datalog_t *d, uint16_t len, ...);
+void log_vect_init(datalog_t *d, const char *log_name, ...);
 
 /* Reset current logs data indexes to 0 */
-void log_vect_reset(datalog_t *d);
+void log_vect_reset(datalog_t *d, const char *log_name);
 
 /* Set value for a cell (ie. using column id) for the current line */
 void log_vect_setvalue(datalog_t *d, uint8_t idx, void * value);
 
-/* Move to next line for further data storage */
-void log_vect_storeline(datalog_t *d);
+/* Print line and move timestamp to next line for further data storage */
+/* On first call line displayed, the header is also printed */
+void log_vect_display_line(datalog_t *d);
 
-/* Dump all table in CSV format */
-void log_vect_dumpall(datalog_t *d);
+/* Same as before, and also print the footer */
+void log_vect_display_last_line(datalog_t *d);
 
 #endif /* LOG_H */

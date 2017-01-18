@@ -77,45 +77,26 @@ void print_log(int level, const char *function, const char *format, ...)
 	va_end (args);
 }
 
-void log_vect_init(datalog_t *d, uint16_t len, ...)
+void log_vect_init(datalog_t *d, const char *log_name, ...)
 {
 	va_list args;
 
 	datalog_col_t t;
 
 	d->line_cur = 0;
-	d->line_max = len;
+	if (log_name)
+		strncpy (d->log_name, log_name, LOGNAME_MAX);
 
 	d->col_nb = 0;
 
-	va_start (args, len);
+	va_start (args, log_name);
 
 	for (t = va_arg(args, int);
 	     t != COL_END;
 	     d->col_nb++, t = va_arg(args, int))
 	{
-		uint16_t size;
-
 		/* 1st var arg is column type */
 		d->columns[d->col_nb].type = t;
-
-		switch (t) {
-		case COL_INT16:
-			size = sizeof(int16_t) * len;
-			break;
-		case COL_DOUBLE:
-			size = sizeof(double) * len;
-			break;
-		default:
-		case COL_END:
-			return;
-		}
-
-		/* allocate a vector regarding column type element size */
-		d->datas[d->col_nb] = malloc(size);
-		if (!d->datas[d->col_nb])
-			goto alloc_err;
-		memset(d->datas[d->col_nb], 0, size);
 
 		/* 2nd var arg is the column name */
 		d->columns[d->col_nb].name = va_arg(args, const char *);
@@ -124,86 +105,71 @@ void log_vect_init(datalog_t *d, uint16_t len, ...)
 	va_end (args);
 
 	return;
-
-alloc_err:
-	printf("Malloc failed!\n");
-#if defined(__AVR__)
-	printf("%p, %p, %d\n",
-		__malloc_heap_end,
-		__malloc_heap_start,
-		__malloc_margin);
-#endif
-
-	for(;;);
 }
 
-inline void log_vect_reset(datalog_t *d)
+inline void log_vect_reset(datalog_t *d, const char *log_name)
 {
 	d->line_cur = 0;
+	if (log_name)
+		strncpy (d->log_name, log_name, LOGNAME_MAX);
 }
 
 void log_vect_setvalue(datalog_t *d, uint8_t idx, void * value)
 {
-	int16_t *i_datas;
-	double  *d_datas;
-
 	if (idx >= d->col_nb)
-		return;
-	if (d->line_cur >= d->line_max)
 		return;
 
 	switch (d->columns[idx].type) {
 	case COL_INT16:
-		i_datas = (int16_t *)d->datas[idx];
-		i_datas[d->line_cur] = *((int16_t *)value);
+		d->datas[idx].as_int16 = *((int16_t *)value);
 		break;
 	case COL_DOUBLE:
-		d_datas = (double *)d->datas[idx];
-		d_datas[d->line_cur] = *((double *)value);
+		d->datas[idx].as_double = *((double *)value);
 		break;
 	case COL_END:
 		break;
 	}
 }
 
-void log_vect_storeline(datalog_t *d)
-{
-	if (d->line_cur >= d->line_max)
-		return;
-	d->line_cur += 1;
-//	d->line_cur %= d->line_max;
-}
-
-void log_vect_dumpall(datalog_t *d)
+static void _log_vect_print_header(datalog_t *d)
 {
 	uint8_t c;
-	uint16_t l;
 
-	int16_t *i_datas;
-	double  *d_datas;
-
-	printf("\ntime,");
+	printf("\n<<<< %s.csv\n", d->log_name);
+	printf("time,");
 	for (c = 0; c < d->col_nb; c++) {
 		printf("%s,", d->columns[c].name);
 	}
 	printf("\n");
+}
 
-	for (l = 0; l < d->line_cur; l++) {
-		printf("%d,", l);
-		for (c = 0; c < d->col_nb; c++) {
-			switch(d->columns[c].type) {
-			case COL_INT16:
-				i_datas = (int16_t *)d->datas[c];
-				printf("%d,", i_datas[l]);
-				break;
-			case COL_DOUBLE:
-				d_datas = (double *)d->datas[c];
-				printf("%+.2f,", d_datas[l]);
-				break;
-			case COL_END:
-				break;
-			}
+void log_vect_display_line(datalog_t *d)
+{
+	uint8_t c;
+
+	if (!d->line_cur)
+		_log_vect_print_header(d);
+
+	printf("%d,", d->line_cur);
+	for (c = 0; c < d->col_nb; c++) {
+		switch(d->columns[c].type) {
+		case COL_INT16:
+			printf("%d,", d->datas[c].as_int16);
+			break;
+		case COL_DOUBLE:
+			printf("%+.2f,", d->datas[c].as_double);
+			break;
+		case COL_END:
+			break;
 		}
-		printf("\n");
 	}
+	printf("\n");
+
+	d->line_cur += 1;
+}
+
+void log_vect_display_last_line(datalog_t *d)
+{
+	log_vect_display_line(d);
+	printf(">>>>\n");
 }
