@@ -149,6 +149,7 @@ inline uint8_t controller_get_pose_reached(controller_t *ctrl)
 {
 	return ctrl->pose_reached;
 }
+
 static uint16_t tempo;
 
 static void show_game_time()
@@ -170,6 +171,9 @@ static void motor_drive(polar_t command)
 
 	hbridge_engine_update(&hbridges, HBRIDGE_MOTOR_RIGHT, right_command);
 	hbridge_engine_update(&hbridges, HBRIDGE_MOTOR_LEFT,  left_command);
+
+	log_vect_setvalue(&datalog, LOG_IDX_MOTOR_L, (void *) &left_command);
+	log_vect_setvalue(&datalog, LOG_IDX_MOTOR_R, (void *) &right_command);
 }
 
 void task_controller_update()
@@ -258,6 +262,14 @@ void task_controller_update()
 			 * Perform two PWM sweeps to characterize encoders.
 			 */
 
+			/* first entry, we reset the datalog */
+			if (!tempo)
+				log_vect_reset(&datalog, "cal1_up",
+						LOG_IDX_SPEED_L,
+						LOG_IDX_SPEED_R,
+						LOG_IDX_MOTOR_L,
+						LOG_IDX_MOTOR_R,
+						-1);
 			/*
 			 * Two ramps :
 			 * 1. [-pwm ... +pwm] for 400 cycles (0.02 = 8s)
@@ -280,7 +292,7 @@ void task_controller_update()
 			/* catch speed */
 			robot_speed = encoder_read();
 
-			/* TODO: store the line */
+			log_vect_display_line(&datalog);
 
 			tempo ++;
 			if (tempo == 400) {
@@ -288,13 +300,20 @@ void task_controller_update()
 				//motor_command.angle = 0;
 				//motor_drive(motor_command);
 
-				/* TODO: extract data */
+				log_vect_display_last_line(&datalog);
+				/* prepare next log */
+				log_vect_reset(&datalog, "cal1_down",
+						LOG_IDX_SPEED_L,
+						LOG_IDX_SPEED_R,
+						LOG_IDX_MOTOR_L,
+						LOG_IDX_MOTOR_R,
+						-1);
 			} else if (tempo == 800) {
 				motor_command.distance = 0;
 				motor_command.angle = 0;
 				motor_drive(motor_command);
 
-				/* TODO: extract data */
+				log_vect_display_last_line(&datalog);
 
 				controller.mode = CTRL_STATE_STOP;
 				tempo = 0;
@@ -307,6 +326,19 @@ void task_controller_update()
 			/*
 			 * Second calibration test:
 			 * Perform a speed command to tune Kp, Ki (& Kd).
+			 */
+
+			/* first entry, we reset the datalog */
+			if (!tempo)
+				log_vect_reset(&datalog, "cal2",
+						LOG_IDX_ROBOT_SPEED_D,
+						/*LOG_IDX_ROBOT_SPEED_A,*/
+						LOG_IDX_SPEED_ORDER_D,
+						/*LOG_IDX_SPEED_ORDER_A,*/
+						LOG_IDX_MOTOR_L,
+						LOG_IDX_MOTOR_R,
+						-1);
+			/*
 			 * t[0s..1s] : speed is set to 0
 			 * t[1s..7s] : speed is set to full
 			 * t[7s..8s] : speed is set to 0
@@ -320,7 +352,7 @@ void task_controller_update()
 
 			speed_order.angle = 0;
 
-			/* TODO: store a data */
+			log_vect_setvalue(&datalog, LOG_IDX_SPEED_ORDER_D, (void *) &speed_order.distance);
 
 			/* catch speed */
 			robot_speed = encoder_read();
@@ -330,7 +362,7 @@ void task_controller_update()
 
 			motor_drive(motor_command);
 
-			/* TODO: store the line */
+			log_vect_display_line(&datalog);
 
 			tempo ++;
 			if (tempo == 400) {
@@ -338,7 +370,7 @@ void task_controller_update()
 				motor_command.angle = 0;
 				motor_drive(motor_command);
 
-				/* TODO: extract data */
+				log_vect_display_last_line(&datalog);
 
 				controller.mode = CTRL_STATE_STOP;
 				tempo = 0;

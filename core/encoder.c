@@ -45,6 +45,9 @@ polar_t encoder_read(void)
 	robot_speed.distance = (right_speed + left_speed) / 2.0;
 	robot_speed.angle = right_speed - left_speed;
 
+	log_vect_setvalue(&datalog, LOG_IDX_SPEED_L, (void *) &left_speed);
+	log_vect_setvalue(&datalog, LOG_IDX_SPEED_R, (void *) &right_speed);
+
 	//print_eventually("(dist, angle) = (%d, %d)\n",
 	//	  robot_speed.distance, robot_speed.angle);
 

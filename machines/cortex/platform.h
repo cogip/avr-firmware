@@ -4,6 +4,7 @@
 #include "analog_sensor.h"
 #include "controller.h"
 #include "hbridge.h"
+#include "log.h"
 #include "odometry.h"
 #include "qdec.h"
 #include "sd21.h"
@@ -32,6 +33,8 @@ extern qdec_t encoders[];
 extern sd21_t sd21;
 extern hbridge_t hbridges;
 extern controller_t controller;
+
+extern datalog_t datalog;
 
 func_cb_t mach_get_end_of_game_pfn();
 pose_t mach_trajectory_get_route_update(void);

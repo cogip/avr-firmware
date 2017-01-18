@@ -242,6 +242,9 @@ controller_t controller = {
 	.min_angle_for_pose_reached = 100,
 };
 
+/* This global object contains all numerical logs references (vectors, etc.) */
+datalog_t datalog;
+
 inline func_cb_t mach_get_end_of_game_pfn()
 {
 	return NULL;
@@ -357,4 +360,15 @@ void mach_setup(void)
 	/* global interrupt enable */
 	sei();
 #endif
+
+	log_vect_init(&datalog, NULL, /*400,*/
+			COL_INT16, "left_speed",
+			COL_INT16, "right_speed",
+			COL_INT16, "left_command",
+			COL_INT16, "right_command",
+			COL_DOUBLE, "robot_speed.distance",
+			//COL_DOUBLE, "robot_speed.angle",
+			COL_DOUBLE, "speed_order.distance",
+			//COL_DOUBLE, "speed_order.angle",
+			COL_END);
 }
