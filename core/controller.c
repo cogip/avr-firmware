@@ -207,6 +207,13 @@ void task_controller_update()
 		}
 		break;
 
+		case CTRL_STATE_IDLE:
+		{
+			/* No motor control at all (PMW unit tests). */
+
+			kos_yield();
+		}
+
 		case CTRL_STATE_INGAME:
 		{
 			if (tempo >= 4500) {

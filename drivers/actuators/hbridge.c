@@ -64,6 +64,8 @@ void hbridge_enter_calibration(hbridge_t *obj)
 
 	hbridge_calibration_usage(obj);
 
+	controller.mode = CTRL_STATE_IDLE;
+
 	while (!quit) {
 		/* display prompt */
 		printf("[%02d].pwm = %4d $ ",
