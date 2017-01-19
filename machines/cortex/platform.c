@@ -286,11 +286,6 @@ static void mach_pinmux_setup(void)
 #endif
 }
 
-int mach_getchar_or_yield()
-{
-	return getchar();
-}
-
 void mach_sched_init()
 {
 	msched_init(10/*ms*/, &TCC0);

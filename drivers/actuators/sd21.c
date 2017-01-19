@@ -1,4 +1,6 @@
 #include <stdio.h>
+
+#include "console.h"
 #include "log.h"
 #include "platform.h"
 #include "sd21.h"

@@ -2,6 +2,7 @@
 #define CONSOLE_H
 
 #include "usart.h"
+#include "kos.h"
 
 typedef struct {
 	usart_t *usart;
@@ -17,6 +18,8 @@ do { \
 		printf(__VA_ARGS__); \
 	} \
 } while(0)
+
+int mach_getchar_or_yield();
 
 void console_init(console_t *con);
 

@@ -1,6 +1,6 @@
-#include "console.h"
-
 #include <stdio.h>
+
+#include "console.h"
 
 //static int uart_putchar(char c, FILE *stream);
 //static int uart_getchar(FILE *stream);
@@ -30,6 +30,13 @@
 //
 //	return -1;
 //}
+
+int mach_getchar_or_yield()
+{
+	while (!usart_is_data_arrived(&USARTC0))
+		kos_yield();
+	return getchar();
+}
 
 void console_init(console_t *con)
 {

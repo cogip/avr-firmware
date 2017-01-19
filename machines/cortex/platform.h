@@ -44,8 +44,6 @@ uint8_t mach_stop_robot(void);
 void mach_check_calibration_mode(void);
 #endif
 
-int mach_getchar_or_yield();
-
 void mach_setup(void);
 
 void mach_tasks_init();

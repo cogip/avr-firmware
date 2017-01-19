@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include "console.h"
 #include "encoder.h"
 #include "log.h"
 #include "mcurses.h"

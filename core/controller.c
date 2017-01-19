@@ -1,6 +1,7 @@
 #include <math.h>
 #include <stdio.h>
 
+#include "console.h"
 #include "encoder.h"
 #include "kos.h"
 #include "log.h"

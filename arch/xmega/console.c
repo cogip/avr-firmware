@@ -37,6 +37,11 @@ static int uart_getchar(FILE *stream)
 	return -1;
 }
 
+int mach_getchar_or_yield()
+{
+	return getchar();
+}
+
 void console_init(console_t *con)
 {
 	usart_setup(con->usart, con->speed);

@@ -1,4 +1,6 @@
 #include <stdio.h>
+
+#include "console.h"
 #include "hbridge.h"
 #include "platform.h"
 

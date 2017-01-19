@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "action.h"
+#include "console.h"
 #include "controller.h"
 #include "encoder.h"
 #include "hbridge.h"

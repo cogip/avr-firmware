@@ -18,6 +18,8 @@ do { \
 	} \
 } while(0)
 
+int mach_getchar_or_yield();
+
 void console_init(console_t *con);
 
 #endif /* CONSOLE_H */
