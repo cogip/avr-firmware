@@ -368,6 +368,8 @@ void task_controller_update()
 							 speed_order,
 							 robot_speed);
 
+			log_vect_setvalue(&datalog, LOG_IDX_ROBOT_SPEED_D, (void *) &robot_speed.distance);
+
 			motor_drive(motor_command);
 
 			log_vect_display_line(&datalog);
