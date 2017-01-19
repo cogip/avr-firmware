@@ -198,7 +198,6 @@ hbridge_t hbridges = {
 			/* left motor */
 			.direction_pin_port = &PORTD,
 			.direction_pin_id = PIN4_bp,
-			//.direction_inverse_polarity = FALSE,
 			.direction_inverse_polarity = TRUE,
 			.pwm_channel = PIN0_bp,
 			.offset = 100,
@@ -207,7 +206,6 @@ hbridge_t hbridges = {
 			/* right motor */
 			.direction_pin_port = &PORTD,
 			.direction_pin_id = PIN5_bp,
-			//.direction_inverse_polarity = TRUE,
 			.direction_inverse_polarity = FALSE,
 			.pwm_channel = PIN1_bp,
 			.offset = 100,
@@ -301,7 +299,6 @@ static void mach_pinmux_setup(void)
 //	PORTJ.DIRCLR = PIN1_bm;
 #endif
 }
-
 
 void mach_sched_init()
 {
