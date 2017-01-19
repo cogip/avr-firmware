@@ -19,6 +19,8 @@ do { \
 	} \
 } while(0)
 
+int con_scanf(const char *fmt, ...);
+
 int mach_getchar_or_yield();
 
 void console_init(console_t *con);

@@ -1,3 +1,4 @@
+#include <stdarg.h>
 #include <stdio.h>
 
 #include "console.h"
@@ -30,6 +31,28 @@
 //
 //	return -1;
 //}
+
+int con_scanf(const char *fmt, ...)
+{
+	int i = 0, ret;
+	char buf[100] = {0};
+	va_list args;
+
+	do {
+		while (!usart_is_data_arrived(&USARTC0))
+			kos_yield();
+		buf[i] = getchar();
+		printf("%c", buf[i++]);
+	} while (buf[i-1] != '\n' && i < 100);
+
+	buf[i-1] = '\0'; /* remove EOL */
+
+	va_start(args, fmt);
+	ret = vsscanf(buf, fmt, args);
+	va_end(args);
+
+	return ret;
+}
 
 int mach_getchar_or_yield()
 {

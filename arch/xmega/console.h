@@ -18,6 +18,8 @@ do { \
 	} \
 } while(0)
 
+#define con_scanf scanf
+
 int mach_getchar_or_yield();
 
 void console_init(console_t *con);

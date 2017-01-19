@@ -150,6 +150,7 @@ CFLAGS		+= -Os
 LDFLAGS		:= -lm
 ifneq ($(CONFIG_ENABLE_LOGGING),)
 LDFLAGS		+= -Wl,-u,vfprintf -lprintf_flt
+LDFLAGS		+= -Wl,-u,vfscanf -lscanf_flt
 endif
 endif
 
