@@ -337,7 +337,8 @@ void task_controller_update()
 			 */
 
 			/* first entry, we reset the datalog */
-			if (!tempo)
+			if (!tempo) {
+				encoder_reset();
 				log_vect_reset(&datalog, "cal2",
 						LOG_IDX_ROBOT_SPEED_D,
 						/*LOG_IDX_ROBOT_SPEED_A,*/
@@ -346,6 +347,7 @@ void task_controller_update()
 						LOG_IDX_MOTOR_L,
 						LOG_IDX_MOTOR_R,
 						-1);
+			}
 			/*
 			 * t[0s..1s] : speed is set to 0
 			 * t[1s..7s] : speed is set to full
