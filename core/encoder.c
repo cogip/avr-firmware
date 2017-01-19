@@ -55,6 +55,14 @@ polar_t encoder_read(void)
 	return robot_speed;
 }
 
+/* drop any pending measured movement if any */
+void encoder_reset(void)
+{
+	qdec_read(&encoders[0]);
+	qdec_read(&encoders[1]);
+}
+
+
 #if defined(CONFIG_CALIBRATION)
 
 #define CAL_USAGE \
