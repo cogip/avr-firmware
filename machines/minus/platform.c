@@ -302,28 +302,10 @@ static void mach_pinmux_setup(void)
 #endif
 }
 
-#ifdef CONFIG_ENABLE_LOGGING
-static void usartc0_putchar(const char c)
-{
-	usart_send(&USARTC0, c);
-}
-
-static int usartc0_getchar()
-{
-	return usart_recv(&USARTC0);
-}
-#endif
 
 int mach_getchar_or_yield()
 {
-#ifdef CONFIG_ENABLE_LOGGING
-	while (!usart_is_data_arrived(&USARTC0))
-		kos_yield();
 	return getchar();
-#else
-	kos_yield();
-	return 0;
-#endif
 }
 
 void mach_sched_init()
@@ -336,6 +318,11 @@ void mach_sched_run()
 	kos_run();
 }
 
+console_t usartc0_console = {
+	.usart = &USART_CONSOLE,
+	.speed = 115200,
+};
+
 void mach_setup(void)
 {
 #if F_CPU == 32000000UL
@@ -345,8 +332,7 @@ void mach_setup(void)
 
 #ifdef CONFIG_ENABLE_LOGGING
 	/* setup logs through usart communication */
-	usart_setup(&USART_CONSOLE, 115200);
-	console_init(usartc0_putchar, usartc0_getchar);
+	console_init(&usartc0_console);
 #endif
 
 #ifdef CONFIG_ANALOG_SENSORS

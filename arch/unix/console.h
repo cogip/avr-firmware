@@ -1,8 +1,12 @@
 #ifndef CONSOLE_H
 #define CONSOLE_H
 
-typedef void (*putchar_cb_t)(const char);
-typedef int (*getchar_cb_t)(void);
+#include "usart.h"
+
+typedef struct {
+	usart_t *usart;
+	uint32_t speed;
+} console_t;
 
 #define printf_ratelimited(...) \
 do { \
@@ -14,6 +18,6 @@ do { \
 	} \
 } while(0)
 
-void console_init(putchar_cb_t, getchar_cb_t);
+void console_init(console_t *con);
 
 #endif /* CONSOLE_H */

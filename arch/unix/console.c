@@ -31,8 +31,10 @@
 //	return -1;
 //}
 
-void console_init(putchar_cb_t put_cb, getchar_cb_t get_cb)
+void console_init(console_t *con)
 {
+	usart_setup(con->usart, con->speed);
+
 	//putchar_cb = put_cb;
 	//getchar_cb = get_cb;
 

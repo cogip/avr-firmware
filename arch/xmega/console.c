@@ -1,41 +1,50 @@
-#include "console.h"
-
 #include <stdio.h>
+
+#include "console.h"
+#include "usart.h"
+#include "kos.h"
 
 static int uart_putchar(char c, FILE *stream);
 static int uart_getchar(FILE *stream);
 
 static FILE uart_fdstream = FDEV_SETUP_STREAM(uart_putchar, uart_getchar,
 					      _FDEV_SETUP_RW);
-static putchar_cb_t putchar_cb;
-static getchar_cb_t getchar_cb;
 
+
+static console_t *main_console = NULL;
 
 static int uart_putchar(char c, FILE *stream)
 {
-	if (putchar_cb) {
+	if (main_console) {
 		if (c == '\n')
 			uart_putchar('\r', stream);
 
-		putchar_cb(c);
+		usart_send(main_console->usart, c);
+		return 1;
 	}
 	return 0;
 }
 
 static int uart_getchar(FILE *stream)
 {
-	if (getchar_cb) {
-		return getchar_cb();
+	if (main_console) {
+		while (!usart_is_data_arrived(main_console->usart))
+			kos_yield();
+
+		return usart_recv(main_console->usart);
 	}
 
 	return -1;
 }
 
-void console_init(putchar_cb_t put_cb, getchar_cb_t get_cb)
+void console_init(console_t *con)
 {
-	putchar_cb = put_cb;
-	getchar_cb = get_cb;
+	usart_setup(con->usart, con->speed);
 
-	stdout = &uart_fdstream;
-	stdin = &uart_fdstream;
+	if (!main_console) {
+		main_console = con;
+
+		stdout = &uart_fdstream;
+		stdin = &uart_fdstream;
+	}
 }
