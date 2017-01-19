@@ -64,7 +64,7 @@ static void mach_enter_calibration_mode(void)
 		printf("$ ");
 
 		/* wait for command */
-		c = mach_getchar_or_yield();
+		c = con_getchar();
 		printf("%c\n", c);
 
 		switch (c) {

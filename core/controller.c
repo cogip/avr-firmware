@@ -424,7 +424,7 @@ void controller_enter_calibration()
 		printf("$ ");
 
 		/* wait for command */
-		c = mach_getchar_or_yield();
+		c = con_getchar();
 		printf("%c\n", c);
 
 		switch (c) {

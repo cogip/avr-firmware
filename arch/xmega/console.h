@@ -20,7 +20,7 @@ do { \
 
 #define con_scanf scanf
 
-int mach_getchar_or_yield();
+int con_getchar();
 
 void console_init(console_t *con);
 

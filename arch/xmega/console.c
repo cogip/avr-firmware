@@ -37,7 +37,7 @@ static int uart_getchar(FILE *stream)
 	return -1;
 }
 
-int mach_getchar_or_yield()
+int con_getchar()
 {
 	return getchar();
 }

@@ -21,7 +21,7 @@ do { \
 
 int con_scanf(const char *fmt, ...);
 
-int mach_getchar_or_yield();
+int con_getchar();
 
 void console_init(console_t *con);
 

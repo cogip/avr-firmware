@@ -167,7 +167,7 @@ void sd21_enter_calibration(sd21_t *obj)
 			*cur);
 
 		/* wait for command */
-		c = mach_getchar_or_yield();
+		c = con_getchar();
 		printf("%c\n", c);
 
 		switch (c) {

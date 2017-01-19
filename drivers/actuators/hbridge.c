@@ -72,7 +72,7 @@ void hbridge_enter_calibration(hbridge_t *obj)
 			engine_id, cur);
 
 		/* wait for command */
-		c = mach_getchar_or_yield();
+		c = con_getchar();
 		printf("%c\n", c);
 
 		switch (c) {
