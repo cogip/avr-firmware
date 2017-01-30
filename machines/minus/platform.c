@@ -130,51 +130,17 @@ sd21_t sd21 = {
 	.twi = &TWIC,
 	.twi_speed_khz = 100,
 
-	.servos_nb = 11,
+	.servos_nb = 10,
 	.servos = {
-		/* [0...3] had no related action, not used then */
-		/* Right arm */
-		[4] = {
-			.value_init = 2400,
+		[0] = {
+			.value_init = 1200,
 			.value_open = 1200,
 			.value_close = 2400,
 		},
-		/* Left arm */
-		[5] = {
-			.value_init = 600,
-			.value_open = 1800,
-			.value_close = 600,
-		},
-		/* Glasses right arm */
-		[6] = {
-			.value_init = 600,
-			.value_open = 600,
-			.value_close = 2450,
-		},
-		/* Glasses left arm */
-		[7] = {
-			.value_init = 2600,
-			.value_open = 2600,
-			.value_close = 800,
-		},
-
-		/* Clamp */
-		[8] = {
-			.value_init = 1700,
-			.value_open = 2120,
-			.value_close = 1700,
-		},
-		/* Right door */
 		[9] = {
-			.value_init = 1350,
-			.value_open = 700,
-			.value_close = 1350,
-		},
-		/* Left door */
-		[10] = {
-			.value_init = 875,
-			.value_open = 1500,
-			.value_close = 875,
+			.value_init = 2500,
+			.value_open = 1800,
+			.value_close = 700,
 		},
 	},
 };
@@ -286,7 +252,8 @@ static void mach_pinmux_setup(void)
 	PORTA.PIN0CTRL = PORT_ISC_INPUT_DISABLE_gc;
 
 	/* twi configuration pin */
-	PORTC.DIRSET = PIN1_bm; /*!< PC1 (SCL) as output pin */
+	//PORTC.DIRSET = PIN0_bm; /*!< PC0 (SDA) as output pin */
+	//PORTC.DIRSET = PIN1_bm; /*!< PC1 (SCL) as output pin */
 	/* usart configuration pin */
 	PORTC.DIRCLR = PIN2_bm; /*!< PC2 (RDX0) as input pin */
 	PORTC.DIRSET = PIN3_bm; /*!< PC3 (TXD0) as output pin */
