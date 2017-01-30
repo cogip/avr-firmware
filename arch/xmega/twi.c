@@ -3,6 +3,7 @@
 
 #include "twi.h"
 
+#ifdef TWI_INT_MODE
 static twi_t *twi_ref_on_twic;
 
 /*! TWIC Master Interrupt vector */
@@ -41,6 +42,7 @@ void twi_master_write_handler(twi_t *twi)
 		/* transaction finished : send STOP */
 		twi->MASTER.CTRLC = TWI_MASTER_CMD_STOP_gc;
 }
+#endif /* TWI_INT_MODE */
 
 /**
  * \param twi
@@ -49,18 +51,25 @@ void twi_master_write_handler(twi_t *twi)
  */
 void twi_master_setup(twi_t *twi, uint16_t freq)
 {
+#ifdef TWI_INT_MODE
 	if (twi == &TWIC)
 		twi_ref_on_twic = twi;
 	else
 		; /* FIXME */
+#endif
 
 	/* When smart mode is enabled, the acknowledge action, as set by the
 	 * ACKACT bit in the CTRLC register, is sent immediately after reading
 	 * the DATA register.
 	 */
 	/* twi->MASTER.CTRLB = TWI_MASTER_SMEN_bm; /\*!< Smart mode */
+#ifdef TWI_INT_MODE
 	twi->MASTER.CTRLA = TWI_MASTER_INTLVL_LO_gc | TWI_MASTER_RIEN_bm |
 			    TWI_MASTER_WIEN_bm | TWI_MASTER_ENABLE_bm;
+#else
+	twi->MASTER.CTRLA = TWI_MASTER_RIEN_bm |
+			    TWI_MASTER_WIEN_bm | TWI_MASTER_ENABLE_bm;
+#endif
 
 	/* indicate the current TWI bus state */
 	twi->MASTER.STATUS = TWI_MASTER_BUSSTATE_IDLE_gc;
@@ -76,28 +85,29 @@ void twi_master_setup(twi_t *twi, uint16_t freq)
 void twi_write(twi_t *twi, uint8_t slave_address, uint8_t *write_data,
 	       uint8_t nb_bytes_to_write)
 {
+#ifdef TWI_INT_MODE
 	twi_i = 0;
 	twi_nb_bytes_to_write = nb_bytes_to_write;
 	twi_write_data =  write_data;
+#endif
 	twi->MASTER.ADDR = slave_address << 1;
 
-#if 0
 	while (!(twi->MASTER.STATUS & TWI_MASTER_WIF_bm))
 		; /* wait write interrupt flag */
+	twi->MASTER.STATUS |= TWI_MASTER_WIF_bm;
 
 	/* if slave returned NACK or did not reply at all : send address
 	 * until slave returns ACK
 	 */
-
 	for (uint8_t i = 0; i < nb_bytes_to_write; i++) {
 		twi->MASTER.DATA = write_data[i]; /* write date and time */
 		while (!(twi->MASTER.STATUS & TWI_MASTER_WIF_bm))
 			; /* wait write interrupt flag */
+		twi->MASTER.STATUS |= TWI_MASTER_WIF_bm;
 	}
 
 	/* send stop */
 	twi->MASTER.CTRLC = TWI_MASTER_CMD_STOP_gc;
-#endif
 }
 
 /**
@@ -106,6 +116,7 @@ void twi_write(twi_t *twi, uint8_t slave_address, uint8_t *write_data,
 void twi_read(twi_t *twi, uint8_t slave_address, uint8_t *write_data,
 	      uint8_t *read_data, uint8_t nb_byte_to_read)
 {
+#if 0
 	uint8_t i;
 
 	twi->MASTER.ADDR = slave_address << 1;
@@ -133,4 +144,5 @@ void twi_read(twi_t *twi, uint8_t slave_address, uint8_t *write_data,
 	_delay_ms(1);
 	; /* wait read interrupt flag */
 	twi->MASTER.CTRLC = TWI_MASTER_CMD_STOP_gc;
+#endif
 }
