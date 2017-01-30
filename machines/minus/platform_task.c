@@ -106,7 +106,7 @@ exit_point:
  * Tasks registration
  */
 
-#define TASK_CALIB_STACK	184
+#define TASK_CALIB_STACK	256
 #define TASK_CTRL_STACK		256
 
 void mach_tasks_init()
