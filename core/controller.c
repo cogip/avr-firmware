@@ -390,6 +390,70 @@ void task_controller_update()
 			}
 		}
 		break;
+
+		case CTRL_STATE_CALIB_MODE3:
+		{
+			/*
+			 * Third calibration test:
+			 * Perform a speed command to tune Kp, Ki (& Kd).
+			 */
+
+			/* first entry, we reset the datalog */
+			if (!tempo) {
+				encoder_reset();
+				log_vect_reset(&datalog, "cal3",
+						LOG_IDX_ROBOT_SPEED_D,
+						/*LOG_IDX_ROBOT_SPEED_A,*/
+						LOG_IDX_SPEED_ORDER_D,
+						/*LOG_IDX_SPEED_ORDER_A,*/
+						LOG_IDX_MOTOR_L,
+						LOG_IDX_MOTOR_R,
+						-1);
+			}
+			/*
+			 * t[0s..2s] : angular speed is set to +15
+			 * t[2s..4s] : angular speed is set to -30
+			 * t[4s..6s] : angular speed is set to +30
+			 * t[6s..8s] : angular speed is set to -15
+			 */
+			if (tempo < 100)
+				speed_order.angle = +15;
+			else if (tempo >= 100 && tempo < 200)
+				speed_order.angle = -30;
+			else if (tempo >= 200 && tempo < 300)
+				speed_order.angle = +30;
+			else if (tempo >= 300 && tempo < 400)
+				speed_order.angle = -15;
+
+			speed_order.distance = 0;
+
+			log_vect_setvalue(&datalog, LOG_IDX_SPEED_ORDER_D, (void *) &speed_order.distance);
+
+			/* catch speed */
+			robot_speed = encoder_read();
+			motor_command = speed_controller(&controller,
+							 speed_order,
+							 robot_speed);
+
+			log_vect_setvalue(&datalog, LOG_IDX_ROBOT_SPEED_D, (void *) &robot_speed.distance);
+
+			motor_drive(motor_command);
+
+			log_vect_display_line(&datalog);
+
+			tempo ++;
+			if (tempo == 400) {
+				motor_command.distance = 0;
+				motor_command.angle = 0;
+				motor_drive(motor_command);
+
+				log_vect_display_last_line(&datalog);
+
+				controller.mode = CTRL_STATE_STOP;
+				tempo = 0;
+			}
+		}
+		break;
 #endif /* defined(CONFIG_CALIBRATION) */
 
 		} /* switch(controller.mode) */
@@ -408,10 +472,21 @@ static void controller_calibration_usage(void)
 	printf("\t       this will calibrate : encoders & pwm ranges\n");
 	printf("\t'2' to launch speed control loop only (out: cal2.csv)\n");
 	printf("\t       this will calibrate : Kp, Ki & (Kd) for speed PID\n");
+	printf("\t'3' to launch angular control loop only (out: cal3.csv)\n");
+	printf("\t'p' to tune Kp\n");
+	printf("\t'i' to tune Ki\n");
+	printf("\t'd' to tune Kd\n");
 	printf("\n");
 	printf("\t'h' to display this help\n");
 	printf("\t'q' to quit\n");
 	printf("\n");
+}
+
+static void scanf_update_val (const char *var_name, double *var)
+{
+	printf("%s = %+.2f\tenter new value: ", var_name , *var);
+	con_scanf("%lf", var);
+	printf("new %s = %+.2f\n", var_name, *var);
 }
 
 void controller_enter_calibration()
@@ -438,6 +513,30 @@ void controller_enter_calibration()
 		case '2':
 			controller.mode = CTRL_STATE_CALIB_MODE2;
 			printf("CAL2 launched\n");
+			break;
+		case '3':
+			controller.mode = CTRL_STATE_CALIB_MODE3;
+			printf("CAL3 launched\n");
+			break;
+		case 'p':
+			scanf_update_val("Kp", &controller.linear_speed_pid.kp);
+			break;
+		case 'i':
+			scanf_update_val("Ki", &controller.linear_speed_pid.ki);
+			break;
+		case 'd':
+			scanf_update_val("Kd", &controller.linear_speed_pid.kd);
+			break;
+		case 'l':
+			printf("controller.linear_speed_pid: "
+			       "Kp = %+.2f\tKi = %+.2f\tKd = %+.2f\n",
+			       controller.linear_speed_pid.kp,
+			       controller.linear_speed_pid.ki,
+			       controller.linear_speed_pid.kd);
+
+			scanf_update_val("Kp", &controller.linear_speed_pid.kp);
+			scanf_update_val("Ki", &controller.linear_speed_pid.ki);
+			scanf_update_val("Kd", &controller.linear_speed_pid.kd);
 			break;
 		case 'h':
 			controller_calibration_usage();

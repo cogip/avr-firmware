@@ -13,6 +13,7 @@ typedef enum {
 #if defined(CONFIG_CALIBRATION)
 	CTRL_STATE_CALIB_MODE1,
 	CTRL_STATE_CALIB_MODE2,
+	CTRL_STATE_CALIB_MODE3,
 #endif
 } controller_mode_t;
 
