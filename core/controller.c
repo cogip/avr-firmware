@@ -213,6 +213,7 @@ void task_controller_update()
 
 			kos_yield();
 		}
+		break;
 
 		case CTRL_STATE_INGAME:
 		{
