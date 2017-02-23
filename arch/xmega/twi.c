@@ -79,9 +79,16 @@ void twi_master_setup(twi_t *twi, uint16_t freq)
 #endif
 }
 
-/**
- *
- */
+inline int8_t twi_wait_wif(twi_t *twi)
+{
+	uint16_t timeout = 1000;
+
+	while (!(twi->MASTER.STATUS & TWI_MASTER_WIF_bm) && timeout--)
+		; /* wait write interrupt flag */
+
+	return !timeout;
+}
+
 void twi_write(twi_t *twi, uint8_t slave_address, uint8_t *write_data,
 	       uint8_t nb_bytes_to_write)
 {
@@ -92,8 +99,8 @@ void twi_write(twi_t *twi, uint8_t slave_address, uint8_t *write_data,
 #endif
 	twi->MASTER.ADDR = slave_address << 1;
 
-	while (!(twi->MASTER.STATUS & TWI_MASTER_WIF_bm))
-		; /* wait write interrupt flag */
+	if (twi_wait_wif(twi))
+		return;
 	twi->MASTER.STATUS |= TWI_MASTER_WIF_bm;
 
 	/* if slave returned NACK or did not reply at all : send address
@@ -101,8 +108,8 @@ void twi_write(twi_t *twi, uint8_t slave_address, uint8_t *write_data,
 	 */
 	for (uint8_t i = 0; i < nb_bytes_to_write; i++) {
 		twi->MASTER.DATA = write_data[i]; /* write date and time */
-		while (!(twi->MASTER.STATUS & TWI_MASTER_WIF_bm))
-			; /* wait write interrupt flag */
+		if (twi_wait_wif(twi))
+			return;
 		twi->MASTER.STATUS |= TWI_MASTER_WIF_bm;
 	}
 
