@@ -15,38 +15,25 @@
  *	PA0 - PA7 : IR
  * PORTB : JTAG + ANA inputs
  * PORTC : Communication
- *	PC0 (SDA) : i2c communication
- *	PC1 (SCL) : i2c communication
- *	PC2 (RX) : Debug communication
- *	PC3 (TX) :
- *	PC6 (RX1) : (Lidar communication)
- *	PC7 (TX1) :
- * PORTD : Communication
- *	PD2 (RX2) : (MotherBoard communication)
- *	PD3 (TX2) :
- *	PD4 : DIR1 left motor
- *	PD5 : DIR2 right motor
- *	PD6 : DIR3 elevator motor
+ *	PC0 (SDA) : I2C RGB Sensor Left + SD21
+ *	PC1 (SCL) : I2C RGB Sensor Left + SD21
+ *	PC2 (RX) : UART Debug communication
+ *	PC3 (TX) : UART Debug communication
+ *	PC4 (GPIO) : RGB LED Enable Left
+ *	PC7 (GPIO) : RGB LED Enable Right
+ * PORTD : Communication + PWM
+ *	PD0 (SDA) : I2C RGB Sensor right
+ *	PD1 (SCL) : I2C RGB Sensor right
+ *	PD2 (OC0A) : PWM right motor
+ *	PD3 (OCBA) : PWM left motor
+ *	PD4 : DIR right motor
+ *	PD5 : DIR left motor
  * PORTE : Timer + PWM
- *	PE0 (OC0A) : PWM1 left motor
- *	PE1 (OC0B) : PWM2 right motor
- *	PE2 (OC0C) : PWM3
- *	PE3 (OC0D) : -
  *	PE4 : encoder A1 left wheel
  *	PE5 : encoder B1
  * PORTF : Timer decoder quadrature
  *	PF0 : encoder A2 right wheel
  *	PF1 : encoder B2
- *	PF4 : encoder A3
- *	PF5 : encoder B3
- * PORTH : Digital port
- *	PH0 : capteur TOR 19
- *	PH1 : 18
- *	PH2 : 17
- * PORTJ :
- * PORTK :
- * PORTQ : TOSC
- * PORTR : PDI + XTAL
  *
  * use TCC0 as general timer
  * use TCE0 timer to generate PWM signal
@@ -183,32 +170,32 @@ sd21_t sd21 = {
 
 /* TCE0 ClkIn == ClkPer / 8 == 4000 KHz */
 /* Counter set to 200 for 20KHz output */
-#define TCE0_MOTOR_PRESCALER		TC_CLKSEL_DIV8_gc
-#define TCE0_MOTOR_PER_VALUE		200
+#define TC_MOTOR_PRESCALER		TC_CLKSEL_DIV8_gc
+#define TC_MOTOR_PER_VALUE		200
 
 hbridge_t hbridges = {
-	.tc = &TCE0,
-	.period = TCE0_MOTOR_PER_VALUE,
-	.prescaler = TCE0_MOTOR_PRESCALER,
+	.tc = &TCD0,
+	.period = TC_MOTOR_PER_VALUE,
+	.prescaler = TC_MOTOR_PRESCALER,
 
-	.pwm_port = &PORTE, /* TODO: can be 'guessed' from timer ref above */
+	.pwm_port = &PORTD, /* TODO: can be 'guessed' from timer ref above */
 
 	.engine_nb = 2,
 	.engines = {
 		[HBRIDGE_MOTOR_LEFT] = {
 			/* left motor */
 			.direction_pin_port = &PORTD,
-			.direction_pin_id = PIN4_bp,
+			.direction_pin_id = PIN5_bp,
 			.direction_inverse_polarity = FALSE,
-			.pwm_channel = PIN0_bp,
+			.pwm_channel = PIN3_bp,
 			.offset = 0,
 		},
 		[HBRIDGE_MOTOR_RIGHT] = {
 			/* right motor */
 			.direction_pin_port = &PORTD,
-			.direction_pin_id = PIN5_bp,
+			.direction_pin_id = PIN4_bp,
 			.direction_inverse_polarity = TRUE,
-			.pwm_channel = PIN1_bp,
+			.pwm_channel = PIN2_bp,
 			.offset = 0,
 		},
 	},
@@ -276,13 +263,6 @@ static void mach_pinmux_setup(void)
 	/* usart configuration pin */
 	PORTC.DIRCLR = PIN2_bm; /*!< PC2 (RDX0) as input pin */
 	PORTC.DIRSET = PIN3_bm; /*!< PC3 (TXD0) as output pin */
-
-	/**
-	 * PORTH and PORTJ as digital input
-	 */
-//	PORTH.DIR = 0x00;
-//	PORTJ.DIRCLR = PIN0_bm;
-//	PORTJ.DIRCLR = PIN1_bm;
 #endif
 }
 
