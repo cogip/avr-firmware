@@ -16,6 +16,7 @@
 #include <signal.h>
 #include <time.h>
 
+#include "console.h"
 #include "irq.h"
 #include "hwtimer.h"
 
@@ -130,13 +131,13 @@ void timer_normal_mode_setup(volatile hwtimer_t *tc, uint16_t period,
 		struct sigaction sa;
 
 
-		printf("%s: period = %d\n", __func__, period);
+		cons_printf("%s: period = %d\n", __func__, period);
 		switch (period) {
 		case 325:
 			period_ms = 10;
 			break;
 		default:
-			printf("not supported\n");
+			cons_printf("not supported\n");
 			break;
 		}
 
@@ -145,7 +146,7 @@ void timer_normal_mode_setup(volatile hwtimer_t *tc, uint16_t period,
 
            /* Establish handler for timer signal */
 
-           printf("Establishing handler for signal %d\n", SIGRTMIN);
+           cons_printf("Establishing handler for signal %d\n", SIGRTMIN);
            sa.sa_flags = SA_SIGINFO;
 		if (handler) {
 			if (tc0 == &TCC0)
@@ -178,7 +179,7 @@ void timer_normal_mode_setup(volatile hwtimer_t *tc, uint16_t period,
            if (timer_create(CLOCK_REALTIME, &sev, &timerid) == -1)
                errExit("timer_create");
 
-           printf("timer ID is 0x%lx\n", (long) timerid);
+           cons_printf("timer ID is 0x%lx\n", (long) timerid);
 
            /* Start the timer */
 

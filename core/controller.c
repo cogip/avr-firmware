@@ -466,27 +466,27 @@ void task_controller_update()
 #if defined(CONFIG_CALIBRATION)
 static void controller_calibration_usage(void)
 {
-	printf("\n>>> Entering controller calibration mode\n\n");
+	cons_printf("\n>>> Entering controller calibration mode\n\n");
 
-	printf("\t'1' to launch motor sweep [-pwm..+pwm] (out: cal1*.csv)\n");
-	printf("\t       this will calibrate : encoders & pwm ranges\n");
-	printf("\t'2' to launch speed control loop only (out: cal2.csv)\n");
-	printf("\t       this will calibrate : Kp, Ki & (Kd) for speed PID\n");
-	printf("\t'3' to launch angular control loop only (out: cal3.csv)\n");
-	printf("\t'p' to tune Kp\n");
-	printf("\t'i' to tune Ki\n");
-	printf("\t'd' to tune Kd\n");
-	printf("\n");
-	printf("\t'h' to display this help\n");
-	printf("\t'q' to quit\n");
-	printf("\n");
+	cons_printf("\t'1' to launch motor sweep [-pwm..+pwm] (out: cal1*.csv)\n");
+	cons_printf("\t       this will calibrate : encoders & pwm ranges\n");
+	cons_printf("\t'2' to launch speed control loop only (out: cal2.csv)\n");
+	cons_printf("\t       this will calibrate : Kp, Ki & (Kd) for speed PID\n");
+	cons_printf("\t'3' to launch angular control loop only (out: cal3.csv)\n");
+	cons_printf("\t'p' to tune Kp\n");
+	cons_printf("\t'i' to tune Ki\n");
+	cons_printf("\t'd' to tune Kd\n");
+	cons_printf("\n");
+	cons_printf("\t'h' to display this help\n");
+	cons_printf("\t'q' to quit\n");
+	cons_printf("\n");
 }
 
 static void scanf_update_val (const char *var_name, double *var)
 {
-	printf("%s = %+.2f\tenter new value: ", var_name , *var);
+	cons_printf("%s = %+.2f\tenter new value: ", var_name , *var);
 	con_scanf("%lf", var);
-	printf("new %s = %+.2f\n", var_name, *var);
+	cons_printf("new %s = %+.2f\n", var_name, *var);
 }
 
 void controller_enter_calibration()
@@ -499,24 +499,24 @@ void controller_enter_calibration()
 	while (!quit) {
 
 		/* display prompt */
-		printf("$ ");
+		cons_printf("$ ");
 
 		/* wait for command */
 		c = con_getchar();
-		printf("%c\n", c);
+		cons_printf("%c\n", c);
 
 		switch (c) {
 		case '1':
 			controller.mode = CTRL_STATE_CALIB_MODE1;
-			printf("CAL1 launched\n");
+			cons_printf("CAL1 launched\n");
 			break;
 		case '2':
 			controller.mode = CTRL_STATE_CALIB_MODE2;
-			printf("CAL2 launched\n");
+			cons_printf("CAL2 launched\n");
 			break;
 		case '3':
 			controller.mode = CTRL_STATE_CALIB_MODE3;
-			printf("CAL3 launched\n");
+			cons_printf("CAL3 launched\n");
 			break;
 		case 'p':
 			scanf_update_val("Kp", &controller.linear_speed_pid.kp);
@@ -528,7 +528,7 @@ void controller_enter_calibration()
 			scanf_update_val("Kd", &controller.linear_speed_pid.kd);
 			break;
 		case 'l':
-			printf("controller.linear_speed_pid: "
+			cons_printf("controller.linear_speed_pid: "
 			       "Kp = %+.2f\tKi = %+.2f\tKd = %+.2f\n",
 			       controller.linear_speed_pid.kp,
 			       controller.linear_speed_pid.ki,
@@ -545,7 +545,7 @@ void controller_enter_calibration()
 			quit = 1;
 			break;
 		default:
-			printf("\n");
+			cons_printf("\n");
 			break;
 		}
 	}

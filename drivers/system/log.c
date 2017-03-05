@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "console.h"
 #include "log.h"
 #include "utils.h"
 
@@ -156,13 +157,13 @@ static void _log_vect_print_header(datalog_t *d)
 {
 	uint8_t c;
 
-	printf("\n<<<< %s.csv\n", d->log_name);
-	printf("time,");
+	cons_printf("\n<<<< %s.csv\n", d->log_name);
+	cons_printf("time,");
 	for (c = 0; c < d->col_nb; c++) {
 		if (d->columns[c].visible)
-			printf("%s,", d->columns[c].name);
+			cons_printf("%s,", d->columns[c].name);
 	}
-	printf("\n");
+	cons_printf("\n");
 }
 
 void log_vect_display_line(datalog_t *d)
@@ -172,22 +173,22 @@ void log_vect_display_line(datalog_t *d)
 	if (!d->line_cur)
 		_log_vect_print_header(d);
 
-	printf("%d,", d->line_cur);
+	cons_printf("%d,", d->line_cur);
 	for (c = 0; c < d->col_nb; c++) {
 		if (d->columns[c].visible) {
 			switch(d->columns[c].type) {
 			case COL_INT16:
-				printf("%d,", d->datas[c].as_int16);
+				cons_printf("%d,", d->datas[c].as_int16);
 				break;
 			case COL_DOUBLE:
-				printf("%+.2f,", d->datas[c].as_double);
+				cons_printf("%+.2f,", d->datas[c].as_double);
 				break;
 			case COL_END:
 				break;
 			}
 		}
 	}
-	printf("\n");
+	cons_printf("\n");
 
 	d->line_cur += 1;
 }
@@ -195,5 +196,5 @@ void log_vect_display_line(datalog_t *d)
 void log_vect_display_last_line(datalog_t *d)
 {
 	log_vect_display_line(d);
-	printf(">>>>\n");
+	cons_printf(">>>>\n");
 }

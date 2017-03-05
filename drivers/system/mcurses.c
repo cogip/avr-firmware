@@ -19,7 +19,7 @@ void mcurses_getyx(uint8_t *y, uint8_t *x)
 
 	irq_disable();
 
-	printf("\033[6n");
+	cons_printf("\033[6n");
 
 	/*
 	 * Cursor position raport  (Response to request cursor position)
@@ -62,14 +62,14 @@ void mcurses_getmaxyx(uint8_t *y, uint8_t *x)
 void mcurses_gotoyx(uint8_t y, uint8_t x)
 {
 	irq_disable();
-	printf("\033[%d;%dH", y + 1, x + 1);
+	cons_printf("\033[%d;%dH", y + 1, x + 1);
 	irq_enable();
 }
 
 void mcurses_clear()
 {
 	irq_disable();
-	printf("\033[2J");
+	cons_printf("\033[2J");
 	irq_enable();
 }
 
@@ -82,7 +82,7 @@ void mcurses_init()
 
 	/* Set scrolling fast mode */
 	irq_disable();
-	printf("\033[?4l");
+	cons_printf("\033[?4l");
 	irq_enable();
 
 	/* Set scrolling window */
@@ -90,13 +90,13 @@ void mcurses_init()
 	/* keep NB_FIXED_LINES lines + 1 for hbar */
 	mcurses_getmaxyx(&maxy, &maxx);
 	irq_disable();
-	printf("\033[%d;%dr", NB_FIXED_LINES + 1 + 1, maxy);
+	cons_printf("\033[%d;%dr", NB_FIXED_LINES + 1 + 1, maxy);
 	irq_enable();
 
 	/* Draw hbar */
 	mcurses_gotoyx(NB_FIXED_LINES, 0);
 	while (maxx--)
-		printf("-");
+		cons_printf("-");
 
 	mcurses_gotoyx(NB_FIXED_LINES + 1, 0);
 }
@@ -114,7 +114,7 @@ static void mcurses_monitor_printf_v(uint8_t idx, const char *format, va_list ar
 		       FIELDS_WIDTH * (idx / NB_FIXED_LINES));
 
 	vsnprintf(buf, FIELDS_WIDTH, format, args);
-	printf("%s", buf);
+	cons_printf("%s", buf);
 
 	/* restore context */
 	mcurses_gotoyx(y, x);

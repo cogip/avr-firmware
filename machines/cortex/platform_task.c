@@ -16,18 +16,18 @@
 #if defined(CONFIG_CALIBRATION)
 static void mach_calibration_usage(void)
 {
-	printf("\n>>> Entering calibration mode\n\n");
+	cons_printf("\n>>> Entering calibration mode\n\n");
 
-	printf("\t'o' to calibrate odometry\n");
-	printf("\t'p' to calibrate hbridge & PWM ctrl\n");
+	cons_printf("\t'o' to calibrate odometry\n");
+	cons_printf("\t'p' to calibrate hbridge & PWM ctrl\n");
 #if defined(CONFIG_SD21)
 	printf("\t's' to calibrate servos (sd21 card)\n");
 #endif
-	printf("\t'r' to calibrate controller\n");
-	printf("\n");
-	printf("\t'h' to display this help\n");
-	printf("\t'e' to exit calibration mode\n");
-	printf("\n");
+	cons_printf("\t'r' to calibrate controller\n");
+	cons_printf("\n");
+	cons_printf("\t'h' to display this help\n");
+	cons_printf("\t'e' to exit calibration mode\n");
+	cons_printf("\n");
 }
 
 static void mach_enter_calibration_mode(void)
@@ -39,7 +39,7 @@ static void mach_enter_calibration_mode(void)
 	/* wait for keypress, or schedule */
 	while (!usart_is_data_arrived(&USART_CONSOLE)) {
 
-		printf("Press a key to enter calibration... %ds remaining\r",
+		cons_printf("Press a key to enter calibration... %ds remaining\r",
 			autoboot_ms / 1000);
 
 		kos_set_next_schedule_delay_ms(250);
@@ -52,7 +52,7 @@ static void mach_enter_calibration_mode(void)
 			 * and continue to game mode. */
 			goto exit_point;
 	}
-	printf("\n\n");
+	cons_printf("\n\n");
 	getchar();
 
 	mcurses_init();
@@ -61,11 +61,11 @@ static void mach_enter_calibration_mode(void)
 	while (!quit) {
 
 		/* display prompt */
-		printf("$ ");
+		cons_printf("$ ");
 
 		/* wait for command */
 		c = con_getchar();
-		printf("%c\n", c);
+		cons_printf("%c\n", c);
 
 		switch (c) {
 		case 'o':
@@ -90,14 +90,14 @@ static void mach_enter_calibration_mode(void)
 			quit = 1;
 			break;
 		default:
-			printf("\n");
+			cons_printf("\n");
 			break;
 		}
 	}
 
 exit_point:
 	controller.mode = CTRL_STATE_INGAME;
-	printf("calibration ended\n");
+	cons_printf("calibration ended\n");
 	kos_task_exit();
 }
 #endif /* CONFIG_CALIBRATION */

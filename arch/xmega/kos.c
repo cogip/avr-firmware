@@ -9,6 +9,7 @@
 #include <string.h>
 #include <util/atomic.h>
 
+#include "console.h"
 #include "kos.h"
 #include "kos_settings.h"
 #include "msched.h"
@@ -236,11 +237,11 @@ static void dump_all_stack()
 	uint8_t i;
 	KOS_Task *task;
 
-	printf("\n\n*** STACK OVERFLOW ***\n\n");
+	cons_printf("\n\n*** STACK OVERFLOW ***\n\n");
 	for (i = 0; i < tasks_count; i++) {
 		task = &tasks[i];
 
-		printf("%s:\tsize = %4d\t[0x%04x ... 0x%04x]\n",
+		cons_printf("%s:\tsize = %4d\t[0x%04x ... 0x%04x]\n",
 			task->name,
 			task->stack_top - task->stack_bottom + 1,
 			(unsigned int)task->stack_bottom,
@@ -273,10 +274,10 @@ static void stack_check_consistency()
 		/* check if we have enough space for context switch */
 		if (current_sp - 39 < (int)kos_current_task->stack_bottom) {
 			dump_all_stack();
-			printf("\ntask '%s' stack is too small!\n",
+			cons_printf("\ntask '%s' stack is too small!\n",
 				kos_current_task->name);
-			printf("current SP - 39 = 0x%04x\n", current_sp - 39);
-			printf("requires %d more bytes at least\n",
+			cons_printf("current SP - 39 = 0x%04x\n", current_sp - 39);
+			cons_printf("requires %d more bytes at least\n",
 				(int)kos_current_task->stack_bottom
 				- (current_sp - 39));
 
@@ -289,7 +290,7 @@ static void stack_check_consistency()
 		    kos_current_task->stack_bottom[2] != STACK_MAGIC3) {
 
 			dump_all_stack();
-			printf("\ntask '%s' stack had overflowed.\n",
+			cons_printf("\ntask '%s' stack had overflowed.\n",
 				kos_current_task->name);
 
 			WAIT_FOREVER();

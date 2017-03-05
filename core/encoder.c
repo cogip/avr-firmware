@@ -74,13 +74,13 @@ void encoder_reset(void)
 
 static void encoder_calibration_usage(void)
 {
-	printf("\n>>> Entering encoder calibration mode\n\n");
+	cons_printf("\n>>> Entering encoder calibration mode\n\n");
 
-	printf("%s", CAL_USAGE);
-	printf("\n");
-	printf("\t'h' to display this help\n");
-	printf("\t'q' to quit\n");
-	printf("\n");
+	cons_printf("%s", CAL_USAGE);
+	cons_printf("\n");
+	cons_printf("\t'h' to display this help\n");
+	cons_printf("\t'q' to quit\n");
+	cons_printf("\n");
 }
 
 void encoder_enter_calibration(void)
@@ -93,11 +93,11 @@ void encoder_enter_calibration(void)
 	while (!quit) {
 
 		/* display prompt */
-		printf("$ ");
+		cons_printf("$ ");
 
 		/* wait for command */
 		c = con_getchar();
-		printf("%c\n", c);
+		cons_printf("%c\n", c);
 
 		switch (c) {
 		case 'S':
@@ -106,7 +106,7 @@ void encoder_enter_calibration(void)
 				sum_left_speed = 0;
 				sum_right_speed = 0;
 			}
-			printf("display_dbg = %s\n", display_dbg ? "True" : "False");
+			cons_printf("display_dbg = %s\n", display_dbg ? "True" : "False");
 			break;
 		case 'h':
 			encoder_calibration_usage();
@@ -115,7 +115,7 @@ void encoder_enter_calibration(void)
 			quit = 1;
 			break;
 		default:
-			printf("\n");
+			cons_printf("\n");
 			break;
 		}
 	}

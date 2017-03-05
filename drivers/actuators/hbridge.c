@@ -39,19 +39,19 @@ void hbridge_engine_update(hbridge_t *b, uint8_t engine_idx, int16_t pwm)
 #if defined(CONFIG_CALIBRATION)
 static void hbridge_calibration_usage(hbridge_t *obj)
 {
-	printf("\n>>> Entering hbridge calibration\n\n");
+	cons_printf("\n>>> Entering hbridge calibration\n\n");
 
-	printf("hbridge_nb = %d\n\n", obj->engine_nb);
+	cons_printf("hbridge_nb = %d\n\n", obj->engine_nb);
 
-	printf("\t'n' to select next engine\n");
-	printf("\t'b' to select prev engine\n");
-	printf("\t'r' to reset current setting to 0\n");
-	printf("\t'+' to add 25\n");
-	printf("\t'-' to sub 25\n");
-	printf("\n");
-	printf("\t'h' to display this help\n");
-	printf("\t'q' to quit\n");
-	printf("\n");
+	cons_printf("\t'n' to select next engine\n");
+	cons_printf("\t'b' to select prev engine\n");
+	cons_printf("\t'r' to reset current setting to 0\n");
+	cons_printf("\t'+' to add 25\n");
+	cons_printf("\t'-' to sub 25\n");
+	cons_printf("\n");
+	cons_printf("\t'h' to display this help\n");
+	cons_printf("\t'q' to quit\n");
+	cons_printf("\n");
 }
 
 
@@ -68,12 +68,12 @@ void hbridge_enter_calibration(hbridge_t *obj)
 
 	while (!quit) {
 		/* display prompt */
-		printf("[%02d].pwm = %4d $ ",
+		cons_printf("[%02d].pwm = %4d $ ",
 			engine_id, cur);
 
 		/* wait for command */
 		c = con_getchar();
-		printf("%c\n", c);
+		cons_printf("%c\n", c);
 
 		switch (c) {
 		case 'n':
@@ -105,7 +105,7 @@ void hbridge_enter_calibration(hbridge_t *obj)
 			quit = 1;
 			break;
 		default:
-			printf("\n");
+			cons_printf("\n");
 			break;
 		}
 	}
