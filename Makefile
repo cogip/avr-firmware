@@ -131,7 +131,7 @@ F_CPU		:= $(CONFIG_F_CPU)
 # look for include files in each of the modules
 CFLAGS 		+= $(patsubst %,-I%,$(src-dirs))
 
-CFLAGS		+= -Iinclude/ -Iarch/include
+CFLAGS		+= -Iarch/include
 ifneq ($(MCU),)
 MCUCCFLAGS	:= -mmcu=$(MCU)
 else
