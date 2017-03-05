@@ -21,7 +21,7 @@ do { \
 #define cons_printf printf
 #define cons_scanf scanf
 
-int con_getchar();
+int cons_getchar();
 
 void console_init(console_t *con);
 

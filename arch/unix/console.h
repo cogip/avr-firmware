@@ -22,7 +22,7 @@ do { \
 #define cons_printf printf
 int cons_scanf(const char *fmt, ...);
 
-int con_getchar();
+int cons_getchar();
 
 void console_init(console_t *con);
 

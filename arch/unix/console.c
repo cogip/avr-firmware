@@ -54,7 +54,7 @@ int cons_scanf(const char *fmt, ...)
 	return ret;
 }
 
-int con_getchar()
+int cons_getchar()
 {
 	while (!usart_is_data_arrived(&USARTC0))
 		kos_yield();
