@@ -20,7 +20,7 @@ do { \
 } while(0)
 
 #define cons_printf printf
-int con_scanf(const char *fmt, ...);
+int cons_scanf(const char *fmt, ...);
 
 int con_getchar();
 

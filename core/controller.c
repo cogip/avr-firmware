@@ -485,7 +485,7 @@ static void controller_calibration_usage(void)
 static void scanf_update_val (const char *var_name, double *var)
 {
 	cons_printf("%s = %+.2f\tenter new value: ", var_name , *var);
-	con_scanf("%lf", var);
+	cons_scanf("%lf", var);
 	cons_printf("new %s = %+.2f\n", var_name, *var);
 }
 

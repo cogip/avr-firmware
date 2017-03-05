@@ -32,7 +32,7 @@
 //	return -1;
 //}
 
-int con_scanf(const char *fmt, ...)
+int cons_scanf(const char *fmt, ...)
 {
 	int i = 0, ret;
 	char buf[100] = {0};

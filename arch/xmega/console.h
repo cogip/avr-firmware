@@ -19,7 +19,7 @@ do { \
 } while(0)
 
 #define cons_printf printf
-#define con_scanf scanf
+#define cons_scanf scanf
 
 int con_getchar();
 
