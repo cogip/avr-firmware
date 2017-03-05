@@ -1,9 +1,17 @@
 #ifndef TWI_H_
 #define TWI_H_
 
+#include <stdint.h>
+#if defined(__AVR__)
 #include <avr/interrupt.h>
 
 typedef TWI_t twi_t;
+#else
+typedef void twi_t;
+
+char _twi_[1];
+#define TWIC (_twi_[0])
+#endif
 
 void twi_master_setup(twi_t *twi, uint16_t freq);
 

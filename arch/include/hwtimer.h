@@ -1,14 +1,40 @@
 #ifndef TIMER_H_
 #define TIMER_H_
 
+#if defined(__AVR__)
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#endif
+#include <stdint.h>
 
 #include "utils.h"
 
+#if defined(__AVR__)
 typedef void hwtimer_t;
 typedef TC_CLKSEL_t tc_clksel_t;
 typedef TC_EVSEL_t tc_evsel_t;
+#else
+typedef void hwtimer_t;
+typedef uint16_t tc_clksel_t;
+typedef void *tc_evsel_t;
+
+char _timers_[5];
+
+typedef char TC0_t;
+typedef char TC1_t;
+
+#define TCC0 (_timers_[0])
+#define TCD0 (_timers_[1])
+#define TCE0 (_timers_[2])
+#define TCE1 (_timers_[3])
+#define TCF0 (_timers_[4])
+
+#define TC_EVSEL_CH0_gc ((tc_evsel_t) 0)
+#define TC_EVSEL_CH2_gc ((tc_evsel_t) 2)
+
+#define TC_CLKSEL_DIV8_gc 8
+#define TC_CLKSEL_DIV1024_gc 1024
+#endif
 
 void timer_normal_mode_setup(volatile hwtimer_t *tc, uint16_t period,
 			     tc_clksel_t clock_source, func_cb_t handler);

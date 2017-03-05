@@ -18,8 +18,13 @@ do { \
 	} \
 } while(0)
 
+#if defined(__AVR__)
 #define cons_printf printf
 #define cons_scanf scanf
+#else
+#define cons_printf printf
+int cons_scanf(const char *fmt, ...);
+#endif
 
 int cons_getchar();
 

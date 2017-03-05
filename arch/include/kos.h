@@ -5,6 +5,11 @@
 #define _KOS_H_
 
 #include <stdint.h>
+#if !defined(__AVR__)
+#include <signal.h>
+#include <sys/types.h>
+#include <ucontext.h>
+#endif
 
 #include "kos_settings.h"
 
@@ -28,6 +33,10 @@ typedef struct KOS_Task {
 
     uint8_t *stack_bottom;
     uint8_t *stack_top;
+
+#if !defined(__AVR__)
+    ucontext_t uctx;
+#endif
 } KOS_Task;
 
 typedef void (*KOS_TaskFn)(void);

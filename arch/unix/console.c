@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "console.h"
+#include "kos.h"
 
 //static int uart_putchar(char c, FILE *stream);
 //static int uart_getchar(FILE *stream);
