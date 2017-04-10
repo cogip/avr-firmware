@@ -12,13 +12,30 @@
 /*
  * Machine parameters
  */
-#define WHEELS_DISTANCE			2960 /* pulses soit 279 mm */
-#define WHEELS_DIAMETER			60   /* 60 mm - perimeter : 188 mm */
-#define WHEELS_ENCODER_RESOLUTION	2000 /* 500*4 pulse per rotate - 10.61 pulse/mm */
 
-/* 2960*pi/2 = 4650 pulses pour 90° soit 51.66 pulses/° */
-#define PULSE_PER_DEGREE		1.0
-#define PULSE_PER_MM			1.0
+/* To be computed :
+ *  - PULSE_PER_MM		: Number of pulses per mm of coding wheel
+ *  - WHEELS_DISTANCE		: Distance between coding wheels in pulses
+ *  - PULSE_PER_DEGREE		: Number of pulses per degree of coding wheel
+ *
+ * Must be known :
+ *  - WHEELS_DIAMETER		: Coding wheel diameter
+ *  - WHEELS_DISTANCE_MM	: Distance between coding wheels in mm
+ *
+ * Must be known and defined :
+ *  - WHEELS_ENCODER_RESOLUTION	: Number of pulses by turn of coding wheels
+ */
+
+#define WHEELS_ENCODER_RESOLUTION	2000
+/* WHEELS_PERIMETER = pi*WHEELS_DIAMETER
+ * PULSE_PER_MM = WHEELS_ENCODER_RESOLUTION / WHEELS_PERIMETER
+ */
+#define PULSE_PER_MM			10.61
+/* WHEELS_DISTANCE = WHEELS_DISTANCE_MM * PULSE_PER_MM */
+#define WHEELS_DISTANCE			2965.5
+/* WHEELS_DISTANCE*pi pulses pour 360° soit 25.88 pulses/° */
+#define PULSE_PER_DEGREE		25.88
+
 
 #define POSE_INITIAL			{ 0, 0, 0 }
 #define MAX_ACC				4
