@@ -8,9 +8,9 @@
 
 typedef ADC_t adc_t;
 #else
-typedef void *adc_t;
+typedef char adc_t;
 
-char _adc_[2];
+adc_t _adc_[2];
 #define ADCA (_adc_[0])
 #define ADCB (_adc_[1])
 #endif
