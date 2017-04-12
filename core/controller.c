@@ -219,7 +219,8 @@ void task_controller_update()
 		{
 			if (tempo >= 4500) {
 				controller.mode = CTRL_STATE_STOP;
-				break;
+				cons_printf("game ended\n");
+				kos_task_exit();
 			}
 
 			tempo++;
