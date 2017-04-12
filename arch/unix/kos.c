@@ -8,6 +8,7 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include "kos.h"
 #include "kos_settings.h"
@@ -56,9 +57,12 @@ void kos_new_task(KOS_TaskFn task, const char *name, uint16_t size)
     uint8_t *stack;
     KOS_Task *tcb;
 
-    stack = mmap(NULL,256*1024,PROT_WRITE|PROT_READ,
+    stack = mmap(NULL,size,PROT_WRITE|PROT_READ,
 		MAP_PRIVATE|MAP_GROWSDOWN|MAP_ANONYMOUS,-1,0);
-    stack = &stack[size-1];
+    if (stack == MAP_FAILED) {
+        fprintf(stderr, "kos_new_task: mmap failed with error %u\n", errno);
+	goto kos_new_task_map_failed;
+    }
 
 #if 0
     //make space for pc, sreg, and 32 register
@@ -96,8 +100,8 @@ void kos_new_task(KOS_TaskFn task, const char *name, uint16_t size)
         task_tail = tcb;
     }
 
-    tcb->stack_bottom = stack - (int16_t)size + 1;
-    tcb->stack_top = stack;
+    tcb->stack_bottom = stack;
+    tcb->stack_top = &stack[size-1];
 
 #if 0
     tcb->stack_bottom[0] = STACK_MAGIC1;
@@ -113,6 +117,11 @@ void kos_new_task(KOS_TaskFn task, const char *name, uint16_t size)
 	    tcb->uctx.uc_stack.ss_size = size-1;
 	    makecontext(&tcb->uctx, task, 0);
     }
+
+    return;
+
+kos_new_task_map_failed:
+    exit(errno);
 }
 
 static uint8_t kos_isr_level = 0;
@@ -331,6 +340,20 @@ KOS_Task * kos_get_next_task(void)
 			next_task = t;
 			break;
 		}
+		else if ((t->status == TASK_ZOMBIE) && (t->uctx.uc_stack.ss_size != 0))
+		{
+			if (munmap(t->stack_bottom, t->uctx.uc_stack.ss_size))
+			{
+			        fprintf(stderr, "kos_get_next_task: munmap failed with error %u\n", errno);
+			        exit(1);
+			}
+
+			t->uctx.uc_stack.ss_size = 0;
+			t->uctx.uc_stack.ss_sp = NULL;
+			t->stack_bottom = NULL;
+			t->stack_top = NULL;
+		}
+
 	}
 
 	return next_task; // ? next_task : kos_current_task;
