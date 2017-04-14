@@ -229,6 +229,9 @@ controller_t controller = {
 	.min_angle_for_pose_reached = 100,
 };
 
+/* Robot path */
+path_t *path;
+
 /* This global object contains all numerical logs references (vectors, etc.) */
 datalog_t datalog;
 
@@ -237,10 +240,28 @@ inline func_cb_t mach_get_end_of_game_pfn()
 	return NULL;
 }
 
+/* Return next action point */
 pose_t mach_trajectory_get_route_update(void)
 {
-	pose_t empty = {0,};
-	return empty;
+       pose_t empty = {0,};
+       return empty;
+       pose_t pose = {0, 0, 0};
+
+       if ((path->p_current == NULL))
+       {
+               if (path->p_head != NULL)
+               {
+                       path->p_current = path->p_head;
+                       pose = path->p_current->pose;
+               }
+       }
+       else
+       {
+               path->p_current = path->p_current->p_next;
+               pose = path->p_current->pose;
+       }
+
+       return pose;
 }
 
 uint8_t mach_stop_robot(void)
@@ -249,6 +270,14 @@ uint8_t mach_stop_robot(void)
 	return stop;
 }
 
+void mach_path_setup(void)
+{
+       path = path_new();
+       path = path_append(path, (pose_t){.x=1000,.y=0,.O=90}, NULL);
+       path = path_prepend(path, (pose_t){.x=500,.y=0,.O=90}, NULL);
+       path = path_append(path, (pose_t){.x=1000,.y=0,.O=180}, NULL);
+       path_display(path);
+}
 
 static void mach_pinmux_setup(void)
 {
@@ -321,6 +350,8 @@ void mach_setup(void)
 	/* global interrupt enable */
 	sei();
 #endif
+
+	mach_path_setup();
 
 	log_vect_init(&datalog, NULL, /*400,*/
 			COL_INT16, "left_speed",

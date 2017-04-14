@@ -8,6 +8,7 @@
 #include "odometry.h"
 #include "qdec.h"
 #include "sd21.h"
+#include "path.h"
 
 /*
  * Machine parameters
@@ -50,6 +51,7 @@ extern qdec_t encoders[];
 extern sd21_t sd21;
 extern hbridge_t hbridges;
 extern controller_t controller;
+extern path_t *path;
 
 extern datalog_t datalog;
 
@@ -63,6 +65,7 @@ void mach_check_calibration_mode(void);
 
 void mach_setup(void);
 
+void mach_path_setup();
 void mach_tasks_init();
 void mach_sched_init();
 void mach_sched_run();
