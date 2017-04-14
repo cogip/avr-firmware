@@ -7,6 +7,7 @@
 #include "log.h"
 #include "odometry.h"
 #include "platform.h"
+#include "path.h"
 
 #include "controller.h"
 
@@ -233,11 +234,14 @@ void task_controller_update()
 			odometry_update(&robot_pose, &robot_speed, SEGMENT);
 
 			/* get next pose_t to reach */
-			pose_order = mach_trajectory_get_route_update();
+			if (controller_get_pose_reached(&controller)) /* || obstacle */
+			{
+				pose_order = mach_trajectory_get_route_update();
 
-			pose_order.x *= PULSE_PER_MM;
-			pose_order.y *= PULSE_PER_MM;
-			pose_order.O *= PULSE_PER_DEGREE;
+				pose_order.x *= PULSE_PER_MM;
+				pose_order.y *= PULSE_PER_MM;
+				pose_order.O *= PULSE_PER_DEGREE;
+			}
 
 			/* collision detection */
 			stop = mach_stop_robot();
