@@ -266,6 +266,7 @@ controller_t controller = {
 		.kd = 0.8,
 	},
 
+	//.min_distance_for_angular_switch = 500,
 	.min_distance_for_angular_switch = 100,
 	.min_angle_for_pose_reached = 100,
 };
@@ -273,19 +274,19 @@ controller_t controller = {
 /* This global object contains all numerical logs references (vectors, etc.) */
 datalog_t datalog;
 
-static void mach_ctrl_loop_pre_pfn()
+static void mach_post_ctrl_loop_func()
 {
 	analog_sensor_refresh_all(&ana_sensors);
 }
 
 inline func_cb_t mach_get_ctrl_loop_pre_pfn()
 {
-	return mach_ctrl_loop_pre_pfn;
+	return NULL;
 }
 
 inline func_cb_t mach_get_ctrl_loop_post_pfn()
 {
-	return NULL;
+	return mach_post_ctrl_loop_func;
 }
 
 inline func_cb_t mach_get_end_of_game_pfn()
@@ -295,14 +296,38 @@ inline func_cb_t mach_get_end_of_game_pfn()
 
 pose_t mach_trajectory_get_route_update(void)
 {
-	pose_t empty = {0,};
-	return empty;
+	static uint8_t latest_pos_idx = 0;
+	pose_t pos_list[5];
+
+	pos_list[0].x = 21220.0 / 2; /*!< x-position [pulse] */
+	pos_list[0].y = 0.0; /*!< y-position [pulse] */
+	pos_list[0].O = 0.0; /*!< 0-orientation [pulse] */
+
+	pos_list[1].x = 21220.0 / 2; /*!< x-position [pulse] */
+	pos_list[1].y = 0.0; /*!< y-position [pulse] */
+	pos_list[1].O = 180.0 * 2 * 25.88; /*!< 0-orientation [pulse] */
+
+	pos_list[2].x = 21220.0; /*!< x-position [pulse] */
+	pos_list[2].y = 0.0; /*!< y-position [pulse] */
+	pos_list[2].O = 0.0; /*!< 0-orientation [pulse] */
+
+	pos_list[4].x = 0.0; /*!< x-position [pulse] */
+	pos_list[4].y = 0.0; /*!< y-position [pulse] */
+	pos_list[4].O = 0.0; /*!< 0-orientation [pulse] */
+
+	if (controller_get_pose_reached(&controller)) {
+		latest_pos_idx ++;
+		latest_pos_idx %= 5;
+	}
+
+	return pos_list[latest_pos_idx];
 }
 
 uint8_t mach_stop_robot(void)
 {
 	uint8_t stop = 0;
 	return stop;
+//	return analog_sensor_detect_obstacle (&ana_sensors, AS_ZONE_FRONT);
 }
 
 
@@ -314,12 +339,34 @@ static void mach_pinmux_setup(void)
 	PORTA.OUT = 0x00;
 	PORTA.PIN0CTRL = PORT_ISC_INPUT_DISABLE_gc;
 
+	/* Port B - Jtag disable (fuse bit required) */
+	MCU_MCUCR = MCU_JTAGD_bm; /* Fuse4 bit0 to set to 1 with flasher */
+
 	/* twi configuration pin */
 	PORTC.DIRSET = PIN1_bm; /*!< PC1 (SCL) as output pin */
 	/* usart configuration pin */
 	PORTC.DIRCLR = PIN2_bm; /*!< PC2 (RDX0) as input pin */
 	PORTC.DIRSET = PIN3_bm; /*!< PC3 (TXD0) as output pin */
 #endif
+
+	/* Pumps, outputs all off. */
+	//PORTB.DIR = 0xff; /*!< PORTB as output pin */
+	//PORTB.DIRSET = 0xff;
+	//PORTB.OUT = 0;
+
+	gpio_set_direction(&PORTB, 0 /* pin_id */, TRUE);
+	gpio_set_direction(&PORTB, 1 /* pin_id */, TRUE);
+	gpio_set_direction(&PORTB, 2 /* pin_id */, TRUE);
+	gpio_set_direction(&PORTB, 3 /* pin_id */, TRUE);
+	gpio_set_direction(&PORTB, 4 /* pin_id */, TRUE);
+	gpio_set_direction(&PORTB, 5 /* pin_id */, TRUE);
+
+	gpio_set_output(&PORTB, PIN0_bp, 0);
+	gpio_set_output(&PORTB, PIN1_bp, 0);
+	gpio_set_output(&PORTB, PIN2_bp, 0);
+	gpio_set_output(&PORTB, PIN3_bp, 0);
+	gpio_set_output(&PORTB, PIN4_bp, 0);
+	gpio_set_output(&PORTB, PIN5_bp, 0);
 }
 
 void mach_sched_init()
