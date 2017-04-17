@@ -52,33 +52,6 @@ void analog_sensor_setup(analog_sensors_t *as)
 	}
 }
 
-/*
- * FIXME: following should be put elsewhere...
- */
-
-uint8_t analog_sensor_detect_obstacle(analog_sensors_t *as,
-				      analog_sensor_zone_t zone)
-{
-//	uint8_t i;
-//	uint8_t stop = 0;
-//
-//	for (i = 0; i < as->sensors_nb; i++) {
-//		if ((as->sensors[i].zone & zone) &&
-//		     as->sensors[i].adc2cm_cb) {
-//			uint16_t raw = as->sensors[i].latest_raw_value;
-//			dist_cm_t dist = as->sensors[i].adc2cm_cb(raw);
-//
-//			if (dist && dist < AS_DIST_LIMIT) {
-//				stop = 1;
-//				break;
-//			}
-//		}
-//	}
-//
-//	return stop;
-	return 0;
-}
-
 static uint8_t analog_sensor_adc2cm(uint16_t adc,
 				    float coeff_volts, float const_volts,
 				    float const_dist, uint8_t dist_max)
@@ -91,6 +64,36 @@ static uint8_t analog_sensor_adc2cm(uint16_t adc,
 		distance = UINT8_MAX;
 
 	return (uint8_t) distance;
+}
+
+/*
+ * FIXME: following should be put elsewhere...
+ */
+uint8_t analog_sensor_detect_obstacle(analog_sensors_t *as,
+				      analog_sensor_zone_t zone)
+{
+	uint8_t i;
+	uint8_t stop = 0;
+
+	for (i = 0; i < as->sensors_nb; i++) {
+		if (as->sensors[i].zone & zone) {
+			uint16_t raw = as->sensors[i].raw_values[ANALOG_SENSOR_NB_SAMPLES-1];
+			dist_cm_t dist;
+
+			dist = analog_sensor_adc2cm(raw,
+						    as->sensors[i].coeff_volts,
+						    as->sensors[i].const_volts,
+						    as->sensors[i].const_dist,
+						    as->sensors[i].dist_cm_max);
+
+			if (dist < AS_DIST_LIMIT) {
+				stop = 1;
+				break;
+			}
+		}
+	}
+
+	return stop;
 }
 
 #if defined(CONFIG_CALIBRATION)

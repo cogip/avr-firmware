@@ -13,7 +13,7 @@ typedef uint16_t analog_sensor_zone_t;
 #define AS_ZONE_ALL	0x000F
 #define AS_ZONE_OTHER	0x0010
 
-#define AS_DIST_LIMIT	20 /*cm*/
+#define AS_DIST_LIMIT	30 /*cm*/
 
 /* Average measurement over time */
 #define ANALOG_SENSOR_NB_SAMPLES	3
