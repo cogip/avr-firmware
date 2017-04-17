@@ -108,6 +108,9 @@ static void sd21_calibration_usage(sd21_t *obj)
 	cons_printf("\t'+' to add 25\n");
 	cons_printf("\t'-' to sub 25\n");
 	cons_printf("\n");
+	cons_printf("\t'O' to open ALL servos\n");
+	cons_printf("\t'C' to close ALL servos\n");
+	cons_printf("\n");
 	cons_printf("\t'h' to display this help\n");
 	cons_printf("\t'q' to quit\n");
 	cons_printf("\n");
@@ -136,7 +139,7 @@ static void sd21_calibration_dump(sd21_t *obj)
 
 void sd21_enter_calibration(sd21_t *obj)
 {
-	int c;
+	int c, i;
 	uint8_t quit = 0;
 	static uint8_t servo_id = 0;
 	enum {SET_INIT = 0, SET_OPEN, SET_CLOSE} servo_setting = SET_INIT;
@@ -186,7 +189,7 @@ void sd21_enter_calibration(sd21_t *obj)
 			break;
 		case 's':
 			servo_setting += 1;
-			servo_setting %= SET_CLOSE;
+			servo_setting %= SET_CLOSE + 1;
 			break;
 		case 'r':
 			*cur = CAL_RST;
@@ -199,6 +202,22 @@ void sd21_enter_calibration(sd21_t *obj)
 		case '-':
 			*cur = *cur - 25 < CAL_MIN ? CAL_MIN : *cur - 25;
 			sd21_send_twi_cmd(obj->twi, servo_id, 0, *cur);
+			break;
+		case 'O':
+			for (i = 0; i < obj->servos_nb; i++) {
+				uint16_t value = obj->servos[i].value_open;
+
+				if (value)
+					sd21_send_twi_cmd(obj->twi, i, 0, value);
+			}
+			break;
+		case 'C':
+			for (i = 0; i < obj->servos_nb; i++) {
+				uint16_t value = obj->servos[i].value_close;
+
+				if (value)
+					sd21_send_twi_cmd(obj->twi, i, 0, value);
+			}
 			break;
 		case 'h':
 			sd21_calibration_usage(obj);
