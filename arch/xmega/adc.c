@@ -32,7 +32,7 @@ void adc_setup(adc_t *adc, adc_cb_t callback, void *data)
 	/* set the ENABLE bit in CTRLA to enable ADC */
 	adc->CTRLA = ADC_ENABLE_bm;
 	/* configure 8-bits resolution in signed mode */
-	adc->CTRLB = ADC_RESOLUTION_8BIT_gc | ADC_CONMODE_bm;
+	adc->CTRLB = ADC_RESOLUTION_8BIT_gc;
 	/* ADCB.CTRLB |= ADC_FREERUN_bm; */
 
 	/* ADC reference selection */
