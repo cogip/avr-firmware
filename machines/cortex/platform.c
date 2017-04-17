@@ -118,9 +118,36 @@ sd21_t sd21 = {
 	.twi = &TWIC,
 	.twi_speed_khz = 100,
 
-	.servos_nb = 11,
+	.servos_nb = 9,
 	.servos = {
-		/* [0...3] had no related action, not used then */
+		/* Front-Left */
+		[0] = {
+			.value_init = 525/*1500*/,
+			.value_open = 1850,
+			.value_close = 525,
+		},
+
+		/* Bottom-Left */
+		[1] = {
+			.value_init = 2425/*1500*/,
+			.value_open = 1075,
+			.value_close = 2425,
+		},
+
+		/* Bottom-Right */
+		[2] = {
+			.value_init = 575/*1500*/,
+			.value_open = 1875,
+			.value_close = 575,
+		},
+
+		/* Front-Right */
+		[3] = {
+			.value_init = 2575/*1500*/,
+			.value_open = 1125,
+			.value_close = 2575,
+		},
+
 		/* Right arm */
 		[4] = {
 			.value_init = 2400,
