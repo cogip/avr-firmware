@@ -12,7 +12,7 @@
 /*
  * Machine parameters
  */
-#define WHEELS_DISTANCE			2960 /* pulses soit 279 mm */
+#define WHEELS_DISTANCE			2965/* 279.5 * 10.61 */ /*2960*/ /* pulses soit 279 mm */
 #define WHEELS_DIAMETER			60   /* 60 mm - perimeter : 188 mm */
 #define WHEELS_ENCODER_RESOLUTION	2000 /* 500*4 pulse per rotate - 10.61 pulse/mm */
 
@@ -21,7 +21,7 @@
 #define PULSE_PER_MM			1.0
 
 #define POSE_INITIAL			{ 0, 0, 0 }
-#define MAX_ACC				4
+#define MAX_ACC				10
 
 #define HBRIDGE_MOTOR_LEFT		0
 #define HBRIDGE_MOTOR_RIGHT		1

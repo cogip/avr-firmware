@@ -246,24 +246,24 @@ controller_t controller = {
 	.wheels_distance = WHEELS_DISTANCE,
 
 	.linear_speed_pid = {
-		.kp = 1.5,
-		.ki = 0.2,
+		.kp = 2.0,
+		.ki = 0.1,
 		.kd = 0,
 	},
 	.angular_speed_pid = {
-		.kp = 1.5,
-		.ki = 0.2,
+		.kp = 2.0,
+		.ki = 0.1,
 		.kd = 0,
 	},
 	.linear_pose_pid = {
-		.kp = 1,
+		.kp = 0.1,
 		.ki = 0,
-		.kd = 20,
+		.kd = 1,
 	},
 	.angular_pose_pid = {
-		.kp = 1,
+		.kp = 0.1,
 		.ki = 0,
-		.kd = 20,
+		.kd = 1,
 	},
 
 	.min_distance_for_angular_switch = 500,
