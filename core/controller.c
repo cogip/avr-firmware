@@ -204,6 +204,7 @@ void task_controller_update()
 			if (pfn_evtloop_end_of_game && tempo >= 4500)
 				(*pfn_evtloop_end_of_game)();
 
+			robot_speed = encoder_read();
 			/* final position */
 			motor_command.distance = 0;
 			motor_command.angle = 0;

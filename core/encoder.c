@@ -40,6 +40,10 @@ polar_t encoder_read(void)
 		mcurses_monitor_printf(0, "i:[%+4d, %+4d] c:[%+4d, %+4d]    ",
 				  left_speed, right_speed,
 				  sum_left_speed, sum_right_speed);
+
+		cons_printf("i:[%+4d, %+4d] c:[%+4d, %+4d]    \r",
+				  left_speed, right_speed,
+				  sum_left_speed, sum_right_speed);
 	}
 
 	/* update speed */
