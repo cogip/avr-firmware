@@ -109,7 +109,7 @@ qdec_t encoders[] = {
 		.event_channel = TC_EVSEL_CH2_gc,
 		.tc = &TCF0,
 		.line_count = WHEELS_ENCODER_RESOLUTION / 4,
-		.polarity = -1,
+		.polarity = 1,
 	},
 };
 
