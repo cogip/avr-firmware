@@ -43,6 +43,7 @@ typedef struct {
 	} sensors[];
 } analog_sensors_t;
 
+void analog_sensor_refresh_all(analog_sensors_t *as);
 void analog_sensor_setup(analog_sensors_t *as);
 
 uint8_t analog_sensor_detect_obstacle(analog_sensors_t *as,

@@ -19,7 +19,17 @@ static void irq_adc_handler(uint16_t value, void *data)
 	/* round robin acquisition using 1 ADC channel */
 	as->sensor_index += 1;
 	as->sensor_index %= as->sensors_nb;
-	adc_async_read_start(as->adc, as->sensor_index);
+
+	/* relaunch next acquisition until all sensors/pins had been read */
+	if (as->sensor_index)
+		adc_async_read_start(as->adc,
+				     as->sensors[as->sensor_index].pin_id);
+}
+
+void analog_sensor_refresh_all(analog_sensors_t *as)
+{
+	/* start conversion on first sensor/pin */
+	adc_async_read_start(as->adc, as->sensors[0].pin_id);
 }
 
 void analog_sensor_setup(analog_sensors_t *as)
@@ -27,8 +37,7 @@ void analog_sensor_setup(analog_sensors_t *as)
 	if (as->sensors_nb) {
 		adc_setup(as->adc, irq_adc_handler, as);
 
-		/* start first conversion */
-		adc_async_read_start(as->adc, 0);
+		analog_sensor_refresh_all(as);
 	}
 }
 
