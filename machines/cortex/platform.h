@@ -22,6 +22,7 @@
 
 #define POSE_INITIAL			{ 0, 0, 0 }
 #define MAX_ACC				10
+//#define MAX_ACC				15 // ok, fast mode
 
 #define HBRIDGE_MOTOR_LEFT		0
 #define HBRIDGE_MOTOR_RIGHT		1

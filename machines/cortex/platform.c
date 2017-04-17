@@ -256,17 +256,17 @@ controller_t controller = {
 		.kd = 0,
 	},
 	.linear_pose_pid = {
-		.kp = 0.1,
+		.kp = 0.075,
 		.ki = 0,
-		.kd = 1,
+		.kd = 0.8,
 	},
 	.angular_pose_pid = {
-		.kp = 0.1,
+		.kp = 0.075,
 		.ki = 0,
-		.kd = 1,
+		.kd = 0.8,
 	},
 
-	.min_distance_for_angular_switch = 500,
+	.min_distance_for_angular_switch = 100,
 	.min_angle_for_pose_reached = 100,
 };
 
