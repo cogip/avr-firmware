@@ -259,6 +259,21 @@ controller_t controller = {
 /* This global object contains all numerical logs references (vectors, etc.) */
 datalog_t datalog;
 
+static void mach_ctrl_loop_pre_pfn()
+{
+	analog_sensor_refresh_all(&ana_sensors);
+}
+
+inline func_cb_t mach_get_ctrl_loop_pre_pfn()
+{
+	return mach_ctrl_loop_pre_pfn;
+}
+
+inline func_cb_t mach_get_ctrl_loop_post_pfn()
+{
+	return NULL;
+}
+
 inline func_cb_t mach_get_end_of_game_pfn()
 {
 	return NULL;

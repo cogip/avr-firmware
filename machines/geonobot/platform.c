@@ -255,6 +255,16 @@ controller_t controller = {
 /* This global object contains all numerical logs references (vectors, etc.) */
 datalog_t datalog;
 
+inline func_cb_t mach_get_ctrl_loop_pre_pfn()
+{
+	return NULL;
+}
+
+inline func_cb_t mach_get_ctrl_loop_post_pfn()
+{
+	return NULL;
+}
+
 inline func_cb_t mach_get_end_of_game_pfn()
 {
 	return mach_evtloop_end_of_game;
