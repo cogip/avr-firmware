@@ -144,79 +144,67 @@ sd21_t sd21 = {
 	.twi = &TWIC,
 	.twi_speed_khz = 100,
 
-	.servos_nb = 9,
+	.servos_nb = 4,
 	.servos = {
 		/* Front-Left */
 		[0] = {
-			.value_init = 525/*1500*/,
+			.value_init = 550/*1500*/,
 			.value_open = 1850,
-			.value_close = 525,
+			.value_close = 550,
 		},
 
 		/* Bottom-Left */
 		[1] = {
-			.value_init = 2425/*1500*/,
-			.value_open = 1075,
-			.value_close = 2425,
+			.value_init = 1050/*1500*/,
+			.value_open = 2100,
+			.value_close = 1050,
 		},
 
 		/* Bottom-Right */
 		[2] = {
-			.value_init = 575/*1500*/,
+			.value_init = 600/*1500*/,
 			.value_open = 1875,
-			.value_close = 575,
+			.value_close = 600,
 		},
 
 		/* Front-Right */
 		[3] = {
-			.value_init = 2575/*1500*/,
-			.value_open = 1125,
-			.value_close = 2575,
+			.value_init = 2550/*1500*/,
+			.value_open = 1150,
+			.value_close = 2550,
 		},
 
-		/* Right arm */
-		[4] = {
-			.value_init = 2400,
-			.value_open = 1200,
-			.value_close = 2400,
-		},
-		/* Left arm */
-		[5] = {
-			.value_init = 600,
-			.value_open = 1800,
-			.value_close = 600,
-		},
-		/* Glasses right arm */
-		[6] = {
-			.value_init = 600,
-			.value_open = 600,
-			.value_close = 2450,
-		},
-		/* Glasses left arm */
-		[7] = {
-			.value_init = 2600,
-			.value_open = 2600,
-			.value_close = 800,
-		},
+		///* Right arm */
+		//[4] = {
+		//	.value_init = 2400,
+		//	.value_open = 1200,
+		//	.value_close = 2400,
+		//},
+		///* Left arm */
+		//[5] = {
+		//	.value_init = 600,
+		//	.value_open = 1800,
+		//	.value_close = 600,
+		//},
+		///* Glasses right arm */
+		//[6] = {
+		//	.value_init = 600,
+		//	.value_open = 600,
+		//	.value_close = 2450,
+		//},
+		///* Glasses left arm */
+		//[7] = {
+		//	.value_init = 2600,
+		//	.value_open = 2600,
+		//	.value_close = 800,
+		//},
 
-		/* Clamp */
-		[8] = {
-			.value_init = 1700,
-			.value_open = 2120,
-			.value_close = 1700,
-		},
-		/* Right door */
-		[9] = {
-			.value_init = 1350,
-			.value_open = 700,
-			.value_close = 1350,
-		},
-		/* Left door */
-		[10] = {
-			.value_init = 875,
-			.value_open = 1500,
-			.value_close = 875,
-		},
+		///* Clamp */
+		//[8] = {
+		//	.value_init = 1700,
+		//	.value_open = 2120,
+		//	.value_close = 1700,
+		//},
 	},
 };
 #endif /* CONFIG_SD21 */
