@@ -79,6 +79,20 @@ uint8_t analog_sensor_detect_obstacle(analog_sensors_t *as,
 	return 0;
 }
 
+static uint8_t analog_sensor_adc2cm(uint16_t adc,
+				    float coeff_volts, float const_volts,
+				    float const_dist, uint8_t dist_max)
+{
+	float voltage = adc * 3.3 / 255; /* 8-bits conversion, Vcc ADC = 3.3V */
+	float d = voltage * coeff_volts - const_volts;
+	float distance = 1 / d + const_dist;
+
+	if (distance >= dist_max)
+		distance = UINT8_MAX;
+
+	return (uint8_t) distance;
+}
+
 #if defined(CONFIG_CALIBRATION)
 static void analog_sensor_dump_all(analog_sensors_t *as)
 {
@@ -91,10 +105,12 @@ static void analog_sensor_dump_all(analog_sensors_t *as)
 
 		cons_printf("\ti=%d\tpin=%d %d", i, as->sensors[i].pin_id, raw);
 
-		if (as->sensors[i].adc2cm_cb) {
-			dist = as->sensors[i].adc2cm_cb(raw);
-			printf("\t%3d", dist);
-		}
+		dist = analog_sensor_adc2cm(raw,
+					    as->sensors[i].coeff_volts,
+					    as->sensors[i].const_volts,
+					    as->sensors[i].const_dist,
+					    as->sensors[i].dist_cm_max);
+		cons_printf("\t%3d", dist);
 
 		cons_printf("\n");
 	}

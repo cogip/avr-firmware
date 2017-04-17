@@ -3,19 +3,6 @@
 
 #include <adc.h>
 
-#if defined(CONFIG_GP2D120)
-#include "gp2d120.h"
-#endif
-#if defined(CONFIG_GP2Y0A21)
-#include "gp2y0a21.h"
-#endif
-#if defined(CONFIG_GP2Y0A41)
-#include "gp2y0a41.h"
-#endif
-
-/* from ADC value to distance in centimeters */
-typedef uint8_t (* func_conv_t)(uint16_t);
-
 typedef uint8_t dist_cm_t;
 
 typedef uint16_t analog_sensor_zone_t;
@@ -38,7 +25,14 @@ typedef struct {
 	uint8_t sensors_nb;
 	struct {
 		uint8_t pin_id;
-		func_conv_t adc2cm_cb;
+
+		/* for ADC value to distance (cm) conversion */
+		float coeff_volts;
+		float const_volts;
+		float const_dist;
+
+		uint8_t dist_cm_max;
+
 		analog_sensor_zone_t zone;
 
 		/* acquisition context */

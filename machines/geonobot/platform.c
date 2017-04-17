@@ -63,42 +63,34 @@ analog_sensors_t ana_sensors = {
 	.sensors = {
 		[0] = {
 			.pin_id = PIN0_bp,
-			.adc2cm_cb = gp2y0a21_read,
 			/* .zone = (AS_ZONE_LEFT | AS_ZONE_RIGHT), */
 		},
 		[1] = {
 			.pin_id = PIN1_bp,
-			.adc2cm_cb = gp2y0a21_read,
 			/* .zone = (AS_ZONE_LEFT | AS_ZONE_RIGHT), */
 		},
 		[2] = {
 			.pin_id = PIN2_bp,
-			.adc2cm_cb = gp2y0a21_read,
 			.zone = AS_ZONE_REAR,
 		},
 		[3] = {
 			.pin_id = PIN3_bp,
-			.adc2cm_cb = gp2y0a21_read,
 			.zone = AS_ZONE_REAR,
 		},
 		[4] = {
 			.pin_id = PIN4_bp,
-			.adc2cm_cb = gp2y0a21_read,
 			.zone = AS_ZONE_FRONT,
 		},
 		[5] = {
 			.pin_id = PIN5_bp,
-			.adc2cm_cb = gp2y0a21_read,
 			.zone = AS_ZONE_FRONT,
 		},
 		[6] = {
 			.pin_id = PIN6_bp,
-			.adc2cm_cb = gp2y0a21_read,
 			.zone = AS_ZONE_FRONT,
 		},
 		[7] = {
 			.pin_id = PIN7_bp,
-			.adc2cm_cb = gp2y0a21_read,
 			.zone = AS_ZONE_FRONT,
 		},
 	}

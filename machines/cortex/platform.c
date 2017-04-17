@@ -44,47 +44,73 @@
 analog_sensors_t ana_sensors = {
 	.adc = &ADCA,
 
-	.sensors_nb = 8,
+	.sensors_nb = 6,
 	.sensors = {
+		/* Rear right: [10...80] cm - GP2Y0A21 - cal done */
 		[0] = {
 			.pin_id = PIN0_bp,
-			.adc2cm_cb = gp2y0a21_read,
-			/* .zone = (AS_ZONE_LEFT | AS_ZONE_RIGHT), */
+
+			.coeff_volts = 0.022,
+			.const_volts = 0.010,
+			.const_dist = -5.0,
+			.dist_cm_max = 50,
+
+			.zone = (AS_ZONE_REAR | AS_ZONE_RIGHT),
 		},
+		/* Front left: [10...80] cm - GP2Y0A21 - cal done */
 		[1] = {
 			.pin_id = PIN1_bp,
-			.adc2cm_cb = gp2y0a21_read,
-			/* .zone = (AS_ZONE_LEFT | AS_ZONE_RIGHT), */
+
+			.coeff_volts = 0.03,
+			.const_volts = 0.009,
+			.const_dist = 1.0,
+			.dist_cm_max = 80,
+
+			.zone = (AS_ZONE_FRONT | AS_ZONE_LEFT),
 		},
+		/* Front right: [10...60] cm - GP2D12 - cal done*/
 		[2] = {
 			.pin_id = PIN2_bp,
-			.adc2cm_cb = gp2y0a21_read,
-			.zone = AS_ZONE_REAR,
+
+			.coeff_volts = 0.045,
+			.const_volts = 0.027,
+			.const_dist = 5.0,
+			.dist_cm_max = 50,
+
+			.zone = (AS_ZONE_FRONT | AS_ZONE_RIGHT),
 		},
+		/* Side left: [4...30] cm - GP2YD120X - cal done */
 		[3] = {
-			.pin_id = PIN3_bp,
-			.adc2cm_cb = gp2y0a21_read,
-			.zone = AS_ZONE_REAR,
-		},
-		[4] = {
-			.pin_id = PIN4_bp,
-			.adc2cm_cb = gp2y0a21_read,
-			.zone = AS_ZONE_FRONT,
-		},
-		[5] = {
 			.pin_id = PIN5_bp,
-			.adc2cm_cb = gp2y0a21_read,
-			.zone = AS_ZONE_FRONT,
+
+			.coeff_volts = 0.052,
+			.const_volts = 0.007,
+			.const_dist = 0,
+			.dist_cm_max = 40,
+
+			.zone = AS_ZONE_LEFT,
 		},
-		[6] = {
+		/* Side right: [4...30] cm - GP2YD120X - cal done */
+		[4] = {
 			.pin_id = PIN6_bp,
-			.adc2cm_cb = gp2y0a21_read,
-			.zone = AS_ZONE_FRONT,
+
+			.coeff_volts = 0.052,
+			.const_volts = 0.007,
+			.const_dist = 0,
+			.dist_cm_max = 40,
+
+			.zone = AS_ZONE_RIGHT,
 		},
-		[7] = {
+		/* Rear left: [10...80] cm - GP2Y0A21 - cal done  */
+		[5] = {
 			.pin_id = PIN7_bp,
-			.adc2cm_cb = gp2y0a21_read,
-			.zone = AS_ZONE_FRONT,
+
+			.coeff_volts = 0.03,
+			.const_volts = 0.009,
+			.const_dist = 1.0,
+			.dist_cm_max = 80,
+
+			.zone = (AS_ZONE_REAR | AS_ZONE_LEFT),
 		},
 	}
 };
