@@ -52,6 +52,7 @@ static void mach_calibration_usage(void)
 #if defined(CONFIG_ANALOG_SENSORS)
 	cons_printf("\t'a' to calibrate analogs sensors\n");
 #endif
+	cons_printf("\t'o' to calibrate odometry\n");
 	cons_printf("\t'p' to calibrate hbridge & PWM ctrl\n");
 #if defined(CONFIG_SD21)
 	cons_printf("\t's' to calibrate servos (sd21 card)\n");
@@ -106,6 +107,10 @@ static void mach_enter_calibration_mode(void)
 			analog_sensor_enter_calibration(&ana_sensors);
 			break;
 #endif
+		case 'o':
+			encoder_enter_calibration();
+			/* TODO; odometry_enter_calibration */
+			break;
 		case 'p':
 			hbridge_enter_calibration(&hbridges);
 			break;
