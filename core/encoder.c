@@ -10,7 +10,7 @@
 /**
  *
  */
-int8_t display_dbg = FALSE;
+static int8_t display_dbg = FALSE;
 
 #define print_eventually(...) \
 do { \
@@ -18,8 +18,8 @@ do { \
 		printf(__VA_ARGS__); \
 } while(0)
 
-int16_t sum_left_speed;
-int16_t sum_right_speed;
+static int16_t sum_left_speed;
+static int16_t sum_right_speed;
 
 polar_t encoder_read(void)
 {
