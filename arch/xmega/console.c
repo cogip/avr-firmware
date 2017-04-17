@@ -42,6 +42,11 @@ int cons_getchar()
 	return getchar();
 }
 
+int cons_is_data_arrived()
+{
+	return main_console ? usart_is_data_arrived(main_console->usart) : -1;
+}
+
 void console_init(console_t *con)
 {
 	usart_setup(con->usart, con->speed);

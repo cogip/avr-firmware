@@ -1,6 +1,8 @@
 #ifndef CONSOLE_H
 #define CONSOLE_H
 
+#include <stdio.h>
+
 #include "usart.h"
 
 typedef struct {
@@ -27,6 +29,8 @@ int cons_scanf(const char *fmt, ...);
 #endif
 
 int cons_getchar();
+
+int cons_is_data_arrived();
 
 void console_init(console_t *con);
 
