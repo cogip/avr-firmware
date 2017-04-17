@@ -185,11 +185,17 @@ void task_controller_update()
 	pose_t	pose_order		= { 0, 0, 0 };
 	polar_t	speed_order		= { 0, 0 };
 	polar_t	motor_command;
+	func_cb_t pfn_evtloop_prefunc  = mach_get_ctrl_loop_pre_pfn();
+	func_cb_t pfn_evtloop_postfunc = mach_get_ctrl_loop_post_pfn();
 	func_cb_t pfn_evtloop_end_of_game = mach_get_end_of_game_pfn();
 	uint8_t stop = 0;
 
 	for (;;) {
 		kos_set_next_schedule_delay_ms(20);
+
+		/* Machine specific stuff, if required */
+		if (pfn_evtloop_prefunc)
+			(*pfn_evtloop_prefunc)();
 
 		switch(controller.mode) {
 		default:
@@ -457,6 +463,10 @@ void task_controller_update()
 #endif /* defined(CONFIG_CALIBRATION) */
 
 		} /* switch(controller.mode) */
+
+		/* Machine specific stuff, if required */
+		if (pfn_evtloop_postfunc)
+			(*pfn_evtloop_postfunc)();
 
 		/* this task is called every scheduler tick (20ms) */
 		kos_yield();
