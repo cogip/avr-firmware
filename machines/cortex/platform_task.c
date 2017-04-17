@@ -18,10 +18,13 @@ static void mach_calibration_usage(void)
 {
 	cons_printf("\n>>> Entering calibration mode\n\n");
 
+#if defined(CONFIG_ANALOG_SENSORS)
+	cons_printf("\t'a' to calibrate analogs sensors\n");
+#endif
 	cons_printf("\t'o' to calibrate odometry\n");
 	cons_printf("\t'p' to calibrate hbridge & PWM ctrl\n");
 #if defined(CONFIG_SD21)
-	printf("\t's' to calibrate servos (sd21 card)\n");
+	cons_printf("\t's' to calibrate servos (sd21 card)\n");
 #endif
 	cons_printf("\t'r' to calibrate controller\n");
 	cons_printf("\n");
@@ -68,6 +71,11 @@ static void mach_enter_calibration_mode(void)
 		cons_printf("%c\n", c);
 
 		switch (c) {
+#if defined(CONFIG_ANALOG_SENSORS)
+		case 'a':
+			analog_sensor_enter_calibration(&ana_sensors);
+			break;
+#endif
 		case 'o':
 			encoder_enter_calibration();
 			/* TODO; odometry_enter_calibration */
@@ -106,7 +114,7 @@ exit_point:
  * Tasks registration
  */
 
-#define TASK_CALIB_STACK	184
+#define TASK_CALIB_STACK	256
 #define TASK_CTRL_STACK		256
 
 void mach_tasks_init()
