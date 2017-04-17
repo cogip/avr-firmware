@@ -45,7 +45,7 @@ static double limit_speed_command(double command,
 				  double real_speed)
 {
 	/* limit speed command (maximum acceleration) */
-	int16_t a = command - real_speed;
+	double a = command - real_speed;
 
 	if (a > MAX_ACC)
 		command = real_speed + MAX_ACC;
