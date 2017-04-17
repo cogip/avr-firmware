@@ -48,4 +48,8 @@ void analog_sensor_setup(analog_sensors_t *as);
 uint8_t analog_sensor_detect_obstacle(analog_sensors_t *as,
 				      analog_sensor_zone_t zone);
 
+#if defined(CONFIG_CALIBRATION)
+void analog_sensor_enter_calibration(analog_sensors_t *obj);
+#endif
+
 #endif /* ANALOG_SENSOR_H_ */
