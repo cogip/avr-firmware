@@ -11,10 +11,15 @@ static int8_t display_dbg = FALSE;
 static void irq_adc_handler(uint16_t value, void *data)
 {
 	analog_sensors_t *as = (analog_sensors_t *)data;
-	uint8_t i = as->sensor_index;
+	uint8_t j, i = as->sensor_index;
+	uint16_t sum = 0;
 
 	/* save raw value in context */
-	as->sensors[i].latest_raw_value = value;
+	for (j = 0; j < ANALOG_SENSOR_NB_SAMPLES - 1; j++) {
+		sum += as->sensors[i].raw_values[j];
+		as->sensors[i].raw_values[j] = as->sensors[i].raw_values[j+1];
+	}
+	as->sensors[i].raw_values[j] = (value + sum) / ANALOG_SENSOR_NB_SAMPLES;
 
 	/* round robin acquisition using 1 ADC channel */
 	as->sensor_index += 1;
@@ -34,7 +39,13 @@ void analog_sensor_refresh_all(analog_sensors_t *as)
 
 void analog_sensor_setup(analog_sensors_t *as)
 {
+	uint16_t i, j;
+
 	if (as->sensors_nb) {
+		for (i = 0; i < as->sensors_nb; i++)
+			for (j = 0; j < ANALOG_SENSOR_NB_SAMPLES - 1; j++)
+				as->sensors[i].raw_values[j] = 0;
+
 		adc_setup(as->adc, irq_adc_handler, as);
 
 		analog_sensor_refresh_all(as);
@@ -48,23 +59,24 @@ void analog_sensor_setup(analog_sensors_t *as)
 uint8_t analog_sensor_detect_obstacle(analog_sensors_t *as,
 				      analog_sensor_zone_t zone)
 {
-	uint8_t i;
-	uint8_t stop = 0;
-
-	for (i = 0; i < as->sensors_nb; i++) {
-		if ((as->sensors[i].zone & zone) &&
-		     as->sensors[i].adc2cm_cb) {
-			uint16_t raw = as->sensors[i].latest_raw_value;
-			dist_cm_t dist = as->sensors[i].adc2cm_cb(raw);
-
-			if (dist && dist < AS_DIST_LIMIT) {
-				stop = 1;
-				break;
-			}
-		}
-	}
-
-	return stop;
+//	uint8_t i;
+//	uint8_t stop = 0;
+//
+//	for (i = 0; i < as->sensors_nb; i++) {
+//		if ((as->sensors[i].zone & zone) &&
+//		     as->sensors[i].adc2cm_cb) {
+//			uint16_t raw = as->sensors[i].latest_raw_value;
+//			dist_cm_t dist = as->sensors[i].adc2cm_cb(raw);
+//
+//			if (dist && dist < AS_DIST_LIMIT) {
+//				stop = 1;
+//				break;
+//			}
+//		}
+//	}
+//
+//	return stop;
+	return 0;
 }
 
 #if defined(CONFIG_CALIBRATION)
@@ -74,7 +86,7 @@ static void analog_sensor_dump_all(analog_sensors_t *as)
 
 	cons_printf("\n");
 	for (i = 0; i < as->sensors_nb; i++) {
-		uint16_t raw = as->sensors[i].latest_raw_value;
+		uint16_t raw = as->sensors[i].raw_values[ANALOG_SENSOR_NB_SAMPLES-1];
 		dist_cm_t dist;
 
 		cons_printf("\ti=%d\tpin=%d %d", i, as->sensors[i].pin_id, raw);
@@ -121,7 +133,7 @@ void analog_sensor_enter_calibration(analog_sensors_t *obj)
 		} else {
 			/* poll for command if arrived, or dump values
 			 * periodically */
-			kos_set_next_schedule_delay_ms(250);
+			kos_set_next_schedule_delay_ms(200);
 
 			if (cons_is_data_arrived())
 				c = cons_getchar();

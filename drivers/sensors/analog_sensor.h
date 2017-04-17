@@ -28,6 +28,9 @@ typedef uint16_t analog_sensor_zone_t;
 
 #define AS_DIST_LIMIT	20 /*cm*/
 
+/* Average measurement over time */
+#define ANALOG_SENSOR_NB_SAMPLES	3
+
 typedef struct {
 	adc_t *adc;
 
@@ -39,7 +42,7 @@ typedef struct {
 		analog_sensor_zone_t zone;
 
 		/* acquisition context */
-		uint16_t latest_raw_value; /* keep acquired distances */
+		uint16_t raw_values[ANALOG_SENSOR_NB_SAMPLES]; /* keep acquired distances */
 	} sensors[];
 } analog_sensors_t;
 
