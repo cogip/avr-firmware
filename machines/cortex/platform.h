@@ -21,8 +21,7 @@
 #define PULSE_PER_MM			1.0
 
 #define POSE_INITIAL			{ 0, 0, 0 }
-#define MAX_ACC				10
-//#define MAX_ACC				15 // ok, fast mode
+#define MAX_ACC				15
 
 #define HBRIDGE_MOTOR_LEFT		0
 #define HBRIDGE_MOTOR_RIGHT		1

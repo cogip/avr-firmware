@@ -253,9 +253,9 @@ void task_controller_update()
 				speed_order.angle = 0;
 			} else {
 				/* speed order in position = 60 pulses / 20ms */
-				speed_order.distance = 60;
+				speed_order.distance = 150;
 				/* speed order in angle? = 60 pulses / 20ms */
-				speed_order.angle = 60;
+				speed_order.angle = 150;
 			}
 
 			/* PID / feedback control */
