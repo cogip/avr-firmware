@@ -98,15 +98,17 @@ polar_t controller_update(controller_t *ctrl,
 
 	/* position correction */
 	if (fabs(position_error.distance) > ctrl->min_distance_for_angular_switch) {
-		position_error.angle -= pose_current.O; /* [pulse] */
 
-		if (fabs(position_error.angle) > (M_PI * ctrl->wheels_distance / 2.0)) {
+		position_error.angle -= pose_current.O;
+
+		/* should we go reverse? */
+		if (fabs(position_error.angle) > (90 * PULSE_PER_DEGREE)) {
 			position_error.distance = -position_error.distance;
 
 			if (position_error.angle < 0)
-				position_error.angle += M_PI * ctrl->wheels_distance;
+				position_error.angle += 180 * PULSE_PER_DEGREE;
 			else
-				position_error.angle -= M_PI * ctrl->wheels_distance;
+				position_error.angle -= 180 * PULSE_PER_DEGREE;
 		}
 
 		/* if target point direction angle is too important, bot rotates on its starting point */
