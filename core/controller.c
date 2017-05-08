@@ -97,7 +97,8 @@ polar_t controller_update(controller_t *ctrl,
 	ctrl->pose_reached = 0;
 
 	/* position correction */
-	if (fabs(position_error.distance) > ctrl->min_distance_for_angular_switch) {
+	if (ctrl->regul != CTRL_REGUL_POSE_ANGL
+	    && fabs(position_error.distance) > ctrl->min_distance_for_angular_switch) {
 
 		position_error.angle -= pose_current.O;
 
@@ -118,6 +119,8 @@ polar_t controller_update(controller_t *ctrl,
 		}
 	} else {
 		/* orientation correction (position is reached) */
+		ctrl->regul = CTRL_REGUL_POSE_ANGL;
+
 		position_error.distance = 0;
 		pid_reset(&ctrl->linear_pose_pid);
 
@@ -128,7 +131,9 @@ polar_t controller_update(controller_t *ctrl,
 		if (fabs(position_error.angle) < ctrl->min_angle_for_pose_reached) {
 			position_error.angle = 0;
 			pid_reset(&ctrl->angular_pose_pid);
+
 			ctrl->pose_reached = 1;
+			ctrl->regul = CTRL_REGUL_POSE_DIST; //CTRL_REGUL_IDLE;
 		}
 	}
 
@@ -197,6 +202,8 @@ void task_controller_update()
 	func_cb_t pfn_evtloop_postfunc = mach_get_ctrl_loop_post_pfn();
 	func_cb_t pfn_evtloop_end_of_game = mach_get_end_of_game_pfn();
 	uint8_t stop = 0;
+
+	controller.regul = CTRL_REGUL_POSE_DIST;
 
 	for (;;) {
 		kos_set_next_schedule_delay_ms(20);

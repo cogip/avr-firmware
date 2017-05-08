@@ -17,6 +17,13 @@ typedef enum {
 #endif
 } controller_mode_t;
 
+typedef enum {
+	CTRL_REGUL_IDLE = 0,
+	CTRL_REGUL_POSE_DIST,
+	CTRL_REGUL_POSE_ANGL,
+	//CTRL_REGUL_SPEED, /* time for actions */
+} controller_regul_t;
+
 typedef struct {
 	double wheels_distance;
 
@@ -34,6 +41,8 @@ typedef struct {
 
 	/* Dynamics variables */
 	controller_mode_t mode;
+
+	controller_regul_t regul;
 	uint8_t pose_reached;
 } controller_t;
 
