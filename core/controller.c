@@ -18,12 +18,12 @@
  * \return distance and angle errors between 2 poses
  */
 static polar_t compute_error(controller_t *ctrl,
-			     const pose_t p1, const pose_t p2)
+			     const pose_t pose_order, const pose_t pose_current)
 {
 	polar_t error;
 
-	double x = p1.x - p2.x;
-	double y = p1.y - p2.y;
+	double x = pose_order.x - pose_current.x;
+	double y = pose_order.y - pose_current.y;
 	double O = atan2(y, x);
 
 	error.angle = O * ctrl->wheels_distance;
