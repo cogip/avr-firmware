@@ -97,7 +97,7 @@ polar_t controller_update(controller_t *ctrl,
 	ctrl->pose_reached = 0;
 
 	/* position correction */
-	if (position_error.distance > ctrl->min_distance_for_angular_switch) {
+	if (fabs(position_error.distance) > ctrl->min_distance_for_angular_switch) {
 		position_error.angle -= pose_current.O; /* [pulse] */
 
 		if (fabs(position_error.angle) > (M_PI * ctrl->wheels_distance / 2.0)) {
