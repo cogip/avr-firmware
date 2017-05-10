@@ -34,21 +34,39 @@ polar_t encoder_read(void)
 		sum_right_speed += right_speed;
 	}
 
+	/* update speed */
+	robot_speed.distance = (right_speed + left_speed) / 2.0;
+	robot_speed.angle = right_speed - left_speed;
+
 	if (display_dbg && ! --_cpt) {
+		static pose_t	robot_pose		= POSE_INITIAL;
+
 		_cpt = 6;//(25);
 
 		mcurses_monitor_printf(0, "i:[%+4d, %+4d] c:[%+4d, %+4d]    ",
 				  left_speed, right_speed,
 				  sum_left_speed, sum_right_speed);
 
-		cons_printf("i:[%+4d, %+4d] c:[%+4d, %+4d]    \r",
+		cons_printf("i:[%+4d, %+4d] c:[%+4d, %+4d] ",
 				  left_speed, right_speed,
 				  sum_left_speed, sum_right_speed);
-	}
 
-	/* update speed */
-	robot_speed.distance = (right_speed + left_speed) / 2.0;
-	robot_speed.angle = right_speed - left_speed;
+		robot_pose.x *= PULSE_PER_MM;
+		robot_pose.y *= PULSE_PER_MM;
+		robot_pose.O *= PULSE_PER_DEGREE;
+
+		odometry_update(&robot_pose, &robot_speed, SEGMENT);
+
+		robot_pose.x /= PULSE_PER_MM;
+		robot_pose.y /= PULSE_PER_MM;
+		robot_pose.O /= PULSE_PER_DEGREE;
+
+		cons_printf("o:[%+.2f, %+.2f, %+03.f]    \r",
+				  robot_pose.x,
+				  robot_pose.y,
+				  robot_pose.O);
+
+	}
 
 	log_vect_setvalue(&datalog, LOG_IDX_SPEED_L, (void *) &left_speed);
 	log_vect_setvalue(&datalog, LOG_IDX_SPEED_R, (void *) &right_speed);
@@ -93,6 +111,8 @@ void encoder_enter_calibration(void)
 	uint8_t quit = 0;
 
 	encoder_calibration_usage();
+
+	controller.mode = CTRL_STATE_IDLE;
 
 	while (!quit) {
 
