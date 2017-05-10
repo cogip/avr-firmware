@@ -1,0 +1,69 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import pty,sys,os
+
+if len(sys.argv)<2:
+    #OKGREEN = '\033[92m'
+    #RESET = '\033[0m'
+    #print OKGREEN
+    print "Need a command to run"
+    #print RESET
+    #print 'test'
+    sys.exit(-1)
+ 
+#logfilename = '%s.log'%os.path.basename(sys.argv[1]) # executable name + '.log'
+#if os.path.exists(logfilename):
+#    print "\nRefusing to overwrite existing log %r\n\nRename or remove it and try again\n"%logfilename
+#    sys.exit(-1)
+ 
+#logfile = open(logfilename, 'wb')
+csvfile = None
+
+storing = False
+
+#from colorama import init
+#from colorama import Fore, Back, Style
+
+#init()
+ 
+def read(fd):
+    data = os.read(fd, 1024)
+
+    lines = data.split('\n')
+    
+    for i in range(0,len(lines)):
+        l = lines[i]
+        global storing
+        global csvfile
+        if l.startswith('<<<< '):
+            filename = l.split(' ')[1].rstrip('\r')
+            #logfile.write(' ---- %s\n' % filename)
+            csvfile = open(filename, 'wb')
+            storing = True
+        elif l.startswith('>>>>'):
+            csvfile.close()
+            storing = False
+        elif storing:
+            # add some color
+            #lines[i] = Fore.GREEN + lines[i] + Fore.RESET
+            lines[i] = '\033[92m' + lines[i] + '\033[0m'
+            if i != len(lines)-1:
+                #logfile.write(l + '\n')
+                csvfile.write(l + '\n')
+            else:
+                #logfile.write(l)
+                csvfile.write(l)
+    #logfile.write(data)
+    #logfile.flush() # probably
+    return '\n'.join(lines)
+    #return data
+ 
+#sys.stdout.write('Writing log to %r\n'%logfilename)
+#sys.stdout.flush()
+ 
+#logfile.write('Log file for command: %r\n---------------------\n'%' '.join(sys.argv[1:]))
+pty.spawn(sys.argv[1:], read)
+ 
+#sys.stdout.write('Done with logging %r\n'%cmd)
+
