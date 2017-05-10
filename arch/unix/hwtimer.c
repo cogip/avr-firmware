@@ -135,7 +135,11 @@ void timer_normal_mode_setup(volatile hwtimer_t *tc, uint16_t period,
 		cons_printf("%s: period = %d\n", __func__, period);
 		switch (period) {
 		case 325:
+#if defined(CONFIG_SIMU_NORMAL_SPEED)
 			period_ms = 10;
+#else /* SIMU_10X_SPEED */
+			period_ms = 1;
+#endif
 			break;
 		default:
 			cons_printf("not supported\n");

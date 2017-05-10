@@ -11,6 +11,13 @@ config ARCH
 	help
 	  This can be xmega or unix.
 
+config SIMU_NORMAL_SPEED
+	bool "Simulation at 1:1 speed"
+	default y
+	help
+	  By unselecting this configuration, you will speed up simulation timeline by 10.
+	  Default is normal speed.
+
 choice
 	prompt "Target"
 	default BIG_BOT2015
