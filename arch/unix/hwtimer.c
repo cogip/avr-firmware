@@ -19,6 +19,7 @@
 #include "console.h"
 #include "irq.h"
 #include "hwtimer.h"
+#include "platform.h"
 
 //#define hwtimer_t avrhwtimer_t
 
@@ -319,6 +320,13 @@ void timer_pwm_enable(volatile hwtimer_t *tc, const uint8_t channel)
 /**
  *
  */
+int8_t simu_left_motor_dir = 0;
+int8_t simu_right_motor_dir = 0;
+
+#define SIMU_ENC_BUFSIZE	3
+int16_t simu_left_motor_encoder[SIMU_ENC_BUFSIZE] = {0,};
+int16_t simu_right_motor_encoder[SIMU_ENC_BUFSIZE] = {0,};
+
 void timer_pwm_duty_cycle(volatile hwtimer_t *tc, const uint8_t channel,
 			  uint8_t duty_cycle)
 {
@@ -352,6 +360,41 @@ void timer_pwm_duty_cycle(volatile hwtimer_t *tc, const uint8_t channel,
 
 		/* TODO */
 	}
+#else
+	int16_t i = 0, s = 0;
+	hwtimer_t *enc_timer;
+
+	if (tc == hbridges.tc && channel == hbridges.engines[HBRIDGE_MOTOR_LEFT].pwm_channel) {
+		/* left motor */
+		enc_timer = encoders[0].tc;
+		*enc_timer = simu_left_motor_dir ? duty_cycle : -duty_cycle;
+		*enc_timer += ((WHEELS_ENCODER_RESOLUTION / 4) >> 1);
+
+		for (i = 0; i < SIMU_ENC_BUFSIZE - 1; i++) {
+			s += simu_left_motor_encoder[i];
+			simu_left_motor_encoder[i] = simu_left_motor_encoder[i+1];
+		}
+		s = (s + simu_left_motor_encoder[i] + *enc_timer) / (SIMU_ENC_BUFSIZE + 1);
+
+		simu_left_motor_encoder[i] = s;
+
+	} else if (tc == hbridges.tc && channel == hbridges.engines[HBRIDGE_MOTOR_RIGHT].pwm_channel) {
+		/* right motor */
+		enc_timer = encoders[1].tc;
+		*enc_timer = simu_right_motor_dir ? -duty_cycle : duty_cycle;
+		*enc_timer += ((WHEELS_ENCODER_RESOLUTION / 4) >> 1);
+
+		for (i = 0; i < SIMU_ENC_BUFSIZE - 1; i++) {
+			s += simu_right_motor_encoder[i];
+			simu_right_motor_encoder[i] = simu_right_motor_encoder[i+1];
+		}
+		s = (s + simu_right_motor_encoder[i] + *enc_timer) / (SIMU_ENC_BUFSIZE + 1);
+
+		simu_right_motor_encoder[i] = s;
+
+	} else {
+		cons_printf("%s: unsupported, channel = %d\n", __func__, channel);
+	}
 #endif
 }
 
@@ -365,18 +408,25 @@ inline uint16_t timer_get_cnt(volatile hwtimer_t *tc)
 	else
 		return 0;
 #else
-	struct timespec current_time;
+	if (tc == &TCC0) {
+		struct timespec current_time;
 
-	clock_gettime(CLOCK_REALTIME, &current_time);
-	long delta_ms = orig_time.tv_sec * 1000 - orig_time.tv_sec * 1000;
-	delta_ms += (orig_time.tv_nsec - current_time.tv_nsec) / 1000;
-	if (delta_ms < 0) delta_ms *= -1;
-	delta_ms *= 645;
+		clock_gettime(CLOCK_REALTIME, &current_time);
+		long delta_ms = orig_time.tv_sec * 1000 - orig_time.tv_sec * 1000;
+		delta_ms += (orig_time.tv_nsec - current_time.tv_nsec) / 1000;
+		if (delta_ms < 0) delta_ms *= -1;
+		delta_ms *= 645; //645 == 20 ms
 
-	//printf("%ld\n", delta_ms);
-	return delta_ms;
+		//printf("%ld\n", delta_ms);
+		return delta_ms;
+	} else if (tc == encoders[0].tc) {
+		return simu_left_motor_encoder[SIMU_ENC_BUFSIZE-1];
+	} else if (tc == encoders[1].tc) {
+		return simu_right_motor_encoder[SIMU_ENC_BUFSIZE-1];
+	} else {
+		cons_printf("%s: unsupported\n", __func__);
+	}
 
-	//645 == 20 ms
 	return 0;
 #endif
 }
@@ -389,4 +439,8 @@ inline void timer_set_cnt(volatile hwtimer_t *tc, const uint16_t val)
 	else if (IS_TIMER1(tc))
 		((TC1_t *)tc)->CNT = val;
 #endif
+	if (tc == encoders[0].tc)
+		*encoders[0].tc = val;
+	if (tc == encoders[1].tc)
+		*encoders[1].tc = val;
 }

@@ -14,14 +14,14 @@ typedef void hwtimer_t;
 typedef TC_CLKSEL_t tc_clksel_t;
 typedef TC_EVSEL_t tc_evsel_t;
 #else
-typedef void hwtimer_t;
+typedef int16_t hwtimer_t;
 typedef uint16_t tc_clksel_t;
 typedef void *tc_evsel_t;
 
-char _timers_[5];
+int16_t _timers_[5];
 
-typedef char TC0_t;
-typedef char TC1_t;
+typedef int16_t TC0_t;
+typedef int16_t TC1_t;
 
 #define TCC0 (_timers_[0])
 #define TCD0 (_timers_[1])
