@@ -96,6 +96,24 @@ polar_t controller_update(controller_t *ctrl,
 
 	ctrl->pose_reached = 0;
 
+	cons_printf("%+.0f,%+.0f,%+.0f,%+.0f,%+.0f,%+.0f,"
+		    "%+.0f,%+.0f,"
+		    "%+.0f,%+.0f,"
+		    "%+.0f,%+.0f,"
+		    "\n",
+			  pose_order.x / PULSE_PER_MM,
+			  pose_order.y / PULSE_PER_MM,
+			  pose_order.O / PULSE_PER_DEGREE,
+			  pose_current.x / PULSE_PER_MM,
+			  pose_current.y / PULSE_PER_MM,
+			  pose_current.O / PULSE_PER_DEGREE,
+			  position_error.distance / PULSE_PER_MM,
+			  position_error.angle / PULSE_PER_DEGREE,
+			  speed_order.distance / PULSE_PER_MM,
+			  speed_order.angle / PULSE_PER_DEGREE,
+			  speed_current.distance / PULSE_PER_MM,
+			  speed_current.angle / PULSE_PER_DEGREE);
+
 	/* position correction */
 	if (ctrl->regul != CTRL_REGUL_POSE_ANGL
 	    && fabs(position_error.distance) > ctrl->min_distance_for_angular_switch) {
@@ -240,8 +258,19 @@ void task_controller_update()
 		case CTRL_STATE_INGAME:
 		{
 			if (tempo >= 4500) {
+				cons_printf(">>>>\n");
 				controller.mode = CTRL_STATE_STOP;
 				break;
+			}
+
+			if (!tempo) {
+				cons_printf("<<<< polar_simu.csv\n");
+				cons_printf("pose_order_x,pose_order_y,pose_order_a,"
+					    "pose_current_x,pose_current_y,pose_current_a,"
+					    "position_error_l,position_error_a,"
+					    "speed_order_l,speed_order_a,"
+					    "speed_current_l,speed_current_a,"
+					    "\n");
 			}
 
 			tempo++;
