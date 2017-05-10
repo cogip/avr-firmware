@@ -115,7 +115,7 @@ exit_point:
  */
 
 #define TASK_CALIB_STACK	256
-#define TASK_CTRL_STACK		256
+#define TASK_CTRL_STACK		512
 
 void mach_tasks_init()
 {
