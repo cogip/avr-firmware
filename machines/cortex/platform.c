@@ -245,6 +245,7 @@ hbridge_t hbridges = {
 controller_t controller = {
 	.wheels_distance = WHEELS_DISTANCE,
 
+#if defined(__AVR__)
 	.linear_speed_pid = {
 		.kp = 2.0,
 		.ki = 0.1,
@@ -265,6 +266,28 @@ controller_t controller = {
 		.ki = 0,
 		.kd = 0.4,
 	},
+#else
+	.linear_speed_pid = {
+		.kp = 2.9,
+		.ki = 0.15,
+		.kd = 0,
+	},
+	.angular_speed_pid = {
+		.kp = 2,
+		.ki = 0.05,
+		.kd = 0,
+	},
+	.linear_pose_pid = {
+		.kp = 0.050,
+		.ki = 0,
+		.kd = 0.4,
+	},
+	.angular_pose_pid = {
+		.kp = 0.050,
+		.ki = 0,
+		.kd = 0.4,
+	},
+#endif
 
 	//.min_distance_for_angular_switch = 500,
 	.min_distance_for_angular_switch = 100,
