@@ -1,7 +1,7 @@
 #include "odometry.h"
 
-#define POLY_MAX 64
-#define POLY_MAX_POINTS 128
+#define POLY_MAX 32
+#define POLY_MAX_POINTS 8
 
 #define GRAPH_MAX_VERTICES 32
 
