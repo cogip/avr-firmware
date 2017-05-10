@@ -241,10 +241,12 @@ void sd21_setup(sd21_t *obj)
 
 	twi_master_setup(obj->twi, obj->twi_speed_khz);
 
+#if defined(CONFIG_SD21_INIT_AT_STARTUP)
 	for (i = 0; i < obj->servos_nb; i++) {
 		uint16_t value_init = obj->servos[i].value_init;
 
 		if (value_init)
 			sd21_send_twi_cmd(obj->twi, i, 0, value_init);
 	}
+#endif
 }

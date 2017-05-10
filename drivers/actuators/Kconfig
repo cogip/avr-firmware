@@ -7,4 +7,13 @@ config SD21
 	help
 	   This add support of SD21 for servo control.
 
+config SD21_INIT_AT_STARTUP
+	bool "Send init value at startup"
+	depends on SD21
+	default y
+	help
+	   This send init value to SD-21 daughter board at power-on. Disable
+	   this feature when servo are not calibrated to let the board to set
+	   them to middle point by default.
+
 endmenu
