@@ -41,6 +41,7 @@ int avoidance(const pose_t *start, const pose_t *finish)
 
 	/* Build path graph */
 	build_avoidance_graph();
+	dijkstra(1);
 
 	return 0;
 }
@@ -174,6 +175,7 @@ void build_avoidance_graph(void)
 						graph[p][p2] = (valid_points.points[p2].x-valid_points.points[p].x);
 						graph[p][p2] *= (valid_points.points[p2].x-valid_points.points[p].x);
 						graph[p][p2] += (valid_points.points[p2].y-valid_points.points[p].y) * (valid_points.points[p2].y-valid_points.points[p].y);
+						graph[p][p2] = sqrt(graph[p][p2]);
 						graph[p2][p] = graph[p][p2];
 					}
 				}
@@ -258,4 +260,48 @@ bool is_point_in_polygon(const polygon_t *polygon, pose_t p)
 	}
 
 	return true;
+}
+
+
+void dijkstra(uint16_t target)
+{
+	bool checked[GRAPH_MAX_VERTICES];
+	double distance[GRAPH_MAX_VERTICES];
+	uint16_t v;
+	double weight;
+	double min_distance;
+	int parent[GRAPH_MAX_VERTICES];
+	/* TODO: start should be a parameter. More clean even if start is always index 0 in our case */
+	int start = 0;
+
+	for (int i = 0; i <= valid_points.count; i++)
+	{
+		checked[i] = false;
+		distance[i] = DIJKSTRA_MAX_DISTANCE;
+		parent[i] = -1;
+	}
+
+	distance[start] = 0;
+	v = start;
+
+	while ((v != target) && (checked[v] == false))
+	{
+		min_distance = DIJKSTRA_MAX_DISTANCE;
+		checked[v] = true;
+		for (int i = 0; i < valid_points.count; i++)
+		{
+			weight = graph[v][i];
+			if ((weight >= 0) && (distance[i] > (distance[v] + weight)))
+			{
+				distance[i] = distance[v] + weight;
+				parent[i] = v;
+			}
+			if ((checked[i] == false) && (min_distance > distance[i]))
+			{
+				min_distance = distance[i];
+				v = i;
+			}
+		}
+
+	}
 }

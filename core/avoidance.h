@@ -4,6 +4,7 @@
 #define POLY_MAX_POINTS 8
 
 #define GRAPH_MAX_VERTICES 32
+#define DIJKSTRA_MAX_DISTANCE 13000000
 
 /* Boolean */
 /* TODO: define this elsewhere */
@@ -28,6 +29,7 @@ typedef struct
 	pose_t *points;
 } polygon_t;
 
+void dijkstra();
 int avoidance(const pose_t *start, const pose_t *finish);
 void init_polygons(void);
 void build_avoidance_graph(void);
