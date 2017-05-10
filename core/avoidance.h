@@ -3,6 +3,8 @@
 #define POLY_MAX 64
 #define POLY_MAX_POINTS 128
 
+#define GRAPH_MAX_VERTICES 32
+
 /* Boolean */
 /* TODO: define this elsewhere */
 typedef enum
@@ -26,6 +28,7 @@ typedef struct
 	pose_t *points;
 } polygon_t;
 
+int avoidance(const pose_t *start, const pose_t *finish);
 void init_polygons(void);
 void build_avoidance_graph(void);
 int add_polygon(polygon_t *polygon);

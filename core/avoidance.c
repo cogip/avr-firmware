@@ -14,9 +14,32 @@ static int nb_polygons = 0;
 /* Special polygon used as a simple list of visible points */
 static polygon_t valid_points;
 
+static double graph[GRAPH_MAX_VERTICES][GRAPH_MAX_VERTICES];
+
 int avoidance(const pose_t *start, const pose_t *finish)
 {
+	/* Init all obstacles */
 	init_polygons();
+
+	/* Check that start and destination point are not in a polygon */
+	for (int j = 0; j < nb_polygons; j++)
+	{
+		if ((start == NULL) || (finish == NULL)
+			||(is_point_in_polygon(&polygons[j], *start) == true)
+			|| (is_point_in_polygon(&polygons[j], *finish) == true))
+		{
+			return -1;
+		}
+	}
+
+	valid_points.count = 0;
+	if (valid_points.points)
+		free(valid_points.points);
+	valid_points.points = (pose_t *)malloc(2*sizeof(pose_t));
+	valid_points.points[valid_points.count++] = *start;
+	valid_points.points[valid_points.count++] = *finish;
+
+	/* Build path graph */
 	build_avoidance_graph();
 
 	return 0;
@@ -75,8 +98,6 @@ void init_polygons(void)
  * List all  visible points : all points not contained in a polygon */
 void build_avoidance_graph(void)
 {
-	valid_points.count=0;
-
 	/* For each polygon */
 	for (int i = 0; i < nb_polygons; i++)
 	{
@@ -100,6 +121,7 @@ void build_avoidance_graph(void)
 			/* If that point is not in an other polygon, add it to the list of valid points */
 			if (collide == 0)
 			{
+				valid_points.points = (pose_t *)realloc(valid_points.points, (valid_points.count+1)*sizeof(pose_t));
 				valid_points.points[valid_points.count++] = polygons[i].points[p];
 			}
 		}
@@ -147,6 +169,21 @@ void build_avoidance_graph(void)
 				if (collide == 0)
 				{
 					/* TODO, build the graph */
+					if ((p < GRAPH_MAX_VERTICES) && (p2 < GRAPH_MAX_VERTICES))
+					{
+						graph[p][p2] = (valid_points.points[p2].x-valid_points.points[p].x);
+						graph[p][p2] *= (valid_points.points[p2].x-valid_points.points[p].x);
+						graph[p][p2] += (valid_points.points[p2].y-valid_points.points[p].y) * (valid_points.points[p2].y-valid_points.points[p].y);
+						graph[p2][p] = graph[p][p2];
+					}
+				}
+				else
+				{
+					if ((p < GRAPH_MAX_VERTICES) && (p2 < GRAPH_MAX_VERTICES))
+					{
+						graph[p][p2] = -1;
+						graph[p2][p] = graph[p][p2];
+					}
 				}
 			}
 		}
