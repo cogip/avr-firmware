@@ -90,6 +90,8 @@ polar_t controller_update(controller_t *ctrl,
 			  polar_t speed_order,
 			  polar_t speed_current)
 {
+	polar_t command;
+	polar_t speed;
 	/* ******************** position pid controller ******************** */
 
 	/* compute position error */
@@ -157,16 +159,13 @@ polar_t controller_update(controller_t *ctrl,
 	}
 
 	/* compute speed command with position pid controller */
-	polar_t command;
-
 	command.distance = pid_controller(&ctrl->linear_pose_pid,
 					  position_error.distance);
 	command.angle = pid_controller(&ctrl->angular_pose_pid,
 				       position_error.angle);
 
-	/* limit speed command */
-	polar_t speed;
 
+	/* limit speed command */
 	speed.distance = limit_speed_command(command.distance,
 					     speed_order.distance,
 					     speed_current.distance);
