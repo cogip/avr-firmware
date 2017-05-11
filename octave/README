@@ -1,0 +1,26 @@
+Octave scripts
+--------------
+
+cal_pol.m: visualize pose PID on [x,y] virtual map
+==========
+
+1. Launch cortex.elf in simulation mode, start the game.
+
+   scripts/pty_tst ./cortex.elf
+
+# This will generates "polar_simu.csv"
+
+2. Filter logs eventually presents in CSV file:
+
+   grep -v '\<I\>' polar_simu.csv > polar_simu_clean.csv
+
+3. Launch octave to visualize the robot movements:
+
+   cd octave
+   octave &
+
+Then in octave command prompt, type: "cal_pol"
+
+Figure window will popup with relevant path.
+
+
