@@ -26,7 +26,8 @@ static polar_t compute_error(controller_t *ctrl,
 	double y = pose_order.y - pose_current.y;
 	double O = atan2(y, x);
 
-	error.angle = O * ctrl->wheels_distance;
+	//error.angle = O * ctrl->wheels_distance;
+	error.angle = (O * 360 / (2*M_PI)) * PULSE_PER_DEGREE;
 	error.distance = sqrt(square(x) + square(y));
 
 	return error;
