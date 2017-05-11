@@ -29,6 +29,7 @@ typedef struct
 	pose_t *points;
 } polygon_t;
 
+void dijkstra(uint16_t);
 void dijkstra();
 int avoidance(const pose_t *start, const pose_t *finish);
 void init_polygons(void);
