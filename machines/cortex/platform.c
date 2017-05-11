@@ -320,19 +320,25 @@ inline func_cb_t mach_get_end_of_game_pfn()
 pose_t mach_trajectory_get_route_update(void)
 {
 	static uint8_t latest_pos_idx = 0;
+#if 1
+	/* Path 3: Cross-cases. Used for trajectory 4-quadrant test-case */
 	pose_t pos_list[5];
 
-	pos_list[0].x = 21220.0 / 2; /*!< x-position [pulse] */
-	pos_list[0].y = 0.0; /*!< y-position [pulse] */
-	pos_list[0].O = 0.0; /*!< 0-orientation [pulse] */
+	pos_list[0].x = 400; /*!< x-position [pulse] */
+	pos_list[0].y = 150; /*!< y-position [pulse] */
+	pos_list[0].O = 180; /*!< 0-orientation [pulse] */
 
-	pos_list[1].x = 21220.0 / 2; /*!< x-position [pulse] */
-	pos_list[1].y = 0.0; /*!< y-position [pulse] */
-	pos_list[1].O = 180.0 * 2 * 25.88; /*!< 0-orientation [pulse] */
+	pos_list[1].x = -400; /*!< x-position [pulse] */
+	pos_list[1].y = -150; /*!< y-position [pulse] */
+	pos_list[1].O = 0; /*!< 0-orientation [pulse] */
 
-	pos_list[2].x = 21220.0; /*!< x-position [pulse] */
-	pos_list[2].y = 0.0; /*!< y-position [pulse] */
-	pos_list[2].O = 0.0; /*!< 0-orientation [pulse] */
+	pos_list[2].x = 400; /*!< x-position [pulse] */
+	pos_list[2].y = -150; /*!< y-position [pulse] */
+	pos_list[2].O = 0; /*!< 0-orientation [pulse] */
+
+	pos_list[3].x = -400; /*!< x-position [pulse] */
+	pos_list[3].y = 150; /*!< y-position [pulse] */
+	pos_list[3].O = 0; /*!< 0-orientation [pulse] */
 
 	pos_list[4].x = 0.0; /*!< x-position [pulse] */
 	pos_list[4].y = 0.0; /*!< y-position [pulse] */
@@ -342,6 +348,53 @@ pose_t mach_trajectory_get_route_update(void)
 		latest_pos_idx ++;
 		latest_pos_idx %= 5;
 	}
+#else
+#if 1
+	/* Path 2: Big angle (low X, high Y). Used for trajectory 'stress' */
+	pose_t pos_list[3];
+
+	pos_list[0].x = 100; /*!< x-position [pulse] */
+	pos_list[0].y = 500; /*!< y-position [pulse] */
+	pos_list[0].O = 180; /*!< 0-orientation [pulse] */
+
+	pos_list[1].x = 100; /*!< x-position [pulse] */
+	pos_list[1].y = 600; /*!< y-position [pulse] */
+	pos_list[1].O = -90; /*!< 0-orientation [pulse] */
+
+	pos_list[2].x = 0.0; /*!< x-position [pulse] */
+	pos_list[2].y = 0.0; /*!< y-position [pulse] */
+	pos_list[2].O = 0.0; /*!< 0-orientation [pulse] */
+
+	if (controller_get_pose_reached(&controller)) {
+		latest_pos_idx ++;
+		latest_pos_idx %= 3;
+	}
+#else
+	/* Path 1: X-axis only. Used for PID tuning */
+	pose_t pos_list[4];
+
+	pos_list[0].x = (21220.0 / 2) / PULSE_PER_MM; /*!< x-position [pulse] */
+	pos_list[0].y = 0.0; /*!< y-position [pulse] */
+	pos_list[0].O = 0.0; /*!< 0-orientation [pulse] */
+
+	pos_list[1].x = (21220.0 / 2)  / PULSE_PER_MM; /*!< x-position [pulse] */
+	pos_list[1].y = 0.0; /*!< y-position [pulse] */
+	pos_list[1].O = 180.0; /*!< 0-orientation [pulse] */
+
+	pos_list[2].x = 21220.0 / PULSE_PER_MM; /*!< x-position [pulse] */
+	pos_list[2].y = 0.0; /*!< y-position [pulse] */
+	pos_list[2].O = 0.0; /*!< 0-orientation [pulse] */
+
+	pos_list[3].x = 0.0; /*!< x-position [pulse] */
+	pos_list[3].y = 0.0; /*!< y-position [pulse] */
+	pos_list[3].O = 0.0; /*!< 0-orientation [pulse] */
+
+	if (controller_get_pose_reached(&controller)) {
+		latest_pos_idx ++;
+		latest_pos_idx %= 4;
+	}
+#endif
+#endif
 
 	return pos_list[latest_pos_idx];
 }
