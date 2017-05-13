@@ -160,6 +160,11 @@ void build_avoidance_graph(void)
 							collide++;
 							break;
 						}
+						if (is_point_on_segment(valid_points.points[p],valid_points.points[p2], polygons[i].points[v]) == true)
+						{
+							collide++;
+							break;
+						}
 					}
 					if (collide != 0)
 					{
@@ -190,7 +195,31 @@ void build_avoidance_graph(void)
 			}
 		}
 	}
+}
 
+bool is_point_on_segment(pose_t a, pose_t b, pose_t o)
+{
+	bool res = false;
+
+	if ((b.x - a.x) / (b.y - a.y) == (b.x - o.x) / (b.y - o.y))
+	{
+		if (a.x < b.x)
+		{
+			if ((o.x < b.x) && (o.x > a.x))
+			{
+				res = true;
+			}
+		}
+		else
+		{
+			if ((o.x < a.x) && (o.x > b.x))
+			{
+				res = true;
+			}
+		}
+	}
+
+	return res;
 }
 
 bool is_segment_crossing_line(pose_t a, pose_t b, pose_t o, pose_t p)

@@ -39,3 +39,4 @@ bool is_point_in_polygon(const polygon_t *polygons,pose_t p);
 int8_t get_point_index_in_polygon(const polygon_t *polygons,pose_t p);
 bool is_segment_crossing_line(pose_t a, pose_t b, pose_t o, pose_t p);
 bool is_segment_crossing_segment(pose_t a,pose_t b,pose_t o,pose_t p);
+bool is_point_on_segment(pose_t a, pose_t b, pose_t o);
