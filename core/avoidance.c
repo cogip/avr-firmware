@@ -14,7 +14,7 @@ static int nb_polygons = 0;
 /* Special polygon used as a simple list of visible points */
 static polygon_t valid_points;
 
-static double graph[GRAPH_MAX_VERTICES][GRAPH_MAX_VERTICES];
+static uint64_t graph[GRAPH_MAX_VERTICES];
 
 int avoidance(const pose_t *start, const pose_t *finish)
 {
@@ -172,24 +172,17 @@ void build_avoidance_graph(void)
 					}
 				}
 				/* If no collision, both points of the segment are added to the graph with distance between them */
-				if (collide == 0)
+				if ((p < GRAPH_MAX_VERTICES) && (p2 < GRAPH_MAX_VERTICES))
 				{
-					/* TODO, build the graph */
-					if ((p < GRAPH_MAX_VERTICES) && (p2 < GRAPH_MAX_VERTICES))
+					if (collide == 0)
 					{
-						graph[p][p2] = (valid_points.points[p2].x-valid_points.points[p].x);
-						graph[p][p2] *= (valid_points.points[p2].x-valid_points.points[p].x);
-						graph[p][p2] += (valid_points.points[p2].y-valid_points.points[p].y) * (valid_points.points[p2].y-valid_points.points[p].y);
-						graph[p][p2] = sqrt(graph[p][p2]);
-						graph[p2][p] = graph[p][p2];
+						graph[p] |= (1 << p2);
+						graph[p2] |= (1 << p);
 					}
-				}
-				else
-				{
-					if ((p < GRAPH_MAX_VERTICES) && (p2 < GRAPH_MAX_VERTICES))
+					else
 					{
-						graph[p][p2] = -1;
-						graph[p2][p] = graph[p][p2];
+						graph[p] &= ~(1 << p2);
+						graph[p2] &= ~(1 << p);
 					}
 				}
 			}
@@ -317,20 +310,29 @@ void dijkstra(uint16_t target)
 	{
 		min_distance = DIJKSTRA_MAX_DISTANCE;
 		checked[v] = true;
-		for (int i = 0; i < valid_points.count; i++)
+		for (uint8_t i = 0; i < valid_points.count; i++)
 		{
-			weight = graph[v][i];
-			if ((weight >= 0) && (distance[i] > (distance[v] + weight)))
+			if (graph[v] & (1 << i))
 			{
-				distance[i] = distance[v] + weight;
-				parent[i] = v;
+				weight = (valid_points.points[v].x - valid_points.points[i].x);
+				weight *= (valid_points.points[v].x - valid_points.points[i].x);
+				weight += (valid_points.points[v].y - valid_points.points[i].y)
+					* (valid_points.points[v].y - valid_points.points[i].y);
+				weight = sqrt(weight);
+				if ((weight >= 0 ) && (distance[i] > (distance[v] + weight)))
+				{
+					distance[i] = distance[v] + weight;
+					parent[i] = v;
+				}
 			}
+		}
+		for (uint8_t i = 1; i < valid_points.count; i++)
+		{
 			if ((checked[i] == false) && (min_distance > distance[i]))
 			{
 				min_distance = distance[i];
 				v = i;
 			}
 		}
-
 	}
 }

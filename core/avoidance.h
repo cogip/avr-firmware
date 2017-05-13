@@ -3,7 +3,7 @@
 #define POLY_MAX 32
 #define POLY_MAX_POINTS 8
 
-#define GRAPH_MAX_VERTICES 32
+#define GRAPH_MAX_VERTICES 64
 #define DIJKSTRA_MAX_DISTANCE 13000000
 
 /* Boolean */
