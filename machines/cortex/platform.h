@@ -6,6 +6,7 @@
 #include "hbridge.h"
 #include "log.h"
 #include "odometry.h"
+#include "path.h"
 #include "qdec.h"
 #include "sd21.h"
 
@@ -36,7 +37,6 @@
 /* WHEELS_DISTANCE*2*pi pulses for 360 deg. Thus 51.76 pulses per deg */
 #define PULSE_PER_DEGREE		51.76
 
-#define POSE_INITIAL			{ 0, 0, 0 }
 #define MAX_ACC				15
 
 #define HBRIDGE_MOTOR_LEFT		0
