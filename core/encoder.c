@@ -39,7 +39,7 @@ polar_t encoder_read(void)
 	robot_speed.angle = right_speed - left_speed;
 
 	if (display_dbg && ! --_cpt) {
-		static pose_t	robot_pose		= POSE_INITIAL;
+		static pose_t	robot_pose		= {0,0,0};
 
 		_cpt = 6;//(25);
 

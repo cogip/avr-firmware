@@ -10,6 +10,8 @@
 
 #include "controller.h"
 
+static uint16_t tempo;
+
 /**
  * \fn polar_t compute_error(const pose_t p1, const pose_t p2)
  * \brief compute error between 2 poses
@@ -21,13 +23,20 @@ static polar_t compute_error(controller_t *ctrl,
 			     const pose_t pose_order, const pose_t pose_current)
 {
 	polar_t error;
+	double x, y, O;
 
-	double x = pose_order.x - pose_current.x;
-	double y = pose_order.y - pose_current.y;
-	double O = atan2(y, x);
+	x = pose_order.x - pose_current.x;
+	y = pose_order.y - pose_current.y;
 
-	//error.angle = O * ctrl->wheels_distance;
-	error.angle = (O * 360 / (2*M_PI)) * PULSE_PER_DEGREE;
+	O = atan2(y, x) - DEG2RAD(pose_current.O);
+
+	while (O > M_PI)
+		O -= 2.0 * M_PI;
+
+	while (O < -M_PI)
+		O += 2.0 * M_PI;
+
+	error.angle = RAD2DEG(O);
 	error.distance = sqrt(square(x) + square(y));
 
 	return error;
@@ -95,7 +104,9 @@ polar_t controller_update(controller_t *ctrl,
 	/* ******************** position pid controller ******************** */
 
 	/* compute position error */
-	polar_t position_error = compute_error(ctrl, pose_order, pose_current);
+	polar_t position_error;
+
+	position_error = compute_error(ctrl, pose_order, pose_current);
 
 	ctrl->pose_reached = 0;
 
@@ -103,38 +114,40 @@ polar_t controller_update(controller_t *ctrl,
 		    "%+.0f,%+.0f,"
 		    "%+.0f,%+.0f,"
 		    "%+.0f,%+.0f,"
+		    "%d,"
 		    "\n",
 			  pose_order.x / PULSE_PER_MM,
 			  pose_order.y / PULSE_PER_MM,
-			  pose_order.O / PULSE_PER_DEGREE,
+			  pose_order.O,
 			  pose_current.x / PULSE_PER_MM,
 			  pose_current.y / PULSE_PER_MM,
-			  pose_current.O / PULSE_PER_DEGREE,
+			  pose_current.O,
 			  position_error.distance / PULSE_PER_MM,
-			  position_error.angle / PULSE_PER_DEGREE,
+			  position_error.angle,
 			  speed_order.distance / PULSE_PER_MM,
-			  speed_order.angle / PULSE_PER_DEGREE,
+			  speed_order.angle,
 			  speed_current.distance / PULSE_PER_MM,
-			  speed_current.angle / PULSE_PER_DEGREE);
+			  speed_current.angle,
+			  tempo);
 
 	/* position correction */
 	if (ctrl->regul != CTRL_REGUL_POSE_ANGL
 	    && fabs(position_error.distance) > ctrl->min_distance_for_angular_switch) {
 
-		position_error.angle -= pose_current.O;
-
+#if 0
 		/* should we go reverse? */
-		if (fabs(position_error.angle) > (90 * PULSE_PER_DEGREE)) {
+		if (fabs(position_error.angle) > 90) {
 			position_error.distance = -position_error.distance;
 
 			if (position_error.angle < 0)
-				position_error.angle += 180 * PULSE_PER_DEGREE;
+				position_error.angle += 180;
 			else
-				position_error.angle -= 180 * PULSE_PER_DEGREE;
+				position_error.angle -= 180;
 		}
+#endif
 
 		/* if target point direction angle is too important, bot rotates on its starting point */
-		if (fabs(position_error.angle) > 45 * PULSE_PER_DEGREE) {
+		if (fabs(position_error.angle) > ctrl->min_angle_for_pose_reached / PULSE_PER_DEGREE) {
 			position_error.distance = 0;
 			pid_reset(&ctrl->linear_pose_pid);
 		}
@@ -145,18 +158,18 @@ polar_t controller_update(controller_t *ctrl,
 		position_error.distance = 0;
 		pid_reset(&ctrl->linear_pose_pid);
 
-		/* unit in [pulse] */
-		position_error.angle = pose_order.O - pose_current.O;
-
 		/* orientation is reached */
-		if (fabs(position_error.angle) < ctrl->min_angle_for_pose_reached) {
+		if (fabs(position_error.angle) < ctrl->min_angle_for_pose_reached / PULSE_PER_DEGREE) {
 			position_error.angle = 0;
 			pid_reset(&ctrl->angular_pose_pid);
 
 			ctrl->pose_reached = 1;
 			ctrl->regul = CTRL_REGUL_POSE_DIST; //CTRL_REGUL_IDLE;
+			print_info ("pose_reached\n");
 		}
 	}
+
+	position_error.angle *= PULSE_PER_DEGREE;
 
 	/* compute speed command with position pid controller */
 	command.distance = pid_controller(&ctrl->linear_pose_pid,
@@ -181,8 +194,6 @@ inline uint8_t controller_get_pose_reached(controller_t *ctrl)
 {
 	return ctrl->pose_reached;
 }
-
-static uint16_t tempo;
 
 static void show_game_time()
 {
@@ -221,6 +232,8 @@ void task_controller_update()
 	func_cb_t pfn_evtloop_end_of_game = mach_get_end_of_game_pfn();
 	uint8_t stop = 0;
 
+	robot_pose.x *= PULSE_PER_MM;
+	robot_pose.y *= PULSE_PER_MM;
 	controller.regul = CTRL_REGUL_POSE_DIST;
 
 	for (;;) {
@@ -271,6 +284,7 @@ void task_controller_update()
 					    "position_error_l,position_error_a,"
 					    "speed_order_l,speed_order_a,"
 					    "speed_current_l,speed_current_a,"
+					    "tempo,"
 					    "\n");
 			}
 
@@ -283,12 +297,13 @@ void task_controller_update()
 			/* convert to position */
 			odometry_update(&robot_pose, &robot_speed, SEGMENT);
 
+			robot_pose.O /= PULSE_PER_DEGREE;
+
 			/* get next pose_t to reach */
 			pose_order = mach_trajectory_get_route_update();
 
 			pose_order.x *= PULSE_PER_MM;
 			pose_order.y *= PULSE_PER_MM;
-			pose_order.O *= PULSE_PER_DEGREE;
 
 			/* collision detection */
 			stop = mach_stop_robot();
@@ -300,7 +315,7 @@ void task_controller_update()
 				/* speed order in position = 60 pulses / 20ms */
 				speed_order.distance = 150;
 				/* speed order in angle? = 60 pulses / 20ms */
-				speed_order.angle = 150;
+				speed_order.angle = 150 / 2;
 			}
 
 			/* PID / feedback control */
@@ -310,6 +325,7 @@ void task_controller_update()
 							  speed_order,
 							  robot_speed);
 
+			robot_pose.O *= PULSE_PER_DEGREE;
 			/* set speed to wheels */
 			motor_drive(motor_command);
 		}
