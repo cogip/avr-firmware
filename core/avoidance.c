@@ -11,8 +11,9 @@ static polygon_t polygons[POLY_MAX];
 /* Number of polygons */
 static int nb_polygons = 0;
 
-/* Special polygon used as a simple list of visible points */
-static polygon_t valid_points;
+/* List of visible points */
+static pose_t valid_points[MAX_POINTS];
+static uint8_t valid_points_count = 0;
 
 static uint64_t graph[GRAPH_MAX_VERTICES];
 
@@ -32,12 +33,9 @@ int avoidance(const pose_t *start, const pose_t *finish)
 		}
 	}
 
-	valid_points.count = 0;
-	if (valid_points.points)
-		free(valid_points.points);
-	valid_points.points = (pose_t *)malloc(2*sizeof(pose_t));
-	valid_points.points[valid_points.count++] = *start;
-	valid_points.points[valid_points.count++] = *finish;
+	valid_points_count = 0;
+	valid_points[valid_points_count++] = *start;
+	valid_points[valid_points_count++] = *finish;
 
 	/* Build path graph */
 	build_avoidance_graph();
@@ -67,29 +65,16 @@ void init_polygons(void)
 	polygon_t polygon;
 	uint8_t nb_vertices;
 
-	polygon.count = 0;
-	nb_vertices = 6;
-	if (nb_vertices < POLY_MAX_POINTS)
-	{
-		polygon.points = (pose_t *)malloc(nb_vertices * sizeof(pose_t));
-		polygon.points[polygon.count++] = (pose_t){.x = 25, .y = 45};
-		polygon.points[polygon.count++] = (pose_t){.x = 37.5, .y = 35};
-		polygon.points[polygon.count++] = (pose_t){.x = 50, .y = 45};
-		polygon.points[polygon.count++] = (pose_t){.x = 50, .y = 50};
-		polygon.points[polygon.count++] = (pose_t){.x = 37.5, .y = 52};
-		polygon.points[polygon.count++] = (pose_t){.x = 25, .y = 50};
-		add_polygon(&polygon);
-	}
+	nb_polygons = 0;
 
 	polygon.count = 0;
 	nb_vertices = 4;
 	if (nb_vertices < POLY_MAX_POINTS)
 	{
-		polygon.points = (pose_t *)malloc(nb_vertices * sizeof(pose_t));
-		polygon.points[polygon.count++] = (pose_t){.x = 20, .y = 20};
-		polygon.points[polygon.count++] = (pose_t){.x = 60, .y = 20};
-		polygon.points[polygon.count++] = (pose_t){.x = 60, .y = 40};
-		polygon.points[polygon.count++] = (pose_t){.x = 20, .y = 40};
+		polygon.points[polygon.count++] = (pose_t){.x = 1000, .y = 600};
+		polygon.points[polygon.count++] = (pose_t){.x = 1400, .y = 600};
+		polygon.points[polygon.count++] = (pose_t){.x = 1400, .y = 1000};
+		polygon.points[polygon.count++] = (pose_t){.x = 1000, .y = 1000};
 		add_polygon(&polygon);
 	}
 }
@@ -122,16 +107,15 @@ void build_avoidance_graph(void)
 			/* If that point is not in an other polygon, add it to the list of valid points */
 			if (collide == 0)
 			{
-				valid_points.points = (pose_t *)realloc(valid_points.points, (valid_points.count+1)*sizeof(pose_t));
-				valid_points.points[valid_points.count++] = polygons[i].points[p];
+				valid_points[valid_points_count++] = polygons[i].points[p];
 			}
 		}
 	}
 
 	/* For each segment of the valid points list */
-	for (int p = 0; p < valid_points.count; p++)
+	for (int p = 0; p < valid_points_count; p++)
 	{
-		for (int p2 = p+1; p2 < valid_points.count; p2++)
+		for (int p2 = p+1; p2 < valid_points_count; p2++)
 		{
 			bool collide = 0;
 			if (p != p2)
@@ -143,14 +127,14 @@ void build_avoidance_graph(void)
 					{
 						pose_t p_next = ( (v + 1 == polygons[i].count) ? polygons[i].points[0] : polygons[i].points[v + 1]);
 
-						if (is_segment_crossing_segment(valid_points.points[p],valid_points.points[p2], polygons[i].points[v], p_next) == true)
+						if (is_segment_crossing_segment(valid_points[p],valid_points[p2], polygons[i].points[v], p_next) == true)
 						{
 							collide++;
 							break;
 						}
 						/* Special case of internal crossing of a polygon */
-						int8_t index = get_point_index_in_polygon(&polygons[i], valid_points.points[p]);
-						int8_t index2 = get_point_index_in_polygon(&polygons[i], valid_points.points[p2]);
+						int8_t index = get_point_index_in_polygon(&polygons[i], valid_points[p]);
+						int8_t index2 = get_point_index_in_polygon(&polygons[i], valid_points[p2]);
 						if ((index == 0) && (index2 == (polygons[i].count - 1)))
 							continue;
 						if ((index2 == 0) && (index == (polygons[i].count - 1)))
@@ -160,7 +144,7 @@ void build_avoidance_graph(void)
 							collide++;
 							break;
 						}
-						if (is_point_on_segment(valid_points.points[p],valid_points.points[p2], polygons[i].points[v]) == true)
+						if (is_point_on_segment(valid_points[p],valid_points[p2], polygons[i].points[v]) == true)
 						{
 							collide++;
 							break;
@@ -296,7 +280,7 @@ void dijkstra(uint16_t target)
 	/* TODO: start should be a parameter. More clean even if start is always index 0 in our case */
 	int start = 0;
 
-	for (int i = 0; i <= valid_points.count; i++)
+	for (int i = 0; i <= valid_points_count; i++)
 	{
 		checked[i] = false;
 		distance[i] = DIJKSTRA_MAX_DISTANCE;
@@ -310,14 +294,14 @@ void dijkstra(uint16_t target)
 	{
 		min_distance = DIJKSTRA_MAX_DISTANCE;
 		checked[v] = true;
-		for (uint8_t i = 0; i < valid_points.count; i++)
+		for (i = 0; i < valid_points_count; i++)
 		{
 			if (graph[v] & (1 << i))
 			{
-				weight = (valid_points.points[v].x - valid_points.points[i].x);
-				weight *= (valid_points.points[v].x - valid_points.points[i].x);
-				weight += (valid_points.points[v].y - valid_points.points[i].y)
-					* (valid_points.points[v].y - valid_points.points[i].y);
+				weight = (valid_points[v].x - valid_points[i].x);
+				weight *= (valid_points[v].x - valid_points[i].x);
+				weight += (valid_points[v].y - valid_points[i].y)
+					* (valid_points[v].y - valid_points[i].y);
 				weight = sqrt(weight);
 				if ((weight >= 0 ) && (distance[i] > (distance[v] + weight)))
 				{
@@ -326,7 +310,7 @@ void dijkstra(uint16_t target)
 				}
 			}
 		}
-		for (uint8_t i = 1; i < valid_points.count; i++)
+		for (i = 1; i < valid_points_count; i++)
 		{
 			if ((checked[i] == false) && (min_distance > distance[i]))
 			{

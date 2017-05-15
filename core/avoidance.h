@@ -1,5 +1,7 @@
 #include "odometry.h"
 
+
+#define MAX_POINTS 64
 #define POLY_MAX 32
 #define POLY_MAX_POINTS 8
 
@@ -26,7 +28,7 @@ typedef struct
 typedef struct
 {
 	uint8_t count;
-	pose_t *points;
+	pose_t points[POLY_MAX_POINTS];
 } polygon_t;
 
 void dijkstra(uint16_t);
