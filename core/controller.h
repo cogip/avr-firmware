@@ -44,6 +44,7 @@ typedef struct {
 
 	controller_regul_t regul;
 	uint8_t pose_reached;
+	uint8_t pose_intermediate;
 } controller_t;
 
 
@@ -54,6 +55,7 @@ polar_t controller_update(controller_t *ctrl,
 			  pose_t pose_setpoint, pose_t current_pose,
 			  polar_t speed_setpoint, polar_t current_speed);
 
+void controller_set_pose_intermediate(controller_t *ctrl, uint8_t intermediate);
 uint8_t controller_get_pose_reached(controller_t *ctrl);
 
 void task_controller_update();

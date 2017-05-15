@@ -188,6 +188,11 @@ polar_t controller_update(controller_t *ctrl,
 	return speed_controller(ctrl, speed, speed_current);
 }
 
+inline void controller_set_pose_intermediate(controller_t *ctrl, uint8_t intermediate)
+{
+	ctrl->pose_intermediate = intermediate;
+}
+
 inline uint8_t controller_get_pose_reached(controller_t *ctrl)
 {
 	return ctrl->pose_reached;
