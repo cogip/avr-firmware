@@ -31,8 +31,8 @@ typedef struct
 	pose_t points[POLY_MAX_POINTS];
 } polygon_t;
 
-void dijkstra(uint16_t);
-int avoidance(const pose_t *start, const pose_t *finish);
+pose_t dijkstra(uint16_t);
+pose_t avoidance(const pose_t *start, const pose_t *finish);
 void init_polygons(void);
 void build_avoidance_graph(void);
 int add_polygon(polygon_t *polygon);

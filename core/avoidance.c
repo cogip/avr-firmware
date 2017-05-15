@@ -17,7 +17,7 @@ static uint8_t valid_points_count = 0;
 
 static uint64_t graph[GRAPH_MAX_VERTICES];
 
-int avoidance(const pose_t *start, const pose_t *finish)
+pose_t avoidance(const pose_t *start, const pose_t *finish)
 {
 	/* Init all obstacles */
 	init_polygons();
@@ -29,7 +29,7 @@ int avoidance(const pose_t *start, const pose_t *finish)
 			||(is_point_in_polygon(&polygons[j], *start) == true)
 			|| (is_point_in_polygon(&polygons[j], *finish) == true))
 		{
-			return -1;
+			return *start;
 		}
 	}
 
@@ -39,9 +39,7 @@ int avoidance(const pose_t *start, const pose_t *finish)
 
 	/* Build path graph */
 	build_avoidance_graph();
-	dijkstra(1);
-
-	return 0;
+	return dijkstra(1);
 }
 
 /* Add a polygon to obstacle list */
@@ -269,11 +267,12 @@ bool is_point_in_polygon(const polygon_t *polygon, pose_t p)
 }
 
 
-void dijkstra(uint16_t target)
+pose_t dijkstra(uint16_t target)
 {
 	bool checked[GRAPH_MAX_VERTICES];
 	double distance[GRAPH_MAX_VERTICES];
 	uint16_t v;
+	int i;
 	double weight;
 	double min_distance;
 	int parent[GRAPH_MAX_VERTICES];
@@ -319,4 +318,10 @@ void dijkstra(uint16_t target)
 			}
 		}
 	}
+
+	i = 1;
+	while (parent[i] > 0)
+		i = parent[i];
+
+	return valid_points[i];
 }
