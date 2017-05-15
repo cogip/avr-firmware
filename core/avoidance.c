@@ -257,7 +257,7 @@ bool is_point_in_polygon(const polygon_t *polygon, pose_t p)
 
 		d = ab.x*ap.y - ab.y*ap.x;
 
-		if (d < 0)
+		if (d <= 0)
 		{
 			return false;
 		}
