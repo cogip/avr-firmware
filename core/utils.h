@@ -15,4 +15,6 @@ typedef void (*func_cb_t)(void);
 #define RAD2DEG(a) (a * 360.0 / (2.0*M_PI))
 #define DEG2RAD(a) (a * (2.0*M_PI) / 360.0)
 
+double limit_angle_rad(double O);
+
 #endif /* UTILS_H_ */
