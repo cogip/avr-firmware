@@ -28,13 +28,7 @@ static polar_t compute_error(controller_t *ctrl,
 	x = pose_order.x - pose_current.x;
 	y = pose_order.y - pose_current.y;
 
-	O = atan2(y, x) - DEG2RAD(pose_current.O);
-
-	while (O > M_PI)
-		O -= 2.0 * M_PI;
-
-	while (O < -M_PI)
-		O += 2.0 * M_PI;
+	O = limit_angle_rad(atan2(y, x) - DEG2RAD(pose_current.O));
 
 	error.angle = RAD2DEG(O);
 	error.distance = sqrt(square(x) + square(y));
