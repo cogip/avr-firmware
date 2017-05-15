@@ -4,6 +4,7 @@
 #include "gpio.h"
 #include "usart.h"
 
+#include "avoidance.h"
 #include "console.h"
 #include "kos.h"
 #include "msched.h"
@@ -324,15 +325,30 @@ inline func_cb_t mach_get_end_of_game_pfn()
 
 pose_t mach_trajectory_get_route_update(void)
 {
-	pose_t pose_to_reach;
-	static uint8_t latest_pos_idx = 0;
+	static pose_t pose_reached = POSE_INITIAL;
+	static pose_t pose_to_reach;
+	static int8_t latest_pos_idx = -1;
 
-	if (controller_get_pose_reached(&controller)
-	    && latest_pos_idx + 1 < path_game_yellow_nb) {
-		latest_pos_idx ++;
+	if (latest_pos_idx == -1)
+	{
+		latest_pos_idx = 0;
+		pose_to_reach = path_game_yellow[latest_pos_idx].pos;
 	}
 
-	pose_to_reach = path_game_yellow[latest_pos_idx].pos;
+	if (controller_get_pose_reached(&controller))
+	{
+		if ((pose_to_reach.x == path_game_yellow[latest_pos_idx].pos.x)
+			&& (pose_to_reach.y == path_game_yellow[latest_pos_idx].pos.y))
+		{
+			if (latest_pos_idx + 1 < path_game_yellow_nb)
+			{
+				latest_pos_idx ++;
+			}
+		}
+		pose_reached = pose_to_reach;
+	}
+
+	pose_to_reach = avoidance(&pose_reached, &(path_game_yellow[latest_pos_idx].pos));
 
 	return pose_to_reach;
 }
