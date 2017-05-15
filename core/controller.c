@@ -150,8 +150,11 @@ polar_t controller_update(controller_t *ctrl,
 		ctrl->regul = CTRL_REGUL_POSE_ANGL;
 
 		/* final orientation error */
-		position_error.angle = limit_angle_rad(DEG2RAD(pose_order.O) - DEG2RAD(pose_current.O));
-		position_error.angle = RAD2DEG(position_error.angle);
+		if (!ctrl->pose_intermediate)
+		{
+			position_error.angle = limit_angle_rad(DEG2RAD(pose_order.O) - DEG2RAD(pose_current.O));
+			position_error.angle = RAD2DEG(position_error.angle);
+		}
 
 		position_error.distance = 0;
 		pid_reset(&ctrl->linear_pose_pid);
