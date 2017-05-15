@@ -1,9 +1,8 @@
 #include "odometry.h"
 
-
 #define MAX_POINTS 64
-#define POLY_MAX 32
-#define POLY_MAX_POINTS 8
+#define POLY_MAX 16
+#define POLY_MAX_POINTS 6
 
 #define GRAPH_MAX_VERTICES 64
 #define DIJKSTRA_MAX_DISTANCE 13000000
