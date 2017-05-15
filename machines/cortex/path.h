@@ -3,7 +3,7 @@
 #include "action.h"
 #include "odometry.h"
 
-#define POSE_INITIAL			{ 873, 163, 45 *PULSE_PER_DEGREE }
+#define POSE_INITIAL			{ 873, 163, 45 }
 
 typedef struct {
 	pose_t pos;

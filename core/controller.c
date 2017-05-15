@@ -234,6 +234,7 @@ void task_controller_update()
 
 	robot_pose.x *= PULSE_PER_MM;
 	robot_pose.y *= PULSE_PER_MM;
+	robot_pose.O *= PULSE_PER_DEGREE;
 	controller.regul = CTRL_REGUL_POSE_DIST;
 
 	for (;;) {
