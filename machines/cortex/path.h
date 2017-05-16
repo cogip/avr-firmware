@@ -1,4 +1,5 @@
 #ifndef PATH_H_
+#define PATH_H_
 
 #include "action.h"
 #include "odometry.h"
