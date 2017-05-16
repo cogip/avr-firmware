@@ -1,3 +1,6 @@
+#ifndef AVOIDANCE_H_
+#define AVOIDANCE_H_
+
 #include "odometry.h"
 
 #define MAX_POINTS 64
@@ -40,3 +43,5 @@ int8_t get_point_index_in_polygon(const polygon_t *polygons,pose_t p);
 bool is_segment_crossing_line(pose_t a, pose_t b, pose_t o, pose_t p);
 bool is_segment_crossing_segment(pose_t a,pose_t b,pose_t o,pose_t p);
 bool is_point_on_segment(pose_t a, pose_t b, pose_t o);
+
+#endif /* AVOIDANCE_H_ */
