@@ -3,8 +3,9 @@
 #include <math.h>
 #include <inttypes.h>
 
-#include "odometry.h"
 #include "avoidance.h"
+#include "obstacle.h"
+#include "odometry.h"
 
 /* Obstacle list. Each obstacle is a polygon */
 static polygon_t polygons[POLY_MAX];
