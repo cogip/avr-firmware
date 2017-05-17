@@ -352,11 +352,11 @@ pose_t mach_trajectory_get_route_update(void)
 	if ((pose_to_reach.x == path_game_yellow[latest_pos_idx].pos.x)
 		&& (pose_to_reach.y == path_game_yellow[latest_pos_idx].pos.y))
 	{
-		controller_set_pose_intermediate(&controller, 0);
+		controller_set_pose_intermediate(&controller, FALSE);
 	}
 	else
 	{
-		controller_set_pose_intermediate(&controller, 1);
+		controller_set_pose_intermediate(&controller, TRUE);
 	}
 
 	return pose_to_reach;

@@ -6,6 +6,7 @@
 #include "avoidance.h"
 #include "obstacle.h"
 #include "odometry.h"
+#include "utils.h"
 
 /* Obstacle list. Each obstacle is a polygon */
 static polygon_t polygons[POLY_MAX];
@@ -32,8 +33,8 @@ pose_t avoidance(const pose_t *start, const pose_t *finish)
 	for (int j = 0; j < nb_polygons; j++)
 	{
 		if ((start == NULL) || (finish == NULL)
-			||(is_point_in_polygon(&polygons[j], *start) == true)
-			|| (is_point_in_polygon(&polygons[j], *finish) == true))
+			|| is_point_in_polygon(&polygons[j], *start)
+			|| is_point_in_polygon(&polygons[j], *finish))
 		{
 			return *start;
 		}
@@ -73,7 +74,7 @@ void build_avoidance_graph(void)
 		/* and for each vertice of that polygon */
 		for (int p = 0; p < polygons[i].count; p++)
 		{
-			bool collide = 0;
+			uint8_t collide = FALSE;
 			/* we check thios vertice is not inside an other polygon */
 			for (int j = 0; j < nb_polygons; j++)
 			{
@@ -81,14 +82,14 @@ void build_avoidance_graph(void)
 				{
 					continue;
 				}
-				if (is_point_in_polygon(&polygons[j], polygons[i].points[p]) == true)
+				if (is_point_in_polygon(&polygons[j], polygons[i].points[p]))
 				{
-					collide++;
+					collide = TRUE;
 					break;
 				}
 			}
 			/* If that point is not in an other polygon, add it to the list of valid points */
-			if (collide == 0)
+			if (!collide)
 			{
 				valid_points[valid_points_count++] = polygons[i].points[p];
 			}
@@ -100,7 +101,7 @@ void build_avoidance_graph(void)
 	{
 		for (int p2 = p+1; p2 < valid_points_count; p2++)
 		{
-			bool collide = 0;
+			uint8_t collide = FALSE;
 			if (p != p2)
 			{
 				/* Check if that segment crosses a polygon */
@@ -110,9 +111,9 @@ void build_avoidance_graph(void)
 					{
 						pose_t p_next = ( (v + 1 == polygons[i].count) ? polygons[i].points[0] : polygons[i].points[v + 1]);
 
-						if (is_segment_crossing_segment(valid_points[p],valid_points[p2], polygons[i].points[v], p_next) == true)
+						if (is_segment_crossing_segment(valid_points[p],valid_points[p2], polygons[i].points[v], p_next))
 						{
-							collide++;
+							collide = TRUE;
 							break;
 						}
 						/* Special case of internal crossing of a polygon */
@@ -124,16 +125,16 @@ void build_avoidance_graph(void)
 							continue;
 						if ((index >= 0) && (index2 >= 0) && (abs(index - index2) != 1))
 						{
-							collide++;
+							collide = TRUE;
 							break;
 						}
-						if (is_point_on_segment(valid_points[p],valid_points[p2], polygons[i].points[v]) == true)
+						if (is_point_on_segment(valid_points[p],valid_points[p2], polygons[i].points[v]))
 						{
-							collide++;
+							collide = TRUE;
 							break;
 						}
 					}
-					if (collide != 0)
+					if (collide)
 					{
 						break;
 					}
@@ -141,7 +142,7 @@ void build_avoidance_graph(void)
 				/* If no collision, both points of the segment are added to the graph with distance between them */
 				if ((p < GRAPH_MAX_VERTICES) && (p2 < GRAPH_MAX_VERTICES))
 				{
-					if (collide == 0)
+					if (!collide)
 					{
 						graph[p] |= (1 << p2);
 						graph[p2] |= (1 << p);
@@ -157,9 +158,9 @@ void build_avoidance_graph(void)
 	}
 }
 
-bool is_point_on_segment(pose_t a, pose_t b, pose_t o)
+uint8_t is_point_on_segment(pose_t a, pose_t b, pose_t o)
 {
-	bool res = false;
+	uint8_t res = FALSE;
 
 	if ((b.x - a.x) / (b.y - a.y) == (b.x - o.x) / (b.y - o.y))
 	{
@@ -167,14 +168,14 @@ bool is_point_on_segment(pose_t a, pose_t b, pose_t o)
 		{
 			if ((o.x < b.x) && (o.x > a.x))
 			{
-				res = true;
+				res = TRUE;
 			}
 		}
 		else
 		{
 			if ((o.x < a.x) && (o.x > b.x))
 			{
-				res = true;
+				res = TRUE;
 			}
 		}
 	}
@@ -182,7 +183,7 @@ bool is_point_on_segment(pose_t a, pose_t b, pose_t o)
 	return res;
 }
 
-bool is_segment_crossing_line(pose_t a, pose_t b, pose_t o, pose_t p)
+uint8_t is_segment_crossing_line(pose_t a, pose_t b, pose_t o, pose_t p)
 {
 	vector_t ao, ap, ab;
 	double det = 0;
@@ -195,24 +196,22 @@ bool is_segment_crossing_line(pose_t a, pose_t b, pose_t o, pose_t p)
 
 	det = (ab.x * ap.y - ab.y * ap.x)*(ab.x * ao.y - ab.y * ao.x);
 
-	if (det < 0)
-		return true;
-	else
-		return false;
+	return (det < 0);
 }
 
-bool is_segment_crossing_segment(pose_t a,pose_t b,pose_t o,pose_t p)
+uint8_t is_segment_crossing_segment(pose_t a,pose_t b,pose_t o,pose_t p)
 {
-	if (is_segment_crossing_line(a,b,o,p)==false)
-		return false;
-	if (is_segment_crossing_line(o,p,a,b)==false)
-		return false;
-	return true;
+	if (!is_segment_crossing_line(a,b,o,p))
+		return FALSE;
+	if (!is_segment_crossing_line(o,p,a,b))
+		return FALSE;
+	return TRUE;
 }
 
 int8_t get_point_index_in_polygon(const polygon_t *polygons,pose_t p)
 {
 	uint8_t i;
+
 	for(i = 0; i < polygons->count; i++)
 	{
 		if ((polygons->points[i].x == p.x) && (polygons->points[i].y == p.y))
@@ -224,17 +223,18 @@ int8_t get_point_index_in_polygon(const polygon_t *polygons,pose_t p)
 	return -1;
 }
 
-bool is_point_in_polygon(const polygon_t *polygon, pose_t p)
+uint8_t is_point_in_polygon(const polygon_t *polygon, pose_t p)
 {
 	uint8_t i;
 	double d;
+	pose_t a, b;
+	vector_t ab, ap;
+
 	for(i = 0; i < polygon->count; i++)
 	{
-		pose_t a = polygon->points[i];
-		pose_t b;
+		a = polygon->points[i];
 		b = (i == (polygon->count - 1) ? polygon->points[0] : polygon->points[i+1]);
 
-		vector_t ab, ap;
 		ab.x = b.x - a.x;
 		ab.y = b.y - a.y;
 		ap.x = p.x - a.x;
@@ -244,17 +244,17 @@ bool is_point_in_polygon(const polygon_t *polygon, pose_t p)
 
 		if (d <= 0)
 		{
-			return false;
+			return FALSE;
 		}
 	}
 
-	return true;
+	return TRUE;
 }
 
 
 pose_t dijkstra(uint16_t target)
 {
-	bool checked[GRAPH_MAX_VERTICES];
+	uint8_t checked[GRAPH_MAX_VERTICES];
 	double distance[GRAPH_MAX_VERTICES];
 	uint16_t v;
 	int i;
@@ -266,7 +266,7 @@ pose_t dijkstra(uint16_t target)
 
 	for (int i = 0; i <= valid_points_count; i++)
 	{
-		checked[i] = false;
+		checked[i] = FALSE;
 		distance[i] = DIJKSTRA_MAX_DISTANCE;
 		parent[i] = -1;
 	}
@@ -274,10 +274,10 @@ pose_t dijkstra(uint16_t target)
 	distance[start] = 0;
 	v = start;
 
-	while ((v != target) && (checked[v] == false))
+	while ((v != target) && (checked[v] == FALSE))
 	{
 		min_distance = DIJKSTRA_MAX_DISTANCE;
-		checked[v] = true;
+		checked[v] = TRUE;
 		for (i = 0; i < valid_points_count; i++)
 		{
 			if (graph[v] & (1 << i))
@@ -296,7 +296,7 @@ pose_t dijkstra(uint16_t target)
 		}
 		for (i = 1; i < valid_points_count; i++)
 		{
-			if ((checked[i] == false) && (min_distance > distance[i]))
+			if ((checked[i] == FALSE) && (min_distance > distance[i]))
 			{
 				min_distance = distance[i];
 				v = i;
