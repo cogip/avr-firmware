@@ -20,7 +20,12 @@ static uint64_t graph[GRAPH_MAX_VERTICES];
 pose_t avoidance(const pose_t *start, const pose_t *finish)
 {
 	/* Init all obstacles */
-	init_polygons();
+	if (nb_polygons == 0)
+	{
+		mach_fixed_obstacles_init();
+	}
+	/* TODO: to implement */
+	/*mach_dynamic_obstacles_init();*/
 
 	/* Check that start and destination point are not in a polygon */
 	for (int j = 0; j < nb_polygons; j++)
@@ -53,27 +58,6 @@ int add_polygon(polygon_t *polygon)
 	else
 	{
 		return -1;
-	}
-}
-
-/* Init all known fixed obstacles on map */
-/* TODO: This should be done in machine code */
-void init_polygons(void)
-{
-	polygon_t polygon;
-	uint8_t nb_vertices;
-
-	nb_polygons = 0;
-
-	polygon.count = 0;
-	nb_vertices = 4;
-	if (nb_vertices < POLY_MAX_POINTS)
-	{
-		polygon.points[polygon.count++] = (pose_t){.x = 1000, .y = 600};
-		polygon.points[polygon.count++] = (pose_t){.x = 1400, .y = 600};
-		polygon.points[polygon.count++] = (pose_t){.x = 1400, .y = 1000};
-		polygon.points[polygon.count++] = (pose_t){.x = 1000, .y = 1000};
-		add_polygon(&polygon);
 	}
 }
 
