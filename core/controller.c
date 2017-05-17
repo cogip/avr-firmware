@@ -271,6 +271,12 @@ void task_controller_update()
 
 		case CTRL_STATE_INGAME:
 		{
+			/* while starter switch is not release we wait */
+			if (!mach_is_game_launched()) {
+				kos_yield();
+				break;
+			}
+
 			if (tempo >= 4500) {
 				cons_printf(">>>>\n");
 				controller.mode = CTRL_STATE_STOP;

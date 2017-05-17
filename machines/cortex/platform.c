@@ -339,6 +339,11 @@ uint8_t mach_stop_robot(void)
 //	return analog_sensor_detect_obstacle (&ana_sensors, AS_ZONE_FRONT|AS_ZONE_REAR);
 }
 
+uint8_t mach_is_game_launched(void)
+{
+	/* TODO: return GPIO of starter switch */
+	return TRUE;
+}
 
 static void mach_pinmux_setup(void)
 {

@@ -300,6 +300,12 @@ uint8_t mach_stop_robot(void)
 	return stop;
 }
 
+uint8_t mach_is_game_launched(void)
+{
+	/* TODO: return GPIO of starter switch */
+	return TRUE;
+}
+
 static void mach_pinmux_setup(void)
 {
 #if defined(__AVR__)
