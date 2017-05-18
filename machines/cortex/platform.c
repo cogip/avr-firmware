@@ -156,9 +156,9 @@ sd21_t sd21 = {
 
 		/* Bottom-Left */
 		[1] = {
-			.value_init = 1050/*1500*/,
-			.value_open = 2100,
-			.value_close = 1050,
+			.value_init = 2400/*1500*/,
+			.value_open = 1075,
+			.value_close = 2400,
 		},
 
 		/* Bottom-Right */
