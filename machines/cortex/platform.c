@@ -34,6 +34,7 @@
  * PORTF : Timer decoder quadrature
  *	PF0 : encoder A2 right wheel
  *	PF1 : encoder B2
+ *	PF3 : starter switch
  *
  * use TCC0 as general timer
  * use TCE0 timer to generate PWM signal
@@ -341,8 +342,8 @@ uint8_t mach_stop_robot(void)
 
 uint8_t mach_is_game_launched(void)
 {
-	/* TODO: return GPIO of starter switch */
-	return TRUE;
+	/* Starter switch */
+	return gpio_get_input(&PORTF, PIN3_bp);
 }
 
 static void mach_pinmux_setup(void)
@@ -381,6 +382,9 @@ static void mach_pinmux_setup(void)
 	gpio_set_output(&PORTB, PIN3_bp, 0);
 	gpio_set_output(&PORTB, PIN4_bp, 0);
 	gpio_set_output(&PORTB, PIN5_bp, 0);
+
+	/* Starter switch */
+	gpio_set_direction(&PORTF, PIN3_bp, GPIO_DIR_IN);
 }
 
 void mach_sched_init()
