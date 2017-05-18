@@ -27,3 +27,8 @@ inline void gpio_set_output(gpio_port_t *p, uint8_t pin_id, int8_t value)
 	    && pin_id == hbridges.engines[HBRIDGE_MOTOR_RIGHT].direction_pin_id)
 		simu_right_motor_dir = value;
 }
+
+inline int8_t gpio_get_input(gpio_port_t *p, uint8_t pin_id)
+{
+	return 1;
+}

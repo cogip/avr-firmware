@@ -36,5 +36,6 @@ char _ports_[6];
 
 void gpio_set_direction(gpio_port_t *p, uint8_t pin_id, uint8_t output);
 void gpio_set_output(gpio_port_t *p, uint8_t pin_id, int8_t value);
+int8_t gpio_get_input(gpio_port_t *p, uint8_t pin_id);
 
 #endif /* GPIO_H_ */

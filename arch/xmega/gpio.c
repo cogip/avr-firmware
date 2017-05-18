@@ -15,3 +15,8 @@ inline void gpio_set_output(gpio_port_t *p, uint8_t pin_id, int8_t value)
 	else
 		p->OUT &= ~(1 << pin_id);
 }
+
+inline int8_t gpio_get_input(gpio_port_t *p, uint8_t pin_id)
+{
+	return p->IN & (1 << pin_id);
+}
