@@ -328,11 +328,13 @@ pose_t mach_trajectory_get_route_update(void)
 	static pose_t pose_reached = POSE_INITIAL;
 	static pose_t pose_to_reach;
 	static int8_t latest_pos_idx = -1;
+	static uint8_t index = 1;
 
 	if (latest_pos_idx == -1)
 	{
 		latest_pos_idx = 0;
 		pose_to_reach = path_game_yellow[latest_pos_idx].pos;
+		update_graph(&pose_reached, &pose_to_reach);
 	}
 
 	if (controller_get_pose_reached(&controller))
@@ -342,13 +344,17 @@ pose_t mach_trajectory_get_route_update(void)
 		{
 			if (latest_pos_idx + 1 < path_game_yellow_nb)
 			{
-				latest_pos_idx ++;
+				latest_pos_idx++;
 			}
+			update_graph(&pose_reached, &(path_game_yellow[latest_pos_idx].pos));
+			index = 1;
 		}
+		else
+			index++;
 		pose_reached = pose_to_reach;
 	}
 
-	pose_to_reach = avoidance(&pose_reached, &(path_game_yellow[latest_pos_idx].pos));
+	pose_to_reach = avoidance(index);
 	if ((pose_to_reach.x == path_game_yellow[latest_pos_idx].pos.x)
 		&& (pose_to_reach.y == path_game_yellow[latest_pos_idx].pos.y))
 	{
