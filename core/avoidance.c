@@ -19,7 +19,7 @@ static uint8_t valid_points_count = 0;
 
 static uint64_t graph[GRAPH_MAX_VERTICES];
 
-pose_t avoidance(const pose_t *start, const pose_t *finish)
+pose_t avoidance(uint8_t index)
 {
 	/* Init all obstacles */
 	if (nb_polygons == 0)
@@ -29,6 +29,13 @@ pose_t avoidance(const pose_t *start, const pose_t *finish)
 	/* TODO: to implement */
 	/*mach_dynamic_obstacles_init();*/
 
+
+	/* Build path graph */
+	return dijkstra(1,index);
+}
+
+void update_graph(const pose_t *start, const pose_t *finish)
+{
 	/* Check that start and destination point are not in a polygon */
 	for (int j = 0; j < nb_polygons; j++)
 	{
@@ -36,7 +43,8 @@ pose_t avoidance(const pose_t *start, const pose_t *finish)
 			|| is_point_in_polygon(&polygons[j], *start)
 			|| is_point_in_polygon(&polygons[j], *finish))
 		{
-			return *start;
+			/* TODO: Add return code */
+			return;
 		}
 	}
 
@@ -44,9 +52,7 @@ pose_t avoidance(const pose_t *start, const pose_t *finish)
 	valid_points[valid_points_count++] = *start;
 	valid_points[valid_points_count++] = *finish;
 
-	/* Build path graph */
 	build_avoidance_graph();
-	return dijkstra(1);
 }
 
 /* Add a polygon to obstacle list */
@@ -252,7 +258,7 @@ uint8_t is_point_in_polygon(const polygon_t *polygon, pose_t p)
 }
 
 
-pose_t dijkstra(uint16_t target)
+pose_t dijkstra(uint16_t target, uint16_t index)
 {
 	uint8_t checked[GRAPH_MAX_VERTICES];
 	double distance[GRAPH_MAX_VERTICES];
@@ -261,6 +267,7 @@ pose_t dijkstra(uint16_t target)
 	double weight;
 	double min_distance;
 	int parent[GRAPH_MAX_VERTICES];
+	int child[GRAPH_MAX_VERTICES];
 	/* TODO: start should be a parameter. More clean even if start is always index 0 in our case */
 	int start = 0;
 
@@ -304,9 +311,23 @@ pose_t dijkstra(uint16_t target)
 		}
 	}
 
+	/* Build reverse path (from start to finish */
 	i = 1;
-	while (parent[i] > 0)
+	while (parent[i] >= 0)
+	{
+		child[parent[i]] = i;
 		i = parent[i];
+	}
 
+	/* Find n child in graph */
+	i = 0;
+	v = 0;
+	while ((i != 1) && (v < index))
+	{
+		i = child[i];
+		v++;
+	}
+
+	/* Return point */
 	return valid_points[i];
 }
