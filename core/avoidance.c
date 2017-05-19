@@ -293,7 +293,6 @@ pose_t dijkstra(uint16_t target, uint16_t index)
 				weight *= (valid_points[v].x - valid_points[i].x);
 				weight += (valid_points[v].y - valid_points[i].y)
 					* (valid_points[v].y - valid_points[i].y);
-				weight = sqrt(weight);
 				if ((weight >= 0 ) && (distance[i] > (distance[v] + weight)))
 				{
 					distance[i] = distance[v] + weight;
