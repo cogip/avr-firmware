@@ -5,6 +5,7 @@
 #include "platform.h"
 
 static uint16_t game_time;
+static uint8_t game_started = FALSE;
 
 /* periodic task */
 /* sched period = 20ms -> ticks freq is 1/0.02 = 50 Hz */
@@ -25,6 +26,13 @@ static void show_game_time()
 	}
 }
 
+void planner_start_game(void)
+{
+	/* TODO: send pose_initial, pose_order & speed_order to controller */
+	controller_set_mode(&controller, CTRL_STATE_INGAME);
+	game_started = TRUE;
+}
+
 void task_planner(void)
 {
 	uint8_t stop = FALSE;
@@ -36,9 +44,7 @@ void task_planner(void)
 
 	for (;;)
 	{
-		/* FIXME: following state should be handled in 'planner' object */
-		/* TODO: use a thread safe accessor */
-		if (controller.mode != CTRL_STATE_INGAME)
+		if (!game_started)
 			goto yield_point;
 
 		kos_set_next_schedule_delay_ms(TASK_PERIOD_MS);

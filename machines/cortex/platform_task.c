@@ -106,8 +106,8 @@ static void mach_enter_calibration_mode(void)
 	}
 
 exit_point:
-	controller.mode = CTRL_STATE_INGAME;
 	cons_printf("calibration ended\n");
+	planner_start_game();
 	kos_task_exit();
 }
 #endif /* CONFIG_CALIBRATION */
@@ -117,9 +117,9 @@ exit_point:
  */
 
 #define TASK_CALIB_STACK	256
-#define TASK_PLAN_STACK		512
-#define TASK_CTRL_STACK		512
 #define TASK_AVOID_STACK	512
+#define TASK_CTRL_STACK		512
+#define TASK_PLAN_STACK		512
 
 void mach_tasks_init()
 {
@@ -127,6 +127,8 @@ void mach_tasks_init()
 
 #if defined(CONFIG_CALIBRATION)
 	kos_new_task(mach_enter_calibration_mode, "CALIB", TASK_CALIB_STACK);
+#else
+	planner_start_game();
 #endif
 	kos_new_task(update_graph, "AVOID", TASK_AVOID_STACK);
 	kos_new_task(task_controller_update, "CTRL", TASK_CTRL_STACK);
