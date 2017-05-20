@@ -7,4 +7,4 @@ src-y			+= $(abs-path)/main.c
 src-y			+= $(abs-path)/msched.c
 src-y			+= $(abs-path)/odometry.c
 src-y			+= $(abs-path)/pid.c
-src-y			+= $(abs-path)/utils.c
+src-y			+= $(abs-path)/trigonometry.c

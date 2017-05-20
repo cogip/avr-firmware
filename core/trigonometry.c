@@ -1,6 +1,4 @@
-#include <stdio.h>
-
-#include "utils.h"
+#include "trigonometry.h"
 
 inline double limit_angle_rad(double O)
 {

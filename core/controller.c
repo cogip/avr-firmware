@@ -7,6 +7,7 @@
 #include "log.h"
 #include "odometry.h"
 #include "platform.h"
+#include "trigonometry.h"
 
 #include "controller.h"
 
