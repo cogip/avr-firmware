@@ -3,6 +3,7 @@
 
 #include "console.h"
 #include "encoder.h"
+#include "irq.h"
 #include "kos.h"
 #include "log.h"
 #include "odometry.h"
@@ -199,6 +200,42 @@ inline void controller_set_pose_intermediate(controller_t *ctrl, uint8_t interme
 inline uint8_t controller_is_pose_reached(controller_t *ctrl)
 {
 	return ctrl->pose_reached;
+}
+
+inline void controller_set_pose_to_reach(controller_t *ctrl, const pose_t pose_order)
+{
+	irq_disable();
+	ctrl->pose_order = pose_order;
+	irq_enable();
+}
+
+inline pose_t controller_get_pose_to_reach(controller_t *ctrl)
+{
+	pose_t pose_order;
+
+	irq_disable();
+	pose_order = ctrl->pose_order;
+	irq_enable();
+
+	return pose_order;
+}
+
+inline void controller_set_speed_order(controller_t *ctrl, const polar_t speed_order)
+{
+	irq_disable();
+	ctrl->speed_order = speed_order;
+	irq_enable();
+}
+
+inline polar_t controller_get_speed_order(controller_t *ctrl)
+{
+	polar_t	speed_order;
+
+	irq_disable();
+	speed_order = ctrl->speed_order;
+	irq_enable();
+
+	return speed_order;
 }
 
 static void motor_drive(polar_t command)
