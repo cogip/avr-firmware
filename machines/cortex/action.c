@@ -15,10 +15,9 @@
 #define SERVO_ID_VENT_FR	3
 #define SERVO_ID_VENT_RL	1
 #define SERVO_ID_VENT_RR	2
+#define SERVO_ID_WEDGE_L	6
+#define SERVO_ID_WEDGE_R	7
 
-// to check
-#define SERVO_ID_WEDGE_L	4
-#define SERVO_ID_WEDGE_R	5
 
 /*
  * public
