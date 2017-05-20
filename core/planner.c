@@ -6,14 +6,22 @@
 
 static uint16_t game_time;
 
+/* periodic task */
+/* sched period = 20ms -> ticks freq is 1/0.02 = 50 Hz */
+#define TASK_PERIOD_MS		(20 * 5)
+
+#define TASK_FREQ_HZ		(1000 / TASK_PERIOD_MS)
+#define GAME_DURATION_SEC	90
+#define GAME_DURATION_TICKS	(GAME_DURATION_SEC * TASK_FREQ_HZ)
+
 static void show_game_time()
 {
-	static uint8_t _secs = (4500 / 90);
+	static uint8_t _secs = TASK_FREQ_HZ;
 
 	if (! --_secs) {
-		_secs = (4500 / 90);
+		_secs = TASK_FREQ_HZ;
 		print_info ("Game time = %d\n",
-			    game_time / (4500 / 90));
+			    game_time / TASK_FREQ_HZ);
 	}
 }
 
@@ -28,20 +36,21 @@ void task_planner(void)
 
 	for (;;)
 	{
+		/* FIXME: following state should be handled in 'planner' object */
 		/* TODO: use a thread safe accessor */
 		if (controller.mode != CTRL_STATE_INGAME)
 			goto yield_point;
 
-		kos_set_next_schedule_delay_ms(100);
+		kos_set_next_schedule_delay_ms(TASK_PERIOD_MS);
 
-		if (pfn_evtloop_end_of_game && game_time >= 4500)
+		if (pfn_evtloop_end_of_game && game_time >= GAME_DURATION_TICKS)
 			(*pfn_evtloop_end_of_game)();
 
 		/* while starter switch is not release we wait */
 		if (!mach_is_game_launched())
 			goto yield_point;
 
-		if (game_time >= 4500) {
+		if (game_time >= GAME_DURATION_TICKS) {
 			cons_printf(">>>>\n");
 			/* TODO: use a thread safe accessor */
 			controller.mode = CTRL_STATE_STOP;
