@@ -83,8 +83,8 @@ ifeq ($(clean-targets),1)
 
 .PHONY: clean
 clean:
-	$(Q)find . -name *.d -exec rm '{}' \;
-	$(Q)find . -name *.o -exec rm '{}' \;
+	$(Q)find . -name '*.d' -exec rm '{}' \;
+	$(Q)find . -name '*.o' -exec rm '{}' \;
 	$(Q)rm -f *.eep *.elf *.hex *.elf.map
 
 .PHONY: mrproper
