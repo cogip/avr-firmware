@@ -369,16 +369,12 @@ static void mach_pinmux_setup(void)
 #endif
 
 	/* Pumps, outputs all off. */
-	//PORTB.DIR = 0xff; /*!< PORTB as output pin */
-	//PORTB.DIRSET = 0xff;
-	//PORTB.OUT = 0;
-
-	gpio_set_direction(&PORTB, 0 /* pin_id */, TRUE);
-	gpio_set_direction(&PORTB, 1 /* pin_id */, TRUE);
-	gpio_set_direction(&PORTB, 2 /* pin_id */, TRUE);
-	gpio_set_direction(&PORTB, 3 /* pin_id */, TRUE);
-	gpio_set_direction(&PORTB, 4 /* pin_id */, TRUE);
-	gpio_set_direction(&PORTB, 5 /* pin_id */, TRUE);
+	gpio_set_direction(&PORTB, PIN0_bp, GPIO_DIR_OUT);
+	gpio_set_direction(&PORTB, PIN1_bp, GPIO_DIR_OUT);
+	gpio_set_direction(&PORTB, PIN2_bp, GPIO_DIR_OUT);
+	gpio_set_direction(&PORTB, PIN3_bp, GPIO_DIR_OUT);
+	gpio_set_direction(&PORTB, PIN4_bp, GPIO_DIR_OUT);
+	gpio_set_direction(&PORTB, PIN5_bp, GPIO_DIR_OUT);
 
 	gpio_set_output(&PORTB, PIN0_bp, 0);
 	gpio_set_output(&PORTB, PIN1_bp, 0);
