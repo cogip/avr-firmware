@@ -243,6 +243,8 @@ void task_controller_update()
 	robot_pose.O *= PULSE_PER_DEGREE;
 	controller.regul = CTRL_REGUL_POSE_DIST;
 
+	print_info ("Start ctrl loop\n");
+
 	for (;;) {
 		kos_set_next_schedule_delay_ms(20);
 
