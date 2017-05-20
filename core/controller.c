@@ -201,17 +201,6 @@ inline uint8_t controller_get_pose_reached(controller_t *ctrl)
 	return ctrl->pose_reached;
 }
 
-static void show_game_time()
-{
-	static uint8_t _secs = (4500 / 90);
-
-	if (! --_secs) {
-		_secs = (4500 / 90);
-		print_info ("Game time = %d\n",
-			    tempo / (4500 / 90));
-	}
-}
-
 static void motor_drive(polar_t command)
 {
 	/************************ commandes moteur ************************/
@@ -235,8 +224,6 @@ void task_controller_update()
 	polar_t	motor_command		= { 0, 0 };
 	func_cb_t pfn_evtloop_prefunc  = mach_get_ctrl_loop_pre_pfn();
 	func_cb_t pfn_evtloop_postfunc = mach_get_ctrl_loop_post_pfn();
-	func_cb_t pfn_evtloop_end_of_game = mach_get_end_of_game_pfn();
-	uint8_t stop = 0;
 
 	robot_pose.x *= PULSE_PER_MM;
 	robot_pose.y *= PULSE_PER_MM;
@@ -256,9 +243,6 @@ void task_controller_update()
 		default:
 		case CTRL_STATE_STOP:
 		{
-			if (pfn_evtloop_end_of_game && tempo >= 4500)
-				(*pfn_evtloop_end_of_game)();
-
 			/* final position */
 			motor_command.distance = 0;
 			motor_command.angle = 0;
@@ -280,58 +264,23 @@ void task_controller_update()
 
 		case CTRL_STATE_INGAME:
 		{
-			/* while starter switch is not release we wait */
-			if (!mach_is_game_launched()) {
-				kos_yield();
-				break;
-			}
-
-			if (tempo >= 4500) {
-				cons_printf(">>>>\n");
-				controller.mode = CTRL_STATE_STOP;
-				break;
-			}
-
-			if (!tempo) {
-				cons_printf("<<<< polar_simu.csv\n");
-				cons_printf("pose_order_x,pose_order_y,pose_order_a,"
-					    "pose_current_x,pose_current_y,pose_current_a,"
-					    "position_error_l,position_error_a,"
-					    "speed_order_l,speed_order_a,"
-					    "speed_current_l,speed_current_a,"
-					    "tempo,"
-					    "\n");
-			}
-
-			tempo++;
-			show_game_time();
-
 			/* catch speed */
 			robot_speed = encoder_read();
 
 			/* convert to position */
 			odometry_update(&robot_pose, &robot_speed, SEGMENT);
 
+			/* convert pulse to degree */
 			robot_pose.O /= PULSE_PER_DEGREE;
 
 			/* get next pose_t to reach */
-			pose_order = mach_trajectory_get_route_update();
+			pose_order = controller.pose_order;
 
 			pose_order.x *= PULSE_PER_MM;
 			pose_order.y *= PULSE_PER_MM;
 
-			/* collision detection */
-			stop = mach_stop_robot();
 
-			if (stop) {
-				speed_order.distance = 0;
-				speed_order.angle = 0;
-			} else {
-				/* speed order in position = 60 pulses / 20ms */
-				speed_order.distance = 150;
-				/* speed order in angle? = 60 pulses / 20ms */
-				speed_order.angle = 150 / 2;
-			}
+			speed_order = controller.speed_order;
 
 			/* PID / feedback control */
 			motor_command = controller_update(&controller,
@@ -340,7 +289,9 @@ void task_controller_update()
 							  speed_order,
 							  robot_speed);
 
+			/* convert degree to pulse */
 			robot_pose.O *= PULSE_PER_DEGREE;
+
 			/* set speed to wheels */
 			motor_drive(motor_command);
 		}

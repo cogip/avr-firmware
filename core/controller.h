@@ -42,6 +42,9 @@ typedef struct {
 	/* Dynamics variables */
 	controller_mode_t mode;
 
+	pose_t pose_order;
+	polar_t	speed_order;
+
 	controller_regul_t regul;
 	uint8_t pose_reached;
 	uint8_t pose_intermediate;

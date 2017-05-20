@@ -8,6 +8,7 @@
 #include "kos.h"
 #include "log.h"
 #include "mcurses.h"
+#include "planner.h"
 #include "platform.h"
 #include "platform_task.h"
 #include "usart.h"
@@ -116,6 +117,7 @@ exit_point:
  */
 
 #define TASK_CALIB_STACK	256
+#define TASK_PLAN_STACK		512
 #define TASK_CTRL_STACK		512
 #define TASK_AVOID_STACK	512
 
@@ -128,4 +130,5 @@ void mach_tasks_init()
 #endif
 	kos_new_task(update_graph, "AVOID", TASK_AVOID_STACK);
 	kos_new_task(task_controller_update, "CTRL", TASK_CTRL_STACK);
+	kos_new_task(task_planner, "PLAN", TASK_PLAN_STACK);
 }
