@@ -227,7 +227,7 @@ pose_t mach_trajectory_get_route_update(void)
 	pos_list[1].y = 0.0; /*!< y-position [pulse] */
 	pos_list[1].O = 0.0; /*!< 0-orientation [pulse] */
 
-	if (controller_get_pose_reached(&controller)) {
+	if (controller_is_pose_reached(&controller)) {
 		latest_pos_idx ++;
 		latest_pos_idx %= 2;
 	}

@@ -337,7 +337,7 @@ pose_t mach_trajectory_get_route_update(void)
 		set_start_finish(&pose_reached, &pose_to_reach);
 	}
 
-	if (controller_get_pose_reached(&controller))
+	if (controller_is_pose_reached(&controller))
 	{
 		if ((pose_to_reach.x == path_game_yellow[latest_pos_idx].pos.x)
 			&& (pose_to_reach.y == path_game_yellow[latest_pos_idx].pos.y))

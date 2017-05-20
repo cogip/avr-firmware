@@ -81,7 +81,7 @@ pose_t route_update(void)
 	pose_t pose_to_reach;
 	func_cb_t route_function;
 
-	if (controller_get_pose_reached(&controller)) {
+	if (controller_is_pose_reached(&controller)) {
 		route_retro = 0;
 		route_function = route[route_index].action_function;
 

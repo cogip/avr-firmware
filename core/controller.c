@@ -196,7 +196,7 @@ inline void controller_set_pose_intermediate(controller_t *ctrl, uint8_t interme
 	ctrl->pose_intermediate = intermediate;
 }
 
-inline uint8_t controller_get_pose_reached(controller_t *ctrl)
+inline uint8_t controller_is_pose_reached(controller_t *ctrl)
 {
 	return ctrl->pose_reached;
 }
