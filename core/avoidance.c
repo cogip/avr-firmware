@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "avoidance.h"
+#include "kos.h"
 #include "obstacle.h"
 #include "utils.h"
 
@@ -15,6 +16,15 @@ static pose_t valid_points[MAX_POINTS];
 static uint8_t valid_points_count = 0;
 
 static uint64_t graph[GRAPH_MAX_VERTICES];
+
+static pose_t start = {.x = 0, .y = 0};
+static pose_t finish = {.x = 0, .y = 0};
+
+void set_start_finish(const pose_t *s, const pose_t *f)
+{
+	start = *s;
+	finish = *f;
+}
 
 pose_t avoidance(uint8_t index)
 {
@@ -31,25 +41,34 @@ pose_t avoidance(uint8_t index)
 	return dijkstra(1,index);
 }
 
-void update_graph(const pose_t *start, const pose_t *finish)
+void update_graph()
 {
-	/* Check that start and destination point are not in a polygon */
-	for (int j = 0; j < nb_polygons; j++)
+	for(;;)
 	{
-		if ((start == NULL) || (finish == NULL)
-			|| is_point_in_polygon(&polygons[j], *start)
-			|| is_point_in_polygon(&polygons[j], *finish))
+		/* Init all obstacles */
+		if (nb_polygons == 0)
 		{
-			/* TODO: Add return code */
-			return;
+			mach_fixed_obstacles_init();
 		}
+		kos_set_next_schedule_delay_ms(500);
+		/* Check that start and destination point are not in a polygon */
+		for (int j = 0; j < nb_polygons; j++)
+		{
+			if (is_point_in_polygon(&polygons[j], start)
+				|| is_point_in_polygon(&polygons[j], finish))
+			{
+				/* TODO: Add return code */
+				break;
+			}
+		}
+
+		valid_points_count = 0;
+		valid_points[valid_points_count++] = start;
+		valid_points[valid_points_count++] = finish;
+
+		build_avoidance_graph();
+		kos_yield();
 	}
-
-	valid_points_count = 0;
-	valid_points[valid_points_count++] = *start;
-	valid_points[valid_points_count++] = *finish;
-
-	build_avoidance_graph();
 }
 
 /* Add a polygon to obstacle list */

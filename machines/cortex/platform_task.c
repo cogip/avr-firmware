@@ -12,6 +12,7 @@
 #include "platform_task.h"
 #include "usart.h"
 #include "qdec.h"
+#include "avoidance.h"
 
 #if defined(CONFIG_CALIBRATION)
 static void mach_calibration_usage(void)
@@ -116,6 +117,7 @@ exit_point:
 
 #define TASK_CALIB_STACK	256
 #define TASK_CTRL_STACK		512
+#define TASK_AVOID_STACK	512
 
 void mach_tasks_init()
 {
@@ -124,5 +126,6 @@ void mach_tasks_init()
 #if defined(CONFIG_CALIBRATION)
 	kos_new_task(mach_enter_calibration_mode, "CALIB", TASK_CALIB_STACK);
 #endif
+	kos_new_task(update_graph, "AVOID", TASK_AVOID_STACK);
 	kos_new_task(task_controller_update, "CTRL", TASK_CTRL_STACK);
 }

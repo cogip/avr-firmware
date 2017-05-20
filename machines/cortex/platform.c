@@ -334,7 +334,7 @@ pose_t mach_trajectory_get_route_update(void)
 	{
 		latest_pos_idx = 0;
 		pose_to_reach = path_game_yellow[latest_pos_idx].pos;
-		update_graph(&pose_reached, &pose_to_reach);
+		set_start_finish(&pose_reached, &pose_to_reach);
 	}
 
 	if (controller_get_pose_reached(&controller))
@@ -346,7 +346,7 @@ pose_t mach_trajectory_get_route_update(void)
 			{
 				latest_pos_idx++;
 			}
-			update_graph(&pose_reached, &(path_game_yellow[latest_pos_idx].pos));
+			set_start_finish(&pose_reached, &(path_game_yellow[latest_pos_idx].pos));
 			index = 1;
 		}
 		else
