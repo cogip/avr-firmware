@@ -1,11 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
-#include <inttypes.h>
 
 #include "avoidance.h"
 #include "obstacle.h"
-#include "odometry.h"
 #include "utils.h"
 
 /* Obstacle list. Each obstacle is a polygon */
