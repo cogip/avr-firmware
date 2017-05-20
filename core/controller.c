@@ -432,7 +432,7 @@ void task_controller_update()
 
 				log_vect_display_last_line(&datalog);
 
-				controller.mode = CTRL_STATE_STOP;
+				controller_set_mode(&controller, CTRL_STATE_STOP);
 				tempo = 0;
 			}
 		}
@@ -493,7 +493,7 @@ void task_controller_update()
 
 				log_vect_display_last_line(&datalog);
 
-				controller.mode = CTRL_STATE_STOP;
+				controller_set_mode(&controller, CTRL_STATE_STOP);
 				tempo = 0;
 			}
 		}
@@ -557,7 +557,7 @@ void task_controller_update()
 
 				log_vect_display_last_line(&datalog);
 
-				controller.mode = CTRL_STATE_STOP;
+				controller_set_mode(&controller, CTRL_STATE_STOP);
 				tempo = 0;
 			}
 		}
@@ -664,16 +664,13 @@ void controller_enter_calibration()
 
 		switch (c) {
 		case '1':
-			controller.mode = CTRL_STATE_CALIB_MODE1;
-			cons_printf("CAL1 launched\n");
+			controller_set_mode(&controller, CTRL_STATE_CALIB_MODE1);
 			break;
 		case '2':
-			controller.mode = CTRL_STATE_CALIB_MODE2;
-			cons_printf("CAL2 launched\n");
+			controller_set_mode(&controller, CTRL_STATE_CALIB_MODE2);
 			break;
 		case '3':
-			controller.mode = CTRL_STATE_CALIB_MODE3;
-			cons_printf("CAL3 launched\n");
+			controller_set_mode(&controller, CTRL_STATE_CALIB_MODE3);
 			break;
 		case 'p':
 			scanf_update_val("Kp", &cur_pid->kp);

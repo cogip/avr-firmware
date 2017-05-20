@@ -64,7 +64,7 @@ void hbridge_enter_calibration(hbridge_t *obj)
 
 	hbridge_calibration_usage(obj);
 
-	controller.mode = CTRL_STATE_IDLE;
+	controller_set_mode(&controller, CTRL_STATE_IDLE);
 
 	while (!quit) {
 		/* display prompt */

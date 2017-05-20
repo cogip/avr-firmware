@@ -112,7 +112,7 @@ void encoder_enter_calibration(void)
 
 	encoder_calibration_usage();
 
-	controller.mode = CTRL_STATE_IDLE;
+	controller_set_mode(&controller, CTRL_STATE_IDLE);
 
 	while (!quit) {
 

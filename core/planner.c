@@ -52,8 +52,7 @@ void task_planner(void)
 
 		if (game_time >= GAME_DURATION_TICKS) {
 			cons_printf(">>>>\n");
-			/* TODO: use a thread safe accessor */
-			controller.mode = CTRL_STATE_STOP;
+			controller_set_mode(&controller, CTRL_STATE_STOP);
 			break;
 		}
 
