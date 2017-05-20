@@ -28,13 +28,6 @@ void set_start_finish(const pose_t *s, const pose_t *f)
 
 pose_t avoidance(uint8_t index)
 {
-	/* Init all obstacles */
-	if (nb_polygons == 0)
-	{
-		mach_fixed_obstacles_init();
-	}
-	/* TODO: to implement */
-	/*mach_dynamic_obstacles_init();*/
 
 
 	/* Build path graph */
@@ -43,32 +36,33 @@ pose_t avoidance(uint8_t index)
 
 void update_graph()
 {
-	for(;;)
+	/* Init all obstacles */
+	if (nb_polygons == 0)
 	{
-		/* Init all obstacles */
-		if (nb_polygons == 0)
-		{
-			mach_fixed_obstacles_init();
-		}
-		kos_set_next_schedule_delay_ms(500);
-		/* Check that start and destination point are not in a polygon */
-		for (int j = 0; j < nb_polygons; j++)
-		{
-			if (is_point_in_polygon(&polygons[j], start)
-				|| is_point_in_polygon(&polygons[j], finish))
-			{
-				/* TODO: Add return code */
-				break;
-			}
-		}
-
-		valid_points_count = 0;
-		valid_points[valid_points_count++] = start;
-		valid_points[valid_points_count++] = finish;
-
-		build_avoidance_graph();
-		kos_yield();
+		mach_fixed_obstacles_init();
 	}
+	/* TODO: to implement */
+	/*mach_dynamic_obstacles_init();*/
+	if (nb_polygons == 0)
+	{
+		mach_fixed_obstacles_init();
+	}
+	/* Check that start and destination point are not in a polygon */
+	for (int j = 0; j < nb_polygons; j++)
+	{
+		if (is_point_in_polygon(&polygons[j], start)
+			|| is_point_in_polygon(&polygons[j], finish))
+		{
+			/* TODO: Add return code */
+			break;
+		}
+	}
+
+	valid_points_count = 0;
+	valid_points[valid_points_count++] = start;
+	valid_points[valid_points_count++] = finish;
+
+	build_avoidance_graph();
 }
 
 /* Add a polygon to obstacle list */
