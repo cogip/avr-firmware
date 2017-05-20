@@ -67,6 +67,8 @@ pose_t controller_get_pose_to_reach(controller_t *ctrl);
 void controller_set_speed_order(controller_t *ctrl, const polar_t speed_order);
 polar_t controller_get_speed_order(controller_t *ctrl);
 
+void controller_set_mode(controller_t *ctrl, controller_mode_t new_mode);
+
 void task_controller_update();
 
 #if defined(CONFIG_CALIBRATION)

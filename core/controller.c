@@ -238,6 +238,43 @@ inline polar_t controller_get_speed_order(controller_t *ctrl)
 	return speed_order;
 }
 
+void controller_set_mode(controller_t *ctrl, controller_mode_t new_mode)
+{
+	char *new_mode_str;
+
+	if (new_mode == ctrl->mode)
+		return;
+
+	switch(new_mode) {
+	case CTRL_STATE_STOP:
+		new_mode_str = "STOP";
+		break;
+	case CTRL_STATE_IDLE:
+		new_mode_str = "IDLE";
+		break;
+	case CTRL_STATE_INGAME:
+		new_mode_str = "INGAME";
+		break;
+#if defined(CONFIG_CALIBRATION)
+	case CTRL_STATE_CALIB_MODE1:
+		new_mode_str = "CALIB_MODE1";
+		break;
+	case CTRL_STATE_CALIB_MODE2:
+		new_mode_str = "CALIB_MODE2";
+		break;
+	case CTRL_STATE_CALIB_MODE3:
+		new_mode_str = "CALIB_MODE3";
+		break;
+#endif
+	default:
+		new_mode_str = "Invalid!";
+		break;
+	};
+
+	ctrl->mode = new_mode;
+	print_info("new_mode = %s\n", new_mode_str);
+}
+
 static void motor_drive(polar_t command)
 {
 	/************************ commandes moteur ************************/
