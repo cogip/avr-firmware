@@ -145,7 +145,7 @@ sd21_t sd21 = {
 	.twi = &TWIC,
 	.twi_speed_khz = 100,
 
-	.servos_nb = 4,
+	.servos_nb = 8,
 	.servos = {
 		/* Front-Left */
 		[0] = {
@@ -164,7 +164,7 @@ sd21_t sd21 = {
 		/* Bottom-Right */
 		[2] = {
 			.value_init = 600/*1500*/,
-			.value_open = 1875,
+			.value_open = 1925,
 			.value_close = 600,
 		},
 
@@ -175,30 +175,34 @@ sd21_t sd21 = {
 			.value_close = 2550,
 		},
 
-		///* Right arm */
-		//[4] = {
-		//	.value_init = 2400,
-		//	.value_open = 1200,
-		//	.value_close = 2400,
-		//},
-		///* Left arm */
-		//[5] = {
-		//	.value_init = 600,
-		//	.value_open = 1800,
-		//	.value_close = 600,
-		//},
-		///* Glasses right arm */
-		//[6] = {
-		//	.value_init = 600,
-		//	.value_open = 600,
-		//	.value_close = 2450,
-		//},
-		///* Glasses left arm */
-		//[7] = {
-		//	.value_init = 2600,
-		//	.value_open = 2600,
-		//	.value_close = 800,
-		//},
+		/* Glasses right arm */
+		[4] = {
+			.value_init = 0,//1500,//600,
+			.value_open = 600,
+			.value_close = 2450,
+		},
+
+		/* Glasses left arm */
+		[5] = {
+			.value_init = 0,//1500,//2600,
+			.value_open = 2600,
+			.value_close = 800,
+		},
+
+
+		/* Left arm */
+		[6] = {
+			.value_init = 1850,
+			.value_open = 800,
+			.value_close = 1850,
+		},
+
+		/* Right arm */
+		[7] = {
+			.value_init = 925,
+			.value_open = 1975,
+			.value_close = 925,
+		},
 
 		///* Clamp */
 		//[8] = {
