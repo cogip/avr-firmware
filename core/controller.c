@@ -311,13 +311,13 @@ void task_controller_update()
 			robot_pose.O /= PULSE_PER_DEGREE;
 
 			/* get next pose_t to reach */
-			pose_order = controller.pose_order;
+			pose_order = controller_get_pose_to_reach(&controller);
 
 			pose_order.x *= PULSE_PER_MM;
 			pose_order.y *= PULSE_PER_MM;
 
-
-			speed_order = controller.speed_order;
+			/* get speed order */
+			speed_order = controller_get_speed_order(&controller);
 
 			/* PID / feedback control */
 			motor_command = controller_update(&controller,

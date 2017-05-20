@@ -63,8 +63,8 @@ void task_planner(void)
 		show_game_time();
 
 		pose_order = mach_trajectory_get_route_update();
-		/* TODO: use a thread safe accessor */
-		controller.pose_order = pose_order;
+
+		controller_set_pose_to_reach(&controller, pose_order);
 
 		/* collision detection */
 		stop = mach_stop_robot();
@@ -79,8 +79,7 @@ void task_planner(void)
 			speed_order.angle = 150 / 2;
 		}
 
-		/* TODO: use a thread safe accessor */
-		controller.speed_order = speed_order;
+		controller_set_speed_order(&controller, speed_order);
 
 yield_point:
 		kos_yield();
