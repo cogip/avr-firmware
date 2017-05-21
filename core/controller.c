@@ -137,17 +137,20 @@ polar_t controller_update(controller_t *ctrl,
 	if (ctrl->regul != CTRL_REGUL_POSE_ANGL
 	    && fabs(position_error.distance) > ctrl->min_distance_for_angular_switch) {
 
-#if 0
+#if defined(CONFIG_CTRL_REVERSE_ALLOWED)
 		/* should we go reverse? */
 		if (fabs(position_error.angle) > 90) {
+			ctrl->in_reverse = TRUE;
+
 			position_error.distance = -position_error.distance;
 
 			if (position_error.angle < 0)
 				position_error.angle += 180;
 			else
 				position_error.angle -= 180;
-		}
+		} else
 #endif
+			ctrl->in_reverse = FALSE;
 
 		/* if target point direction angle is too important, bot rotates on its starting point */
 		if (fabs(position_error.angle) > ctrl->min_angle_for_pose_reached / PULSE_PER_DEGREE) {
@@ -201,6 +204,11 @@ polar_t controller_update(controller_t *ctrl,
 inline void controller_set_pose_intermediate(controller_t *ctrl, uint8_t intermediate)
 {
 	ctrl->pose_intermediate = intermediate;
+}
+
+inline uint8_t controller_is_in_reverse(controller_t *ctrl)
+{
+	return ctrl->in_reverse;
 }
 
 inline uint8_t controller_is_pose_reached(controller_t *ctrl)
