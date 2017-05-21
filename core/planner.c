@@ -199,6 +199,8 @@ void task_planner(void)
 		}
 
 		pose_order = path_yellow->poses[path_yellow->current_pose_idx].pos;
+		if (!mach_is_camp_yellow())
+			pose_yellow_to_blue(&pose_order);
 
 		controller_set_pose_to_reach(&controller, pose_order);
 
