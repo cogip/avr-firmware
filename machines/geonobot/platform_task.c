@@ -65,7 +65,7 @@ static void mach_calibration_usage(void)
 	cons_printf("\n");
 }
 
-static void mach_enter_calibration_mode(void)
+static void task_calibration_entry(void)
 {
 	int16_t autoboot_ms = 3000;
 	int c;
@@ -156,7 +156,7 @@ void mach_tasks_init()
 	kos_init();
 
 #if defined(CONFIG_CALIBRATION)
-	kos_new_task(mach_enter_calibration_mode, "CALIB", TASK_CALIB_STACK);
+	kos_new_task(task_calibration_entry, "CALIB", TASK_CALIB_STACK);
 #else
 	planner_start_game();
 #endif
