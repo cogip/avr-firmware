@@ -201,6 +201,10 @@ void task_planner(void)
 
 		/* ===== position ===== */
 		if (controller_is_pose_reached(&controller)) {
+
+			if (path->poses[path->current_pose_idx].act)
+				path->poses[path->current_pose_idx].act();
+
 			increment_current_pose_idx();
 		}
 
