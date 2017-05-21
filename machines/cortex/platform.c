@@ -35,6 +35,7 @@
  * PORTF : Timer decoder quadrature
  *	PF0 : encoder A2 right wheel
  *	PF1 : encoder B2
+ *	PF2 : color switch
  *	PF3 : starter switch
  *
  * use TCC0 as general timer
@@ -383,6 +384,12 @@ uint8_t mach_is_game_launched(void)
 	return gpio_get_input(&PORTF, PIN3_bp);
 }
 
+uint8_t mach_is_camp_yellow(void)
+{
+	/* Color switch for coords translations */
+	return gpio_get_input(&PORTF, PIN2_bp);
+}
+
 static void mach_pinmux_setup(void)
 {
 #if defined(__AVR__)
@@ -418,6 +425,8 @@ static void mach_pinmux_setup(void)
 
 	/* Starter switch */
 	gpio_set_direction(&PORTF, PIN3_bp, GPIO_DIR_IN);
+	/* Color switch */
+	gpio_set_direction(&PORTF, PIN2_bp, GPIO_DIR_IN);
 }
 
 void mach_sched_init()

@@ -247,6 +247,12 @@ uint8_t mach_is_game_launched(void)
 	return TRUE;
 }
 
+uint8_t mach_is_camp_yellow(void)
+{
+	/* TODO: return GPIO of color switch */
+	return TRUE;
+}
+
 static void mach_pinmux_setup(void)
 {
 #if defined(__AVR__)

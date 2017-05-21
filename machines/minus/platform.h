@@ -59,6 +59,7 @@ func_cb_t mach_get_end_of_game_pfn();
 pose_t mach_trajectory_get_route_update(void);
 uint8_t mach_is_zone_obscured(analog_sensor_zone_t zone);
 uint8_t mach_is_game_launched(void);
+uint8_t mach_is_camp_yellow(void);
 
 #if defined(CONFIG_CALIBRATION)
 void mach_check_calibration_mode(void);
