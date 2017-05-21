@@ -14,6 +14,15 @@
 
 static uint16_t tempo;
 
+static void set_pose_reached(controller_t *ctrl)
+{
+	if (ctrl->pose_reached)
+		return;
+
+	ctrl->pose_reached = TRUE;
+	print_info("pose reached\n");
+}
+
 /**
  * \fn polar_t compute_error(const pose_t p1, const pose_t p2)
  * \brief compute error between 2 poses
@@ -104,8 +113,6 @@ polar_t controller_update(controller_t *ctrl,
 
 	position_error = compute_error(ctrl, pose_order, pose_current);
 
-	ctrl->pose_reached = 0;
-
 	cons_printf("%+.0f,%+.0f,%+.0f,%+.0f,%+.0f,%+.0f,"
 		    "%+.0f,%+.0f,"
 		    "%+.0f,%+.0f,"
@@ -165,9 +172,8 @@ polar_t controller_update(controller_t *ctrl,
 			position_error.angle = 0;
 			pid_reset(&ctrl->angular_pose_pid);
 
-			ctrl->pose_reached = 1;
+			set_pose_reached(&controller);
 			ctrl->regul = CTRL_REGUL_POSE_DIST; //CTRL_REGUL_IDLE;
-			print_info ("pose_reached\n");
 		}
 	}
 
@@ -206,6 +212,7 @@ inline void controller_set_pose_to_reach(controller_t *ctrl, const pose_t pose_o
 {
 	irq_disable();
 	ctrl->pose_order = pose_order;
+	ctrl->pose_reached = FALSE;
 	irq_enable();
 }
 
