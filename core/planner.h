@@ -24,4 +24,8 @@ void planner_start_game(void);
 
 void task_planner(void);
 
+#if defined(CONFIG_CALIBRATION)
+void planner_enter_calibration();
+#endif
+
 #endif /* PLANNER_H_ */

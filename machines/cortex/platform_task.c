@@ -28,6 +28,7 @@ static void mach_calibration_usage(void)
 	cons_printf("\t's' to calibrate servos (sd21 card)\n");
 #endif
 	cons_printf("\t'r' to calibrate controller\n");
+	cons_printf("\t'g' to calibrate game planner\n");
 	cons_printf("\n");
 	cons_printf("\t'h' to display this help\n");
 	cons_printf("\t'e' to exit calibration mode\n");
@@ -91,6 +92,9 @@ static void task_calibration_entry(void)
 #endif
 		case 'r':
 			controller_enter_calibration();
+			break;
+		case 'g':
+			planner_enter_calibration();
 			break;
 		case 'h':
 			mach_calibration_usage();

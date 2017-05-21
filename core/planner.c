@@ -221,3 +221,43 @@ yield_point:
 	kos_task_exit();
 }
 
+#if defined(CONFIG_CALIBRATION)
+static void planner_calibration_usage()
+{
+	cons_printf("\n>>> Entering planner calibration mode\n\n");
+
+	cons_printf("\t'h' to display this help\n");
+	cons_printf("\t'q' to quit\n");
+	cons_printf("\n");
+}
+
+void planner_enter_calibration()
+{
+	int c;
+	uint8_t quit = 0;
+
+	planner_calibration_usage();
+
+	while (!quit) {
+
+		/* display prompt */
+		cons_printf("$ ");
+
+		/* wait for command */
+		c = cons_getchar();
+		cons_printf("%c\n", c);
+
+		switch (c) {
+		case 'h':
+			planner_calibration_usage();
+			break;
+		case 'q':
+			quit = 1;
+			break;
+		default:
+			cons_printf("\n");
+			break;
+		}
+	}
+}
+#endif /* CONFIG_CALIBRATION */
