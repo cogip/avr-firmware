@@ -9,7 +9,7 @@
 /* Object variables (singleton) */
 static uint16_t game_time = 0;
 static uint8_t game_started = FALSE;
-static path_t * path_yellow = NULL;
+static path_t * path = NULL;
 
 /* periodic task */
 /* sched period = 20ms -> ticks freq is 1/0.02 = 50 Hz */
@@ -28,10 +28,10 @@ static void pose_yellow_to_blue(pose_t *pose)
 
 static inline void increment_current_pose_idx()
 {
-	if (path_yellow->current_pose_idx < path_yellow->nb_pose - 1)
-		path_yellow->current_pose_idx += 1;
-	else if (path_yellow->play_in_loop)
-		path_yellow->current_pose_idx = 0;
+	if (path->current_pose_idx < path->nb_pose - 1)
+		path->current_pose_idx += 1;
+	else if (path->play_in_loop)
+		path->current_pose_idx = 0;
 }
 
 static void show_game_time()
@@ -47,7 +47,6 @@ static void show_game_time()
 
 pose_t planner_get_path_pose_initial()
 {
-	path_t *path = path_yellow;
 	pose_t pose = { 0, 0, 0 };
 
 	if (path && path->poses && path->nb_pose)
@@ -127,24 +126,24 @@ void task_planner(void)
 	print_info("Game planner started\n");
 	print_info("%s camp\n", camp_yellow ? "YELLOW" : "BLUE");
 
-	path_yellow = mach_get_path_yellow();
-	if (!path_yellow) {
+	path = mach_get_path_yellow();
+	if (!path) {
 		print_err("machine has no path\n");
 		kos_task_exit();
 	}
 
 	/* mirror the points in place if selected camp is blue */
 	if (!camp_yellow) {
-		path_yellow->current_pose_idx = path_yellow->nb_pose;
+		path->current_pose_idx = path->nb_pose;
 		do {
-			path_yellow->current_pose_idx -= 1;
-			pose_yellow_to_blue(&path_yellow->poses[path_yellow->current_pose_idx].pos);
+			path->current_pose_idx -= 1;
+			pose_yellow_to_blue(&path->poses[path->current_pose_idx].pos);
 		}
-		while (path_yellow->current_pose_idx);
+		while (path->current_pose_idx);
 	}
 
 	/* object context initialisation */
-	path_yellow->current_pose_idx = 0;
+	path->current_pose_idx = 0;
 
 	for (;;)
 	{
@@ -205,7 +204,7 @@ void task_planner(void)
 			increment_current_pose_idx();
 		}
 
-		pose_order = path_yellow->poses[path_yellow->current_pose_idx].pos;
+		pose_order = path->poses[path->current_pose_idx].pos;
 
 		controller_set_pose_to_reach(&controller, pose_order);
 
