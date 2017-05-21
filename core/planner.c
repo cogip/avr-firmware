@@ -50,12 +50,8 @@ pose_t planner_get_path_pose_initial()
 	path_t *path = path_yellow;
 	pose_t pose = { 0, 0, 0 };
 
-	if (path && path->poses && path->nb_pose) {
+	if (path && path->poses && path->nb_pose)
 		pose = path->poses[0].pos;
-
-		if (!mach_is_camp_yellow())
-			pose_yellow_to_blue(&pose);
-	}
 
 	return pose;
 }
@@ -136,6 +132,17 @@ void task_planner(void)
 		print_err("machine has no path\n");
 		kos_task_exit();
 	}
+
+	/* mirror the points in place if selected camp is blue */
+	if (!camp_yellow) {
+		path_yellow->current_pose_idx = path_yellow->nb_pose;
+		do {
+			path_yellow->current_pose_idx -= 1;
+			pose_yellow_to_blue(&path_yellow->poses[path_yellow->current_pose_idx].pos);
+		}
+		while (path_yellow->current_pose_idx);
+	}
+
 	/* object context initialisation */
 	path_yellow->current_pose_idx = 0;
 
@@ -199,8 +206,6 @@ void task_planner(void)
 		}
 
 		pose_order = path_yellow->poses[path_yellow->current_pose_idx].pos;
-		if (!mach_is_camp_yellow())
-			pose_yellow_to_blue(&pose_order);
 
 		controller_set_pose_to_reach(&controller, pose_order);
 
