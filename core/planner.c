@@ -3,9 +3,12 @@
 #include "console.h"
 #include "kos.h"
 #include "platform.h"
+#include "trigonometry.h"
 
-static uint16_t game_time;
+/* Object variables (singleton) */
+static uint16_t game_time = 0;
 static uint8_t game_started = FALSE;
+static path_t * path_yellow = NULL;
 
 /* periodic task */
 /* sched period = 20ms -> ticks freq is 1/0.02 = 50 Hz */
@@ -14,6 +17,21 @@ static uint8_t game_started = FALSE;
 #define TASK_FREQ_HZ		(1000 / TASK_PERIOD_MS)
 #define GAME_DURATION_SEC	90
 #define GAME_DURATION_TICKS	(GAME_DURATION_SEC * TASK_FREQ_HZ)
+
+static void pose_yellow_to_blue(pose_t *pose)
+{
+	pose->x = 3000 - pose->x;
+	pose->y = pose->y;
+	pose->O = limit_angle_deg(180 - pose->O);
+}
+
+static inline void increment_current_pose_idx()
+{
+	if (path_yellow->current_pose_idx < path_yellow->nb_pose - 1)
+		path_yellow->current_pose_idx += 1;
+	else if (path_yellow->play_in_loop)
+		path_yellow->current_pose_idx = 0;
+}
 
 static void show_game_time()
 {
@@ -24,6 +42,21 @@ static void show_game_time()
 		print_info ("Game time = %d\n",
 			    game_time / TASK_FREQ_HZ);
 	}
+}
+
+pose_t planner_get_path_pose_initial()
+{
+	path_t *path = path_yellow;
+	pose_t pose = { 0, 0, 0 };
+
+	if (path && path->poses && path->nb_pose) {
+		pose = path->poses[0].pos;
+
+		if (!mach_is_camp_yellow())
+			pose_yellow_to_blue(&pose);
+	}
+
+	return pose;
 }
 
 void planner_start_game(void)
@@ -39,8 +72,18 @@ void task_planner(void)
 	func_cb_t pfn_evtloop_end_of_game = mach_get_end_of_game_pfn();
 	pose_t	pose_order		= { 0, 0, 0 };
 	polar_t	speed_order		= { 0, 0 };
+	const uint8_t camp_yellow	= mach_is_camp_yellow();
 
 	print_info("Game planner started\n");
+	print_info("%s camp\n", camp_yellow ? "YELLOW" : "BLUE");
+
+	path_yellow = mach_get_path_yellow();
+	if (!path_yellow) {
+		print_err("machine has no path\n");
+		kos_task_exit();
+	}
+	/* object context initialisation */
+	path_yellow->current_pose_idx = 0;
 
 	for (;;)
 	{
@@ -77,6 +120,8 @@ void task_planner(void)
 		show_game_time();
 
 
+		/* ===== speed ===== */
+
 		/* collision detection */
 		if (controller_is_in_reverse(&controller))
 			zone = AS_ZONE_REAR;
@@ -94,8 +139,12 @@ void task_planner(void)
 
 		controller_set_speed_order(&controller, speed_order);
 
+		/* ===== position ===== */
+		if (controller_is_pose_reached(&controller)) {
+			increment_current_pose_idx();
+		}
 
-		pose_order = mach_trajectory_get_route_update();
+		pose_order = path_yellow->poses[path_yellow->current_pose_idx].pos;
 
 		controller_set_pose_to_reach(&controller, pose_order);
 

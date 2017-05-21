@@ -235,6 +235,11 @@ pose_t mach_trajectory_get_route_update(void)
 	return pos_list[latest_pos_idx];
 }
 
+path_t * mach_get_path_yellow(void)
+{
+	return NULL;
+}
+
 uint8_t mach_is_zone_obscured(analog_sensor_zone_t zone)
 {
 	uint8_t stop = 0;

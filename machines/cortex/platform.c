@@ -373,6 +373,11 @@ pose_t mach_trajectory_get_route_update(void)
 	return pose_to_reach;
 }
 
+path_t * mach_get_path_yellow(void)
+{
+	return &path_homologation_yellow;
+}
+
 uint8_t mach_is_zone_obscured(analog_sensor_zone_t zone)
 {
 	return analog_sensor_detect_obstacle (&ana_sensors, zone);

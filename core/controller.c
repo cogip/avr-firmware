@@ -7,6 +7,7 @@
 #include "kos.h"
 #include "log.h"
 #include "odometry.h"
+#include "planner.h"
 #include "platform.h"
 #include "trigonometry.h"
 
@@ -307,19 +308,20 @@ void task_controller_update()
 {
 	polar_t	robot_speed;
 	/* bot position on the 'table' (absolute position): */
-	pose_t	robot_pose		= POSE_INITIAL;
+	pose_t	robot_pose		= { 0, 0, 0 };
 	pose_t	pose_order		= { 0, 0, 0 };
 	polar_t	speed_order		= { 0, 0 };
 	polar_t	motor_command		= { 0, 0 };
 	func_cb_t pfn_evtloop_prefunc  = mach_get_ctrl_loop_pre_pfn();
 	func_cb_t pfn_evtloop_postfunc = mach_get_ctrl_loop_post_pfn();
 
+	print_info ("Controller started\n");
+
+	robot_pose = planner_get_path_pose_initial();
 	robot_pose.x *= PULSE_PER_MM;
 	robot_pose.y *= PULSE_PER_MM;
 	robot_pose.O *= PULSE_PER_DEGREE;
 	controller.regul = CTRL_REGUL_POSE_DIST;
-
-	print_info ("Start ctrl loop\n");
 
 	for (;;) {
 		kos_set_next_schedule_delay_ms(20);

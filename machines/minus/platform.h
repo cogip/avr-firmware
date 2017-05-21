@@ -6,6 +6,7 @@
 #include "hbridge.h"
 #include "log.h"
 #include "odometry.h"
+#include "planner.h"
 #include "qdec.h"
 #include "sd21.h"
 
@@ -57,6 +58,7 @@ func_cb_t mach_get_ctrl_loop_pre_pfn();
 func_cb_t mach_get_ctrl_loop_post_pfn();
 func_cb_t mach_get_end_of_game_pfn();
 pose_t mach_trajectory_get_route_update(void);
+path_t * mach_get_path_yellow(void);
 uint8_t mach_is_zone_obscured(analog_sensor_zone_t zone);
 uint8_t mach_is_game_launched(void);
 uint8_t mach_is_camp_yellow(void);

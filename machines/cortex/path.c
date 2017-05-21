@@ -5,8 +5,15 @@
 #include "utils.h"
 
 // TODO: do not use Rear gear.
-path_pose_t path_homologation_yellow[] = {
-	[0] = {
+static path_pose_t poses_homologation_yellow[] = {
+	{ /* POSE_INITIAL */
+		.pos = {
+			.x = 873,
+			.y = 163,
+			.O = 45,
+		},
+	},
+	{
 		.pos = {
 			.x = 1400,
 			.y = 500,
@@ -14,7 +21,7 @@ path_pose_t path_homologation_yellow[] = {
 		},
 		.act = NULL,
 	},
-	[1] = {
+	{
 		.pos = {
 			.x = 1000,
 			.y = 900,
@@ -22,7 +29,7 @@ path_pose_t path_homologation_yellow[] = {
 		},
 		.act = NULL,
 	},
-	[2] = {
+	{
 		.pos = {
 			.x = 950,
 			.y = 400,
@@ -32,8 +39,14 @@ path_pose_t path_homologation_yellow[] = {
 	},
 };
 
-uint8_t path_homologation_yellow_nb = 3;
+path_t path_homologation_yellow = {
+	/* static cfg */
+	.play_in_loop = FALSE,
+	.nb_pose = 4,
+	.poses = poses_homologation_yellow,
+};
 
+#if 0
 path_pose_t path_game_yellow[] = {
 	[0] = {
 		.pos = {
@@ -86,3 +99,4 @@ path_pose_t path_game_yellow[] = {
 };
 
 uint8_t path_game_yellow_nb = 6;
+#endif
