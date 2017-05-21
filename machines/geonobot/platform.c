@@ -262,11 +262,6 @@ inline func_cb_t mach_get_end_of_game_pfn()
 	return mach_evtloop_end_of_game;
 }
 
-pose_t mach_trajectory_get_route_update(void)
-{
-	return route_update();
-}
-
 path_t * mach_get_path_yellow(void)
 {
 	return NULL;

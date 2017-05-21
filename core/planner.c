@@ -1,5 +1,6 @@
 #include "planner.h"
 
+#include "avoidance.h"
 #include "console.h"
 #include "kos.h"
 #include "platform.h"
@@ -65,6 +66,59 @@ void planner_start_game(void)
 	controller_set_mode(&controller, CTRL_STATE_INGAME);
 	game_started = TRUE;
 }
+
+/* NOTE: TO INTEGRATE & REMOVE */
+#if 0
+static pose_t mach_trajectory_get_route_update(void)
+{
+	static pose_t pose_reached = POSE_INITIAL;
+	static pose_t pose_to_reach;
+	static int8_t latest_pos_idx = -1;
+	static uint8_t index = 1;
+
+	if (latest_pos_idx == -1)
+	{
+		latest_pos_idx = 0;
+		pose_to_reach = path_game_yellow[latest_pos_idx].pos;
+		set_start_finish(&pose_reached, &pose_to_reach);
+		update_graph();
+	}
+
+	if (controller_is_pose_reached(&controller))
+	{
+		if ((pose_to_reach.x == path_game_yellow[latest_pos_idx].pos.x)
+			&& (pose_to_reach.y == path_game_yellow[latest_pos_idx].pos.y))
+		{
+			if (latest_pos_idx + 1 < path_game_yellow_nb)
+			{
+				latest_pos_idx++;
+			}
+			set_start_finish(&pose_reached, &(path_game_yellow[latest_pos_idx].pos));
+			update_graph();
+			index = 1;
+		}
+		else
+		{
+			index++;
+		}
+		pose_reached = pose_to_reach;
+	}
+
+	pose_to_reach = avoidance(index);
+	if ((pose_to_reach.x == path_game_yellow[latest_pos_idx].pos.x)
+		&& (pose_to_reach.y == path_game_yellow[latest_pos_idx].pos.y))
+	{
+		controller_set_pose_intermediate(&controller, FALSE);
+	}
+	else
+	{
+		controller_set_pose_intermediate(&controller, TRUE);
+	}
+
+	return pose_to_reach;
+}
+#endif
+/* NOTE: TO INTEGRATE & REMOVE */
 
 void task_planner(void)
 {
