@@ -13,7 +13,6 @@
 #include "platform_task.h"
 #include "usart.h"
 #include "qdec.h"
-#include "avoidance.h"
 
 #if defined(CONFIG_CALIBRATION)
 static void mach_calibration_usage(void)
@@ -120,6 +119,8 @@ exit_point:
 #define TASK_CTRL_STACK		512
 #define TASK_PLAN_STACK		512
 
+/* Note: last task registered will be the first to be scheduled.
+ *    running order can be important in current tasks design */
 void mach_tasks_init()
 {
 	kos_init();

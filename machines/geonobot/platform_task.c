@@ -151,6 +151,8 @@ exit_point:
 #define TASK_CTRL_STACK		256
 #define TASK_PLAN_STACK		512
 
+/* Note: last task registered will be the first to be scheduled.
+ *    running order can be important in current tasks design */
 void mach_tasks_init()
 {
 	kos_init();
