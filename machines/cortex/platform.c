@@ -372,11 +372,9 @@ pose_t mach_trajectory_get_route_update(void)
 	return pose_to_reach;
 }
 
-uint8_t mach_stop_robot(void)
+uint8_t mach_is_zone_obscured(analog_sensor_zone_t zone)
 {
-	uint8_t stop = 0;
-	return stop;
-//	return analog_sensor_detect_obstacle (&ana_sensors, AS_ZONE_FRONT|AS_ZONE_REAR);
+	return analog_sensor_detect_obstacle (&ana_sensors, zone);
 }
 
 uint8_t mach_is_game_launched(void)

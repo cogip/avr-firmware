@@ -35,7 +35,7 @@ void planner_start_game(void)
 
 void task_planner(void)
 {
-	uint8_t stop = FALSE;
+	analog_sensor_zone_t zone;
 	func_cb_t pfn_evtloop_end_of_game = mach_get_end_of_game_pfn();
 	pose_t	pose_order		= { 0, 0, 0 };
 	polar_t	speed_order		= { 0, 0 };
@@ -76,24 +76,28 @@ void task_planner(void)
 		game_time++;
 		show_game_time();
 
+
+		/* collision detection */
+		if (controller_is_in_reverse(&controller))
+			zone = AS_ZONE_REAR;
+		else
+			zone = AS_ZONE_FRONT;
+
+		if (mach_is_zone_obscured(zone)) {
+			speed_order.distance = 0;
+		} else {
+			/* max speed order in pulse_linear per ctrl period (20ms) */
+			speed_order.distance = 150;
+		}
+		/* max speed order in pulse_angular per ctrl period (20ms) */
+		speed_order.angle = 150 / 2;
+
+		controller_set_speed_order(&controller, speed_order);
+
+
 		pose_order = mach_trajectory_get_route_update();
 
 		controller_set_pose_to_reach(&controller, pose_order);
-
-		/* collision detection */
-		stop = mach_stop_robot();
-
-		if (stop) {
-			speed_order.distance = 0;
-			speed_order.angle = 0;
-		} else {
-			/* speed order in position = 60 pulses / 20ms */
-			speed_order.distance = 150;
-			/* speed order in angle? = 60 pulses / 20ms */
-			speed_order.angle = 150 / 2;
-		}
-
-		controller_set_speed_order(&controller, speed_order);
 
 yield_point:
 		kos_yield();
