@@ -224,8 +224,10 @@ inline uint8_t controller_is_pose_reached(controller_t *ctrl)
 inline void controller_set_pose_to_reach(controller_t *ctrl, const pose_t pose_order)
 {
 	irq_disable();
-	ctrl->pose_order = pose_order;
-	ctrl->pose_reached = FALSE;
+	if (! pose_equal(&ctrl->pose_order, &pose_order)) {
+		ctrl->pose_order = pose_order;
+		ctrl->pose_reached = FALSE;
+	}
 	irq_enable();
 }
 
