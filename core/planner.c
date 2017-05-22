@@ -10,6 +10,7 @@
 static uint16_t game_time = 0;
 static uint8_t game_started = FALSE;
 static path_t * path = NULL;
+static uint8_t in_calibration = FALSE;
 
 /* periodic task */
 /* sched period = 20ms -> ticks freq is 1/0.02 = 50 Hz */
@@ -147,37 +148,39 @@ void task_planner(void)
 
 	for (;;)
 	{
-		if (!game_started)
+		if (!game_started && !in_calibration)
 			goto yield_point;
 
 		kos_set_next_schedule_delay_ms(TASK_PERIOD_MS);
 
-		if (pfn_evtloop_end_of_game && game_time >= GAME_DURATION_TICKS)
-			(*pfn_evtloop_end_of_game)();
+		if (!in_calibration) {
+			if (pfn_evtloop_end_of_game && game_time >= GAME_DURATION_TICKS)
+				(*pfn_evtloop_end_of_game)();
 
-		/* while starter switch is not release we wait */
-		if (!mach_is_game_launched())
-			goto yield_point;
+			/* while starter switch is not release we wait */
+			if (!mach_is_game_launched())
+				goto yield_point;
 
-		if (game_time >= GAME_DURATION_TICKS) {
-			cons_printf(">>>>\n");
-			controller_set_mode(&controller, CTRL_STATE_STOP);
-			break;
+			if (game_time >= GAME_DURATION_TICKS) {
+				cons_printf(">>>>\n");
+				controller_set_mode(&controller, CTRL_STATE_STOP);
+				break;
+			}
+
+			if (!game_time) {
+				cons_printf("<<<< polar_simu.csv\n");
+				cons_printf("pose_order_x,pose_order_y,pose_order_a,"
+					    "pose_current_x,pose_current_y,pose_current_a,"
+					    "position_error_l,position_error_a,"
+					    "speed_order_l,speed_order_a,"
+					    "speed_current_l,speed_current_a,"
+					    "game_time,"
+					    "\n");
+			}
+
+			game_time++;
+			show_game_time();
 		}
-
-		if (!game_time) {
-			cons_printf("<<<< polar_simu.csv\n");
-			cons_printf("pose_order_x,pose_order_y,pose_order_a,"
-				    "pose_current_x,pose_current_y,pose_current_a,"
-				    "position_error_l,position_error_a,"
-				    "speed_order_l,speed_order_a,"
-				    "speed_current_l,speed_current_a,"
-				    "game_time,"
-				    "\n");
-		}
-
-		game_time++;
-		show_game_time();
 
 
 		/* ===== speed ===== */
@@ -200,7 +203,7 @@ void task_planner(void)
 		controller_set_speed_order(&controller, speed_order);
 
 		/* ===== position ===== */
-		if (controller_is_pose_reached(&controller)) {
+		if (!in_calibration && controller_is_pose_reached(&controller)) {
 
 			if (path->poses[path->current_pose_idx].act)
 				path->poses[path->current_pose_idx].act();
@@ -226,6 +229,11 @@ static void planner_calibration_usage()
 {
 	cons_printf("\n>>> Entering planner calibration mode\n\n");
 
+	cons_printf("\t'n' to go to next pose in path\n");
+	cons_printf("\t'p' to go to prev pose in path\n");
+	cons_printf("\t'a' to launch current action at current pose\n");
+	cons_printf("\n");
+	cons_printf("\t'v' to dump all pose in path\n");
 	cons_printf("\t'h' to display this help\n");
 	cons_printf("\t'q' to quit\n");
 	cons_printf("\n");
@@ -233,10 +241,13 @@ static void planner_calibration_usage()
 
 void planner_enter_calibration()
 {
-	int c;
+	int c, i;
 	uint8_t quit = 0;
 
 	planner_calibration_usage();
+
+	in_calibration = TRUE;
+	controller_set_mode(&controller, CTRL_STATE_INGAME);
 
 	while (!quit) {
 
@@ -248,6 +259,28 @@ void planner_enter_calibration()
 		cons_printf("%c\n", c);
 
 		switch (c) {
+		case 'n':
+			increment_current_pose_idx();
+			break;
+		case 'p':
+			if (path->current_pose_idx)
+				path->current_pose_idx--;
+			break;
+		case 'a':
+			if (path->poses[path->current_pose_idx].act)
+				path->poses[path->current_pose_idx].act();
+			break;
+		case 'v':
+			cons_printf("nb_pose = %d\n", path->nb_pose);
+			for (i = 0; i < path->nb_pose; i++) {
+				pose_t *p = &path->poses[i].pos;
+				cons_printf("%02d %c\t"
+				       "X = %+.2f\tY = %+.2f\tO = %+.2f\n",
+				       i,
+				       i == path->current_pose_idx ? '<' : ' ',
+				       p->x, p->y, p->O);
+			}
+			break;
 		case 'h':
 			planner_calibration_usage();
 			break;
@@ -259,5 +292,9 @@ void planner_enter_calibration()
 			break;
 		}
 	}
+
+	path->current_pose_idx = 0;
+	controller_set_mode(&controller, CTRL_STATE_IDLE);
+	in_calibration = FALSE;
 }
 #endif /* CONFIG_CALIBRATION */
