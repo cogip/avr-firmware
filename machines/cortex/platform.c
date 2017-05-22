@@ -171,9 +171,9 @@ sd21_t sd21 = {
 
 		/* Front-Right */
 		[3] = {
-			.value_init = 2550/*1500*/,
+			.value_init = 2500/*1500*/,
 			.value_open = 1150,
-			.value_close = 2550,
+			.value_close = 2500,
 		},
 
 		/* Glasses right arm */
@@ -200,9 +200,9 @@ sd21_t sd21 = {
 
 		/* Right arm */
 		[7] = {
-			.value_init = 925,
+			.value_init = 950,
 			.value_open = 1975,
-			.value_close = 925,
+			.value_close = 950,
 		},
 
 		///* Clamp */
