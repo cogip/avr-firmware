@@ -8,6 +8,7 @@
 #include "console.h"
 #include "kos.h"
 #include "msched.h"
+#include "obstacle.h"
 #include "platform.h"
 #include "platform_task.h"
 
@@ -323,7 +324,7 @@ inline func_cb_t mach_get_end_of_game_pfn()
 	return NULL;
 }
 
-pose_t mach_trajectory_get_route_update(void)
+pose_t mach_trajectory_get_route_update(const pose_t *robot_pose, uint8_t stop)
 {
 	static pose_t pose_reached = POSE_INITIAL;
 	static pose_t pose_to_reach;
@@ -335,6 +336,12 @@ pose_t mach_trajectory_get_route_update(void)
 		latest_pos_idx = 0;
 		pose_to_reach = path_game_yellow[latest_pos_idx].pos;
 		set_start_finish(&pose_reached, &pose_to_reach);
+		update_graph();
+	}
+
+	if (stop == TRUE)
+	{
+		set_start_finish(robot_pose, &pose_to_reach);
 		update_graph();
 	}
 
@@ -372,11 +379,21 @@ pose_t mach_trajectory_get_route_update(void)
 	return pose_to_reach;
 }
 
-uint8_t mach_stop_robot(void)
+uint8_t mach_stop_robot(const pose_t *robot_pose)
 {
-	uint8_t stop = 0;
+	uint8_t stop = FALSE;
+	reset_dyn_polygons();
+	if (analog_sensor_detect_obstacle (&ana_sensors, AS_ZONE_FRONT))
+	{
+		add_dyn_obstacle(robot_pose, AS_ZONE_FRONT);
+		stop = TRUE;
+	}
+	if (analog_sensor_detect_obstacle (&ana_sensors, AS_ZONE_REAR))
+	{
+		add_dyn_obstacle(robot_pose, AS_ZONE_REAR);
+		stop = TRUE;
+	}
 	return stop;
-//	return analog_sensor_detect_obstacle (&ana_sensors, AS_ZONE_FRONT|AS_ZONE_REAR);
 }
 
 uint8_t mach_is_game_launched(void)

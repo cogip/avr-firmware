@@ -55,8 +55,8 @@ extern datalog_t datalog;
 func_cb_t mach_get_ctrl_loop_pre_pfn();
 func_cb_t mach_get_ctrl_loop_post_pfn();
 func_cb_t mach_get_end_of_game_pfn();
-pose_t mach_trajectory_get_route_update(void);
-uint8_t mach_stop_robot(void);
+pose_t mach_trajectory_get_route_update(const pose_t *robot_pose, uint8_t stop);
+uint8_t mach_stop_robot(const pose_t *robot_pose);
 uint8_t mach_is_game_launched(void);
 
 #if defined(CONFIG_CALIBRATION)

@@ -1,7 +1,9 @@
 #include "planner.h"
 
 #include "console.h"
+#include "controller.h"
 #include "kos.h"
+#include "obstacle.h"
 #include "platform.h"
 
 static uint16_t game_time;
@@ -39,6 +41,7 @@ void task_planner(void)
 	func_cb_t pfn_evtloop_end_of_game = mach_get_end_of_game_pfn();
 	pose_t	pose_order		= { 0, 0, 0 };
 	polar_t	speed_order		= { 0, 0 };
+	pose_t robot_pose		= POSE_INITIAL;
 
 	print_info("Game planner started\n");
 
@@ -76,23 +79,18 @@ void task_planner(void)
 		game_time++;
 		show_game_time();
 
-		pose_order = mach_trajectory_get_route_update();
+		/* collision detection */
+		robot_pose = get_robot_pose();
+		stop = mach_stop_robot(&robot_pose);
+
+		pose_order = mach_trajectory_get_route_update(&robot_pose, stop);
 
 		controller_set_pose_to_reach(&controller, pose_order);
 
-		/* collision detection */
-		stop = mach_stop_robot();
-
-		if (stop) {
-			speed_order.distance = 0;
-			speed_order.angle = 0;
-		} else {
-			/* speed order in position = 60 pulses / 20ms */
-			speed_order.distance = 150;
-			/* speed order in angle? = 60 pulses / 20ms */
-			speed_order.angle = 150 / 2;
-		}
-
+		/* speed order in position = 60 pulses / 20ms */
+		speed_order.distance = 150;
+		/* speed order in angle? = 60 pulses / 20ms */
+		speed_order.angle = 150 / 2;
 		controller_set_speed_order(&controller, speed_order);
 
 yield_point:
