@@ -71,6 +71,8 @@ void controller_set_mode(controller_t *ctrl, controller_mode_t new_mode);
 
 void task_controller_update();
 
+pose_t get_robot_pose();
+
 #if defined(CONFIG_CALIBRATION)
 void controller_enter_calibration();
 #endif

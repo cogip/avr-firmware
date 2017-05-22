@@ -13,6 +13,7 @@
 #include "controller.h"
 
 static uint16_t tempo;
+static pose_t robot_pose = POSE_INITIAL;
 
 /**
  * \fn polar_t compute_error(const pose_t p1, const pose_t p2)
@@ -292,7 +293,6 @@ void task_controller_update()
 {
 	polar_t	robot_speed;
 	/* bot position on the 'table' (absolute position): */
-	pose_t	robot_pose		= POSE_INITIAL;
 	pose_t	pose_order		= { 0, 0, 0 };
 	polar_t	speed_order		= { 0, 0 };
 	polar_t	motor_command		= { 0, 0 };
@@ -606,6 +606,11 @@ static const char *controller_get_pid_name_from_idx(const uint8_t i)
 	default:
 		return NULL;
 	}
+}
+
+pose_t get_robot_pose()
+{
+	return robot_pose;
 }
 
 static void controller_calibration_usage(const uint8_t pid_idx)
