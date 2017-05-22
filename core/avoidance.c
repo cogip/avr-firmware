@@ -10,6 +10,8 @@
 static polygon_t polygons[POLY_MAX];
 /* Number of polygons */
 static int nb_polygons = 0;
+/* Number of dynamic polygons */
+static int nb_dyn_polygons = 0;
 
 /* List of visible points */
 static pose_t valid_points[MAX_POINTS];
@@ -28,8 +30,6 @@ void set_start_finish(const pose_t *s, const pose_t *f)
 
 pose_t avoidance(uint8_t index)
 {
-
-
 	/* Build path graph */
 	return dijkstra(1,index);
 }
@@ -79,20 +79,39 @@ int add_polygon(polygon_t *polygon)
 	}
 }
 
+/* Add a dynamic polygon to obstacle list */
+int add_dyn_polygon(polygon_t *polygon)
+{
+	if (nb_polygons + nb_dyn_polygons < POLY_MAX)
+	{
+		polygons[nb_polygons + nb_dyn_polygons++] = *polygon;
+		return 0;
+	}
+	else
+	{
+		return -1;
+	}
+}
+
+void reset_dyn_polygons()
+{
+	nb_dyn_polygons = 0;
+}
+
 /* Build obstacle graph
  * Each obstacle is a polygon.
  * List all  visible points : all points not contained in a polygon */
 void build_avoidance_graph(void)
 {
 	/* For each polygon */
-	for (int i = 0; i < nb_polygons; i++)
+	for (int i = 0; i < nb_polygons + nb_dyn_polygons; i++)
 	{
 		/* and for each vertice of that polygon */
 		for (int p = 0; p < polygons[i].count; p++)
 		{
 			uint8_t collide = FALSE;
 			/* we check thios vertice is not inside an other polygon */
-			for (int j = 0; j < nb_polygons; j++)
+			for (int j = 0; j < nb_polygons + nb_dyn_polygons; j++)
 			{
 				if (i == j)
 				{
@@ -121,7 +140,7 @@ void build_avoidance_graph(void)
 			if (p != p2)
 			{
 				/* Check if that segment crosses a polygon */
-				for (int i = 0; i < nb_polygons; i++)
+				for (int i = 0; i < nb_polygons + nb_dyn_polygons; i++)
 				{
 					for (int v = 0; v < polygons[i].count; v++)
 					{
