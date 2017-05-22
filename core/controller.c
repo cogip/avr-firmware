@@ -105,12 +105,16 @@ polar_t controller_update(controller_t *ctrl,
 			  polar_t speed_order,
 			  polar_t speed_current)
 {
-	polar_t command;
+	polar_t command = {0, 0};
 	polar_t speed;
 	/* ******************** position pid controller ******************** */
 
 	/* compute position error */
 	polar_t position_error;
+
+	if (controller_is_pose_reached(&controller)) {
+		return command;
+	}
 
 	position_error = compute_error(ctrl, pose_order, pose_current);
 
