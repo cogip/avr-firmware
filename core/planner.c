@@ -193,12 +193,13 @@ void task_planner(void)
 
 		if (mach_is_zone_obscured(zone)) {
 			speed_order.distance = 0;
+			speed_order.angle = 0;
 		} else {
 			/* max speed order in pulse_linear per ctrl period (20ms) */
 			speed_order.distance = 150;
+			/* max speed order in pulse_angular per ctrl period (20ms) */
+			speed_order.angle = 150 / 2;
 		}
-		/* max speed order in pulse_angular per ctrl period (20ms) */
-		speed_order.angle = 150 / 2;
 
 		controller_set_speed_order(&controller, speed_order);
 

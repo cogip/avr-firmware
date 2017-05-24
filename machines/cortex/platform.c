@@ -46,7 +46,7 @@
 analog_sensors_t ana_sensors = {
 	.adc = &ADCA,
 
-	.sensors_nb = 6,
+	.sensors_nb = 8,
 	.sensors = {
 		/* Rear right: [10...80] cm - GP2Y0A21 - cal done */
 		[0] = {
@@ -81,8 +81,30 @@ analog_sensors_t ana_sensors = {
 
 			.zone = (AS_ZONE_FRONT | AS_ZONE_RIGHT),
 		},
-		/* Side left: [4...30] cm - GP2YD120X - cal done */
+		/* *************** Front Side left: [4...30] cm - GP2YD120X - cal NOT done */
 		[3] = {
+			.pin_id = PIN3_bp,
+
+			.coeff_volts = 0.052,
+			.const_volts = 0.007,
+			.const_dist = 0,
+			.dist_cm_max = 40,
+
+			.zone = (AS_ZONE_REAR | AS_ZONE_LEFT),
+		},
+		/* *************** Front Side right: [4...30] cm - GP2YD120X - cal NOT done */
+		[4] = {
+			.pin_id = PIN4_bp,
+
+			.coeff_volts = 0.052,
+			.const_volts = 0.007,
+			.const_dist = 0,
+			.dist_cm_max = 40,
+
+			.zone = (AS_ZONE_REAR | AS_ZONE_RIGHT),
+		},
+		/* Front Side left: [4...30] cm - GP2YD120X - cal done */
+		[5] = {
 			.pin_id = PIN5_bp,
 
 			.coeff_volts = 0.052,
@@ -90,10 +112,10 @@ analog_sensors_t ana_sensors = {
 			.const_dist = 0,
 			.dist_cm_max = 40,
 
-			.zone = AS_ZONE_LEFT,
+			.zone = (AS_ZONE_FRONT | AS_ZONE_LEFT),
 		},
-		/* Side right: [4...30] cm - GP2YD120X - cal done */
-		[4] = {
+		/* Front Side right: [4...30] cm - GP2YD120X - cal done */
+		[6] = {
 			.pin_id = PIN6_bp,
 
 			.coeff_volts = 0.052,
@@ -101,10 +123,10 @@ analog_sensors_t ana_sensors = {
 			.const_dist = 0,
 			.dist_cm_max = 40,
 
-			.zone = AS_ZONE_RIGHT,
+			.zone = (AS_ZONE_FRONT | AS_ZONE_RIGHT),
 		},
 		/* Rear left: [10...80] cm - GP2Y0A21 - cal done  */
-		[5] = {
+		[7] = {
 			.pin_id = PIN7_bp,
 
 			.coeff_volts = 0.03,
@@ -330,7 +352,7 @@ path_t * mach_get_path_yellow(void)
 
 uint8_t mach_is_zone_obscured(analog_sensor_zone_t zone)
 {
-	return analog_sensor_detect_obstacle (&ana_sensors, zone);
+	return analog_sensor_detect_obstacle(&ana_sensors, zone);
 }
 
 uint8_t mach_is_game_launched(void)
