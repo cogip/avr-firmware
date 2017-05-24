@@ -203,6 +203,9 @@ void task_planner(void)
 
 		controller_set_speed_order(&controller, speed_order);
 
+		/* reverse gear selection is granted per point to reach, in path */
+		controller_set_allow_reverse(&controller, path->poses[path->current_pose_idx].allow_reverse);
+
 		/* ===== position ===== */
 		if (!in_calibration && controller_is_pose_reached(&controller)) {
 

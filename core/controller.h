@@ -44,6 +44,7 @@ typedef struct {
 
 	pose_t pose_order;
 	polar_t	speed_order;
+	uint8_t allow_reverse;
 
 	controller_regul_t regul;
 	uint8_t pose_reached;
@@ -61,6 +62,7 @@ polar_t controller_update(controller_t *ctrl,
 
 void controller_set_pose_intermediate(controller_t *ctrl, uint8_t intermediate);
 uint8_t controller_is_in_reverse(controller_t *ctrl);
+void controller_set_allow_reverse(controller_t *ctrl, uint8_t allow);
 
 uint8_t controller_is_pose_reached(controller_t *ctrl);
 void controller_set_pose_to_reach(controller_t *ctrl, const pose_t pose_order);

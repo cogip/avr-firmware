@@ -142,9 +142,8 @@ polar_t controller_update(controller_t *ctrl,
 	if (ctrl->regul != CTRL_REGUL_POSE_ANGL
 	    && fabs(position_error.distance) > ctrl->min_distance_for_angular_switch) {
 
-#if defined(CONFIG_CTRL_REVERSE_ALLOWED)
 		/* should we go reverse? */
-		if (fabs(position_error.angle) > 90) {
+		if (ctrl->allow_reverse && fabs(position_error.angle) > 90) {
 			ctrl->in_reverse = TRUE;
 
 			position_error.distance = -position_error.distance;
@@ -154,7 +153,6 @@ polar_t controller_update(controller_t *ctrl,
 			else
 				position_error.angle -= 180;
 		} else
-#endif
 			ctrl->in_reverse = FALSE;
 
 		/* if target point direction angle is too important, bot rotates on its starting point */
@@ -214,6 +212,11 @@ inline void controller_set_pose_intermediate(controller_t *ctrl, uint8_t interme
 inline uint8_t controller_is_in_reverse(controller_t *ctrl)
 {
 	return ctrl->in_reverse;
+}
+
+inline void controller_set_allow_reverse(controller_t *ctrl, uint8_t allow)
+{
+	ctrl->allow_reverse = allow;
 }
 
 inline uint8_t controller_is_pose_reached(controller_t *ctrl)
@@ -323,11 +326,13 @@ void task_controller_update()
 
 	print_info ("Controller started\n");
 
+	/* object context initialisation */
 	robot_pose = planner_get_path_pose_initial();
 	robot_pose.x *= PULSE_PER_MM;
 	robot_pose.y *= PULSE_PER_MM;
 	robot_pose.O *= PULSE_PER_DEGREE;
 	controller.regul = CTRL_REGUL_POSE_DIST;
+	controller.allow_reverse = FALSE;
 
 	for (;;) {
 		kos_set_next_schedule_delay_ms(20);
