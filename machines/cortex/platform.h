@@ -42,6 +42,11 @@
 #define HBRIDGE_MOTOR_LEFT		0
 #define HBRIDGE_MOTOR_RIGHT		1
 
+#define GPIO_ID_PUMP_FR			PIN0_bp
+#define GPIO_ID_PUMP_RR			PIN1_bp
+#define GPIO_ID_PUMP_FL			PIN4_bp
+#define GPIO_ID_PUMP_RL			PIN5_bp
+
 #define USART_CONSOLE			USARTC0
 
 extern analog_sensors_t ana_sensors;

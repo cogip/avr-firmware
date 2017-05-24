@@ -5,12 +5,6 @@
 #include "platform.h"
 #include "sd21.h"
 
-// to check
-#define GPIO_ID_PUMP_FL		PIN0_bp
-#define GPIO_ID_PUMP_FR		PIN1_bp
-#define GPIO_ID_PUMP_RL		PIN2_bp
-#define GPIO_ID_PUMP_RR		PIN3_bp
-
 #define SERVO_ID_VENT_FL	0
 #define SERVO_ID_VENT_FR	3
 #define SERVO_ID_VENT_RL	1

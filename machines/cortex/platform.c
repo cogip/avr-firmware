@@ -393,12 +393,12 @@ static void mach_pinmux_setup(void)
 	gpio_set_direction(&PORTB, PIN4_bp, GPIO_DIR_OUT);
 	gpio_set_direction(&PORTB, PIN5_bp, GPIO_DIR_OUT);
 
-	gpio_set_output(&PORTB, PIN0_bp, 0); /* Front Right Pump */
-	gpio_set_output(&PORTB, PIN1_bp, 0); /* Rear Right Pump */
+	gpio_set_output(&PORTB, GPIO_ID_PUMP_FR, 0); /* Front Right Pump */
+	gpio_set_output(&PORTB, GPIO_ID_PUMP_RR, 0); /* Rear Right Pump */
 	gpio_set_output(&PORTB, PIN2_bp, 0); /* Not Connected */
 	gpio_set_output(&PORTB, PIN3_bp, 0); /* Not Connected */
-	gpio_set_output(&PORTB, PIN4_bp, 0); /* Front Left Pump */
-	gpio_set_output(&PORTB, PIN5_bp, 0); /* Rear Left Pump */
+	gpio_set_output(&PORTB, GPIO_ID_PUMP_FL, 0); /* Front Left Pump */
+	gpio_set_output(&PORTB, GPIO_ID_PUMP_RL, 0); /* Rear Left Pump */
 
 	/* Starter switch */
 	gpio_set_direction(&PORTF, PIN3_bp, GPIO_DIR_IN);
