@@ -493,7 +493,7 @@ void task_controller_update()
 			if (tempo < 50)
 				speed_order.distance = 0;
 			else if (tempo >= 50 && tempo < 400 - 50)
-				speed_order.distance = 15;
+				speed_order.distance = 50;//15;
 			else if (tempo >= 400 - 50)
 				speed_order.distance = 0;
 

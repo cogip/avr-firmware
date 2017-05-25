@@ -7,5 +7,6 @@
 
 
 path_t path_homologation_yellow;
+path_t path_yellow;
 
 #endif /* PATH_H_ */

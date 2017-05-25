@@ -179,16 +179,16 @@ sd21_t sd21 = {
 
 		/* Bottom-Left */
 		[1] = {
-			.value_init = 2400/*1500*/,
-			.value_open = 1075,
-			.value_close = 2400,
+			.value_init = 2550/*1500*/,
+			.value_open = 1200,
+			.value_close = 2550,
 		},
 
 		/* Bottom-Right */
 		[2] = {
-			.value_init = 600/*1500*/,
-			.value_open = 1925,
-			.value_close = 600,
+			.value_init = 1050, //600/*1500*/
+			.value_open = 2250,
+			.value_close = 1050,//600,
 		},
 
 		/* Front-Right */
@@ -285,14 +285,14 @@ controller_t controller = {
 		.kd = 0,
 	},
 	.linear_pose_pid = {
-		.kp = 0.050,
+		.kp = 0.060,
 		.ki = 0,
-		.kd = 0.4,
+		.kd = 0.5,
 	},
 	.angular_pose_pid = {
-		.kp = 0.050,
+		.kp = 0.060,
 		.ki = 0,
-		.kd = 0.4,
+		.kd = 0.5,
 	},
 #else
 	.linear_speed_pid = {
@@ -347,12 +347,13 @@ inline func_cb_t mach_get_end_of_game_pfn()
 
 path_t * mach_get_path_yellow(void)
 {
-	return &path_homologation_yellow;
+	//return &path_homologation_yellow;
+	return &path_yellow;
 }
 
 uint8_t mach_is_zone_obscured(analog_sensor_zone_t zone)
 {
-	return analog_sensor_detect_obstacle(&ana_sensors, zone);
+	return 0; // analog_sensor_detect_obstacle(&ana_sensors, zone);
 }
 
 uint8_t mach_is_game_launched(void)

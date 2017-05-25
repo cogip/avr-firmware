@@ -7,6 +7,7 @@
 typedef struct {
 	pose_t pos;
 	uint8_t allow_reverse;
+	uint8_t collision_disable;
 	func_cb_t act;
 } path_pose_t;
 
