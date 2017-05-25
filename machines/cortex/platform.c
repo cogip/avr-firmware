@@ -353,7 +353,7 @@ path_t * mach_get_path_yellow(void)
 
 uint8_t mach_is_zone_obscured(analog_sensor_zone_t zone)
 {
-	return 0; // analog_sensor_detect_obstacle(&ana_sensors, zone);
+	return analog_sensor_detect_obstacle(&ana_sensors, zone);
 }
 
 uint8_t mach_is_game_launched(void)
