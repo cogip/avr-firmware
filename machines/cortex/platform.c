@@ -168,7 +168,7 @@ sd21_t sd21 = {
 	.twi = &TWIC,
 	.twi_speed_khz = 100,
 
-	.servos_nb = 8,
+	.servos_nb = 9,
 	.servos = {
 		/* Front-Left */
 		[0] = {
@@ -193,9 +193,9 @@ sd21_t sd21 = {
 
 		/* Front-Right */
 		[3] = {
-			.value_init = 2500/*1500*/,
+			.value_init = 2450/*1500*/,
 			.value_open = 1150,
-			.value_close = 2500,
+			.value_close = 2450,
 		},
 
 		/* Glasses right arm */
@@ -227,12 +227,12 @@ sd21_t sd21 = {
 			.value_close = 950,
 		},
 
-		///* Clamp */
-		//[8] = {
-		//	.value_init = 1700,
-		//	.value_open = 2120,
-		//	.value_close = 1700,
-		//},
+		/* Clamp */
+		[8] = {
+			.value_init = 1000,
+			.value_open = 1300,
+			.value_close = 1000,
+		},
 	},
 };
 #endif /* CONFIG_SD21 */

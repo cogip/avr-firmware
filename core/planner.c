@@ -164,6 +164,7 @@ void task_planner(void)
 			if (game_time >= GAME_DURATION_TICKS) {
 				cons_printf(">>>>\n");
 				controller_set_mode(&controller, CTRL_STATE_STOP);
+				stop_turbine();
 				break;
 			}
 

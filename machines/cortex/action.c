@@ -132,13 +132,13 @@ void act_close_front_right_arm(void)
 {
 	uint8_t pause_ms = CATCH_MODULE_PAUSE_MS;
 	const uint8_t servo_id = mach_is_camp_yellow() ? SERVO_ID_VENT_FR : SERVO_ID_VENT_FL;
-	/*const uint8_t pump_id = mach_is_camp_yellow() ? GPIO_ID_PUMP_FR : GPIO_ID_PUMP_FL;*/
+	const uint8_t pump_id = mach_is_camp_yellow() ? GPIO_ID_PUMP_FR : GPIO_ID_PUMP_FL;
 
 	/* ventouse front right open */
 	sd21_control_servo(&sd21, servo_id, SD21_SERVO_CLOSE);
 
-	/* pump front right on */
-	/*gpio_set_output(&PORTB, pump_id, 1);*/
+	/* pump front right off */
+	gpio_set_output(&PORTB, pump_id, 0);
 
 	while (pause_ms--)
 		kos_yield();
@@ -209,3 +209,15 @@ void act_close_rear_right_arm(void)
 	sd21_control_servo(&sd21, servo_id, SD21_SERVO_CLOSE);
 }
 
+void start_turbine(void)
+{
+	uint8_t pause_ms = CATCH_MODULE_PAUSE_MS * 2;
+	sd21_control_servo(&sd21, 8, SD21_SERVO_OPEN);
+	while (pause_ms--)
+		kos_yield();
+}
+
+void stop_turbine(void)
+{
+	sd21_control_servo(&sd21, 8, SD21_SERVO_CLOSE);
+}

@@ -25,6 +25,8 @@ void act_stop_front_right_pump(void);
 void act_close_FR_arm_open_RR_arm(void);
 void act_stop_rear_right_pump(void);
 void act_close_rear_right_arm(void);
+void start_turbine(void);
+void stop_turbine(void);
 
 //void act_unload_front_right_module(void);
 
