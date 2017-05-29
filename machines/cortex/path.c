@@ -56,16 +56,17 @@ static path_pose_t path_game_yellow[] = {
 	/* Unloading point high priority */
 
 	/* 1) right side */
-	{ .pos = {.x = 1240 /*+ 22*/ + 5, .y = 900,	.O =   90, }, .act = act_open_front_right_arm /* open front right ventouse */, .allow_reverse = TRUE },
-	{ .pos = {.x = 1240 /*+ 22*/ + 5, .y = 1300,	.O =   90, }, .act = act_stop_front_right_pump /* stop front right pump */, },
-	{ .pos = {.x = 1240 /*+ 22*/ + 5, .y = 1200,	.O =   90, }, .act = act_close_FR_arm_open_RR_arm, .allow_reverse = TRUE }, /* note: FR module should drop */
-	{ .pos = {.x = 1240 /*+ 22*/ + 5, .y = 1280,	.O =   90, }, .act = act_stop_rear_right_pump},
-	{ .pos = {.x = 1240 /*+ 22*/ + 5, .y = 1300,	.O =   90, }, .act = act_close_rear_right_arm},
-	{ .pos = {.x = 1240 /*+ 22*/ + 5, .y = 1000,	.O =   90, }, .act = act_open_front_right_arm /* open front right ventouse */, .allow_reverse = TRUE },
-	{ .pos = {.x = 1240 /*+ 22*/ + 5, .y = 1300,	.O =   90, }, .act = act_close_front_right_arm /* close front right ventouse */, .allow_reverse = TRUE },
+	{ .pos = {.x = 1230 /*+ 22*/ + 5, .y = 900,	.O =   90, }, .act = act_open_front_right_arm /* open front right ventouse */, .allow_reverse = TRUE },
+	{ .pos = {.x = 1230 /*+ 22*/ + 5, .y = 1300,	.O =   90, }, .act = act_stop_front_right_pump /* stop front right pump */, },
+	{ .pos = {.x = 1230 /*+ 22*/ + 5, .y = 1200,	.O =   90, }, .act = act_close_FR_arm_open_RR_arm, .allow_reverse = TRUE }, /* note: FR module should drop */
+	{ .pos = {.x = 1230 /*+ 22*/ + 5, .y = 1280,	.O =   90, }, .act = act_stop_rear_right_pump},
+	{ .pos = {.x = 1230 /*+ 22*/ + 5, .y = 1300,	.O =   90, }, .act = act_close_rear_right_arm},
+	{ .pos = {.x = 1250 /*+ 22*/ + 5, .y = 1000,	.O =   90, }, .act = act_open_front_right_arm /* open front right ventouse */, .allow_reverse = TRUE },
+	{ .pos = {.x = 1250 /*+ 22*/ + 5, .y = 1300,	.O =   90, }, .act = act_close_front_right_arm /* close front right ventouse */, .allow_reverse = TRUE },
 
 	{ .pos = {.x = 1000 /*+ 22*/ + 5, .y =  1000, .O =   90, }, .act = NULL, .allow_reverse = TRUE },
 	{ .pos = {.x = 1000 /*+ 22*/ + 5, .y =  400, .O =   90, }, .act = NULL, .allow_reverse = TRUE },
+	{ .pos = {.x = 1000 /*+ 22*/ + 5, .y =  540, .O =   90, }, .act = NULL, .allow_reverse = TRUE },
 
 	/* pichenette */
 	/*{ .pos = {.x = 1060 + 22, .y = 1000,	.O =   90, }, .act = act_open_front_left_arm, .allow_reverse = TRUE },
@@ -83,14 +84,14 @@ static path_pose_t path_game_yellow[] = {
 	{ .pos = {.x = 950 /*+ 22*/, .y =  540, .O =   180, }, .act = NULL},
 	{ .pos = {.x = 885 /*+ 22*/, .y =  540, .O =   180, }, .act = start_turbine}, // aspiration
 	{ .pos = {.x = 950 /*+ 22*/, .y =  540, .O =   180, }, .act = NULL, .allow_reverse = TRUE },
-	{ .pos = {.x = 1000 /*+ 22*/, .y =  350, .O =   -135, }, .act = stop_turbine }, // desaspiration
-	{ .pos = {.x = 1200 /*+ 22*/, .y =  500, .O =   -135, }, .act = NULL, .allow_reverse = TRUE }, // desaspiration
+	{ .pos = {.x = 950 /*+ 22*/, .y =  300, .O =   -135, }, .act = stop_turbine, .collision_disable = TRUE }, // desaspiration
+	{ .pos = {.x = 1200 /*+ 22*/, .y =  500, .O =   -135, }, .act = NULL, .allow_reverse = TRUE, .collision_disable = TRUE}, // desaspiration
 };
 
 path_t path_yellow = {
 	/* static cfg */
 	.play_in_loop = FALSE,
-	.nb_pose = 20,
+	.nb_pose = 21,
 	.poses = path_game_yellow,
 };
 #endif
